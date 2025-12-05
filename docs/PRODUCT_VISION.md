@@ -1,4 +1,4 @@
-# ReadForge - Product Vision
+****# ReadForge - Product Vision
 
 ---
 **Created**: December 6, 2025  
@@ -22,7 +22,7 @@
 1. **Fragmented AI Content Creation**: Users generate content with LLMs but lack a dedicated system to organize, manage, and iterate on long-form content like books
 2. **Context Loss**: When working with LLMs on book-length content, maintaining consistency across chapters is challenging
 3. **Data Ownership**: Most AI content tools are cloud-based, leaving users without true ownership of their creations
-4. **Reading Experience Gap**: AI-generated content often ends up in plain text files or documents, lacking a proper reading experience
+4. **Reading Experience Gap**: AI-generated content often ends up in plain text files or documents, lacking a proper reading **experience**
 
 ### Target Users
 
