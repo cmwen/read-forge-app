@@ -2,15 +2,7 @@
 description: Design system architecture, technical structure, and design patterns
 name: architect
 tools:
-  - edit
-  - search
-  - context7/*
-  - usages
-  - fetch
-  - githubRepo
-  - codebase
-  - runInTerminal
-  - readFile
+  ['edit', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'context7/*', 'github-remote/*', 'usages', 'vscodeAPI', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'extensions', 'todos', 'runSubagent', 'runTests']
 handoffs:
   - label: Implement Architecture
     agent: flutter-developer
