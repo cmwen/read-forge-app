@@ -57,7 +57,7 @@ class LibraryScreen extends ConsumerWidget {
           Icon(
             Icons.library_books_outlined,
             size: 120,
-            color: Theme.of(context).colorScheme.primary.withAlpha(128),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 24),
           Text(
@@ -68,7 +68,7 @@ class LibraryScreen extends ConsumerWidget {
           Text(
             'Tap the + button to create your first book',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(153),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],

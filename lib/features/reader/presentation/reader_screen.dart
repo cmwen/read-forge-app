@@ -77,7 +77,7 @@ class ReaderScreen extends ConsumerWidget {
             Icon(
               Icons.article_outlined,
               size: 80,
-              color: Theme.of(context).colorScheme.primary.withAlpha(128),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 24),
             Text(
@@ -88,7 +88,7 @@ class ReaderScreen extends ConsumerWidget {
             Text(
               'Generate content for this chapter using AI',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(153),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
