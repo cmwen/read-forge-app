@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Settings screen for app-wide preferences
 class SettingsScreen extends ConsumerWidget {
@@ -70,10 +71,17 @@ class SettingsScreen extends ConsumerWidget {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Version'),
-            subtitle: const Text('0.1.0'),
+          FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              final version = snapshot.data?.version ?? '0.1.0';
+              final buildNumber = snapshot.data?.buildNumber ?? '1';
+              return ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('Version'),
+                subtitle: Text('$version+$buildNumber'),
+              );
+            },
           ),
           ListTile(
             leading: const Icon(Icons.description),

@@ -7,6 +7,7 @@ import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
 import 'package:drift/drift.dart' as drift;
+import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 
 /// Provider for a specific chapter
 final chapterProvider = FutureProvider.family.autoDispose((
@@ -426,6 +427,7 @@ class ReaderScreen extends ConsumerWidget {
         .map((ch) => ch.summary!)
         .toList();
 
+    final settings = ref.read(appSettingsProvider);
     final prompt = llmService.generateChapterPromptWithFormat(
       book.title,
       chapter.orderIndex,
@@ -434,6 +436,11 @@ class ReaderScreen extends ConsumerWidget {
       previousChapterSummaries: previousSummaries.isNotEmpty
           ? previousSummaries
           : null,
+      writingStyle: settings.writingStyle,
+      language: settings.language,
+      tone: settings.tone,
+      vocabularyLevel: settings.vocabularyLevel,
+      favoriteAuthor: settings.favoriteAuthor,
     );
 
     if (!context.mounted) return;
@@ -601,34 +608,29 @@ class ReaderScreen extends ConsumerWidget {
     // Check for validation errors that should block import
     if (!validationResult.isValid) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              validationResult.errorMessage ?? 'Invalid content',
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(validationResult.errorMessage ?? 'Parse Error'),
+            content: SingleChildScrollView(
+              child: Text(
+                validationResult.errorDetails ??
+                    'Unable to import content. Please check the format.',
+              ),
             ),
-            backgroundColor: Colors.orange,
-            duration: const Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'Details',
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(validationResult.errorMessage ?? 'Error'),
-                    content: Text(
-                      validationResult.errorDetails ??
-                          'Unable to import content',
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('OK'),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showPasteChapterDialog(context, ref, chapter);
+                },
+                child: const Text('Try Again'),
+              ),
+            ],
           ),
         );
       }

@@ -10,6 +10,7 @@ import 'package:read_forge/core/providers/database_provider.dart';
 import 'package:read_forge/core/data/database.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:uuid/uuid.dart';
+import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 
 /// Book detail screen showing TOC and book metadata
 class BookDetailScreen extends ConsumerWidget {
@@ -237,9 +238,15 @@ class BookDetailScreen extends ConsumerWidget {
     dynamic book,
   ) async {
     final llmService = LLMIntegrationService();
+    final settings = ref.read(appSettingsProvider);
     final prompt = llmService.generateTOCPromptWithFormat(
       book.title,
       description: book.description,
+      writingStyle: settings.writingStyle,
+      language: settings.language,
+      tone: settings.tone,
+      vocabularyLevel: settings.vocabularyLevel,
+      favoriteAuthor: settings.favoriteAuthor,
     );
 
     // Show dialog with options to share or copy
