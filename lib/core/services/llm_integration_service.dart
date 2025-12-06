@@ -17,10 +17,7 @@ class ParseValidationResult {
   });
 
   factory ParseValidationResult.success(LLMResponse response) {
-    return ParseValidationResult(
-      isValid: true,
-      response: response,
-    );
+    return ParseValidationResult(isValid: true, response: response);
   }
 
   factory ParseValidationResult.error(String message, {String? details}) {
@@ -63,7 +60,8 @@ class LLMIntegrationService {
     if (text.trim().isEmpty) {
       return ParseValidationResult.error(
         'Empty input',
-        details: 'The pasted text is empty. Please make sure you\'ve copied '
+        details:
+            'The pasted text is empty. Please make sure you\'ve copied '
             'the response from your AI assistant.',
       );
     }
@@ -97,7 +95,8 @@ class LLMIntegrationService {
       if (lowerText == pattern.toLowerCase()) {
         return ParseValidationResult.error(
           'Clipboard placeholder detected',
-          details: 'It looks like you pasted clipboard placeholder text. '
+          details:
+              'It looks like you pasted clipboard placeholder text. '
               'Please copy the actual response from ChatGPT or your AI assistant '
               'and try again.',
         );
@@ -107,7 +106,8 @@ class LLMIntegrationService {
     // No valid format detected
     return ParseValidationResult.error(
       'Unable to parse response',
-      details: 'The text doesn\'t match any expected format. Please ensure '
+      details:
+          'The text doesn\'t match any expected format. Please ensure '
           'the response is either:\n'
           '• JSON format with type: "toc"\n'
           '• Plain text numbered list like:\n'
@@ -235,13 +235,27 @@ class LLMIntegrationService {
 
     // Build writing preferences section
     final preferencesSection = StringBuffer();
-    if (writingStyle != null || language != null || tone != null || vocabularyLevel != null || favoriteAuthor != null) {
+    if (writingStyle != null ||
+        language != null ||
+        tone != null ||
+        vocabularyLevel != null ||
+        favoriteAuthor != null) {
       preferencesSection.writeln('\n## Writing Preferences');
-      if (language != null) preferencesSection.writeln('- Language: $language');
-      if (writingStyle != null) preferencesSection.writeln('- Writing Style: $writingStyle');
-      if (tone != null) preferencesSection.writeln('- Tone: $tone');
-      if (vocabularyLevel != null) preferencesSection.writeln('- Vocabulary Level: $vocabularyLevel');
-      if (favoriteAuthor != null) preferencesSection.writeln('- Inspired by author: $favoriteAuthor');
+      if (language != null) {
+        preferencesSection.writeln('- Language: $language');
+      }
+      if (writingStyle != null) {
+        preferencesSection.writeln('- Writing Style: $writingStyle');
+      }
+      if (tone != null) {
+        preferencesSection.writeln('- Tone: $tone');
+      }
+      if (vocabularyLevel != null) {
+        preferencesSection.writeln('- Vocabulary Level: $vocabularyLevel');
+      }
+      if (favoriteAuthor != null) {
+        preferencesSection.writeln('- Inspired by author: $favoriteAuthor');
+      }
     }
 
     return '''
@@ -297,13 +311,27 @@ Alternatively, you can respond in plain text format:
 
     // Build writing preferences section
     final preferencesSection = StringBuffer();
-    if (writingStyle != null || language != null || tone != null || vocabularyLevel != null || favoriteAuthor != null) {
+    if (writingStyle != null ||
+        language != null ||
+        tone != null ||
+        vocabularyLevel != null ||
+        favoriteAuthor != null) {
       preferencesSection.writeln('\n## Writing Preferences');
-      if (language != null) preferencesSection.writeln('- Language: $language');
-      if (writingStyle != null) preferencesSection.writeln('- Writing Style: $writingStyle');
-      if (tone != null) preferencesSection.writeln('- Tone: $tone');
-      if (vocabularyLevel != null) preferencesSection.writeln('- Vocabulary Level: $vocabularyLevel');
-      if (favoriteAuthor != null) preferencesSection.writeln('- Inspired by author: $favoriteAuthor');
+      if (language != null) {
+        preferencesSection.writeln('- Language: $language');
+      }
+      if (writingStyle != null) {
+        preferencesSection.writeln('- Writing Style: $writingStyle');
+      }
+      if (tone != null) {
+        preferencesSection.writeln('- Tone: $tone');
+      }
+      if (vocabularyLevel != null) {
+        preferencesSection.writeln('- Vocabulary Level: $vocabularyLevel');
+      }
+      if (favoriteAuthor != null) {
+        preferencesSection.writeln('- Inspired by author: $favoriteAuthor');
+      }
     }
 
     return '''

@@ -12,6 +12,14 @@ import 'package:drift/drift.dart' as drift;
 import 'package:uuid/uuid.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 
+/// Provider for book reading progress
+final bookReadingProgressProvider = FutureProvider.family
+    .autoDispose<double, int>((ref, bookId) async {
+      final repository = ref.watch(bookRepositoryProvider);
+      final progress = await repository.getReadingProgress(bookId);
+      return progress?.percentComplete ?? 0.0;
+    });
+
 /// Book detail screen showing TOC and book metadata
 class BookDetailScreen extends ConsumerWidget {
   final int bookId;
@@ -103,6 +111,65 @@ class BookDetailScreen extends ConsumerWidget {
                     textAlign: TextAlign.center,
                   ),
                 ],
+                // Reading progress
+                const SizedBox(height: 16),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final progressAsync = ref.watch(
+                      bookReadingProgressProvider(book.id),
+                    );
+                    return progressAsync.when(
+                      data: (progress) {
+                        if (progress > 0) {
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.auto_stories,
+                                    size: 16,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimaryContainer,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${progress.toStringAsFixed(1)}% Complete',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: LinearProgressIndicator(
+                                  value: progress / 100,
+                                  minHeight: 8,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                      .withValues(alpha: 0.3),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onPrimaryContainer,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                      loading: () => const SizedBox.shrink(),
+                      error: (error, stack) => const SizedBox.shrink(),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -406,7 +473,9 @@ class BookDetailScreen extends ConsumerWidget {
     String responseText,
   ) async {
     final llmService = LLMIntegrationService();
-    final validationResult = llmService.parseResponseWithValidation(responseText);
+    final validationResult = llmService.parseResponseWithValidation(
+      responseText,
+    );
 
     if (validationResult.isValid && validationResult.response is TOCResponse) {
       final response = validationResult.response as TOCResponse;
@@ -584,24 +653,24 @@ class BookDetailScreen extends ConsumerWidget {
               if (title.isEmpty) return;
 
               final database = ref.read(databaseProvider);
-              await (database.update(database.books)
-                    ..where((tbl) => tbl.id.equals(book.id)))
-                  .write(
-                    BooksCompanion(
-                      title: drift.Value(title),
-                      author: drift.Value(
-                        authorController.text.trim().isEmpty
-                            ? null
-                            : authorController.text.trim(),
-                      ),
-                      description: drift.Value(
-                        descriptionController.text.trim().isEmpty
-                            ? null
-                            : descriptionController.text.trim(),
-                      ),
-                      updatedAt: drift.Value(DateTime.now()),
-                    ),
-                  );
+              await (database.update(
+                database.books,
+              )..where((tbl) => tbl.id.equals(book.id))).write(
+                BooksCompanion(
+                  title: drift.Value(title),
+                  author: drift.Value(
+                    authorController.text.trim().isEmpty
+                        ? null
+                        : authorController.text.trim(),
+                  ),
+                  description: drift.Value(
+                    descriptionController.text.trim().isEmpty
+                        ? null
+                        : descriptionController.text.trim(),
+                  ),
+                  updatedAt: drift.Value(DateTime.now()),
+                ),
+              );
 
               // Invalidate the book provider to refresh
               ref.invalidate(bookDetailProvider(book.id));
