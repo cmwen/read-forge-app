@@ -123,8 +123,9 @@
 | FR3.4.3 | Set preferred tone (formal, casual, etc.) | Must | Voice consistency |
 | FR3.4.4 | Set vocabulary level (simple, advanced) | Should | Accessibility |
 | FR3.4.5 | Set favorite author for style reference | Should | Style guidance |
-| FR3.4.6 | Preferences apply to all prompts by default | Must | Convenience |
-| FR3.4.7 | Per-book preference overrides | Should | Flexibility |
+| FR3.4.6 | **Set default chapter count (5-30)** | Must | **Content length control** |
+| FR3.4.7 | Preferences apply to all prompts by default | Must | Convenience |
+| FR3.4.8 | Per-book preference overrides | Should | Flexibility |
 
 #### FR3.5: API Key Management (BYOK)
 | ID | Requirement | Priority | Notes |
@@ -141,12 +142,13 @@
 | ID | Requirement | Priority | Notes |
 |----|-------------|----------|-------|
 | FR4.1.1 | Display chapter content with proper typography | Must | Core reading |
-| FR4.1.2 | Customizable font size | Must | Accessibility |
-| FR4.1.3 | Customizable font family | Should | Personalization |
-| FR4.1.4 | Light/Dark/Sepia themes | Must | Comfort |
-| FR4.1.5 | Adjustable line spacing | Should | Readability |
-| FR4.1.6 | Adjustable margins | Should | Screen utilization |
-| FR4.1.7 | Keep screen awake while reading | Should | UX |
+| FR4.1.2 | **Support Markdown formatting** | Must | **LLM compatibility** |
+| FR4.1.3 | Customizable font size | Must | Accessibility |
+| FR4.1.4 | Customizable font family | Should | Personalization |
+| FR4.1.5 | Light/Dark/Sepia themes | Must | Comfort |
+| FR4.1.6 | Adjustable line spacing | Should | Readability |
+| FR4.1.7 | Adjustable margins | Should | Screen utilization |
+| FR4.1.8 | Keep screen awake while reading | Should | UX |
 
 #### FR4.2: Navigation
 | ID | Requirement | Priority | Notes |
@@ -213,7 +215,7 @@
 | ID | Requirement | Priority | Notes |
 |----|-------------|----------|-------|
 | FR5.2.1 | Export single book as JSON | Must | Data portability |
-| FR5.2.2 | Export single book as EPUB | Should | Standard format |
+| FR5.2.2 | **Export single book as EPUB** | Should | **Future feature - standard format** |
 | FR5.2.3 | Export single book as Markdown | Should | Developer-friendly |
 | FR5.2.4 | Export all books as ZIP | Should | Full backup |
 | FR5.2.5 | Include highlights/notes in export | Should | Complete data |
@@ -357,6 +359,19 @@ APIKey
 
 ---
 
+## Recent Feature Additions
+
+### Markdown Support (December 2025)
+- **Reader now supports full Markdown rendering** for LLM-generated content
+- Includes: headers (H1-H6), bold, italic, lists, code blocks, blockquotes
+- Prompts explicitly request Markdown formatting from LLMs
+- Maintains compatibility with plain text content
+
+### Content Length Preferences (December 2025)
+- **Configurable default chapter count** (5, 10, 15, 20, 25, 30 chapters)
+- Preference applied automatically to TOC generation prompts
+- Accessible via Settings > Content Generation > Default Chapter Count
+
 ## Acceptance Criteria Summary
 
 ### MVP Launch Criteria
@@ -365,11 +380,12 @@ APIKey
 - [ ] User can paste and parse TOC from LLM response  
 - [ ] User can generate and share chapter prompts via Intent
 - [ ] User can paste chapter content from LLM response
-- [ ] User can read books with basic reader controls
+- [x] **User can read books with Markdown formatting support**
 - [ ] User can bookmark, highlight, and add notes
 - [ ] Reading progress is tracked automatically
 - [ ] User can export books as JSON
-- [ ] User can set and save style preferences
+- [x] **User can set content length preferences (chapter count)**
+- [x] User can set and save style preferences
 - [ ] User can create derivative books
 - [ ] App works offline (except Intent sharing)
 

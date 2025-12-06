@@ -50,6 +50,11 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     state = state.copyWith(favoriteAuthor: author);
     await _service.save(state);
   }
+
+  Future<void> setSuggestedChapters(int count) async {
+    state = state.copyWith(suggestedChapters: count);
+    await _service.save(state);
+  }
 }
 
 /// Provider for AppSettingsNotifier

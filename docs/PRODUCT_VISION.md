@@ -39,9 +39,9 @@
 | **Local-First** | All data stored on device, user owns everything |
 | **Context-Aware Generation** | Smart prompt generation that maintains book integrity |
 | **BYOK (Bring Your Own Key)** | Use any LLM provider with your own API keys |
-| **Full Reading Experience** | Not just a generator, but a complete e-reader |
+| **Full Reading Experience** | Not just a generator, but a complete e-reader with Markdown support |
 | **Derivative Works** | Fork books to create variations and adaptations |
-| **Data Portability** | Easy export in standard formats |
+| **Data Portability** | Easy export in standard formats (JSON, EPUB) |
 
 ## Product Principles
 
@@ -73,13 +73,30 @@
 | NovelAI | Good for fiction | Cloud-dependent, subscription | Local-first, BYOK |
 | Calibre | Great library management | No generation, desktop-only | Mobile + AI integration |
 
+## Current Features
+
+### Content Format Support
+- **Markdown Rendering**: Full support for Markdown formatting in generated content, including:
+  - Headers (H1-H6)
+  - Bold, italic, and emphasis
+  - Lists (bulleted and numbered)
+  - Code blocks and inline code
+  - Blockquotes
+  - This aligns with how most LLMs (ChatGPT, Claude, Gemini) naturally format their responses
+
+### Content Generation Control
+- **Customizable Chapter Count**: Users can set their preferred default number of chapters (5-30)
+- **Writing Preferences**: Style, tone, vocabulary level, and favorite author for style emulation
+- **Context-Aware Prompts**: Automatically includes book metadata and previous chapters
+
 ## Future Vision (12-month outlook)
 
-1. **P2P Sync**: Decentralized sync between user's devices
-2. **Community Sharing**: Optional sharing of book templates/structures (not content)
-3. **Voice Integration**: Text-to-speech for generated content
-4. **Multi-platform**: Expand to iOS and desktop
-5. **Plugin System**: Extensible for advanced users
+1. **EPUB Export**: Export books in standard EPUB format for use in other e-readers
+2. **P2P Sync**: Decentralized sync between user's devices
+3. **Community Sharing**: Optional sharing of book templates/structures (not content)
+4. **Voice Integration**: Text-to-speech for generated content
+5. **Multi-platform**: Expand to iOS and desktop
+6. **Plugin System**: Extensible for advanced users
 
 ---
 
