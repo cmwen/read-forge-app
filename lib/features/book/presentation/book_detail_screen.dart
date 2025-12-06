@@ -155,7 +155,9 @@ class BookDetailScreen extends ConsumerWidget {
             Icon(
               Icons.list_alt,
               size: 64,
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -166,7 +168,9 @@ class BookDetailScreen extends ConsumerWidget {
             Text(
               'Generate a Table of Contents using AI to get started',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),

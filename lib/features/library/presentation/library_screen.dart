@@ -68,7 +68,9 @@ class LibraryScreen extends ConsumerWidget {
           Text(
             'Tap the + button to create your first book',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
