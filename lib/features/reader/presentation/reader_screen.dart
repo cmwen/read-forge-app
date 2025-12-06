@@ -57,7 +57,7 @@ class ReaderScreen extends ConsumerWidget {
             return _buildEmptyContent(context, ref, chapter);
           }
 
-          return _buildReader(context, chapter, preferences);
+          return _buildReader(context, ref, chapter, preferences);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -121,6 +121,7 @@ class ReaderScreen extends ConsumerWidget {
 
   Widget _buildReader(
     BuildContext context,
+    WidgetRef ref,
     dynamic chapter,
     dynamic preferences,
   ) {
@@ -163,26 +164,7 @@ class ReaderScreen extends ConsumerWidget {
           const SizedBox(height: 48),
 
           // Navigation buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton.icon(
-                onPressed: () {
-                  // TODO: Navigate to previous chapter
-                },
-                icon: const Icon(Icons.chevron_left),
-                label: const Text('Previous'),
-              ),
-              TextButton.icon(
-                onPressed: () {
-                  // TODO: Navigate to next chapter
-                },
-                icon: const Icon(Icons.chevron_right),
-                label: const Text('Next'),
-                iconAlignment: IconAlignment.end,
-              ),
-            ],
-          ),
+          _buildChapterNavigation(context, ref, chapter),
         ],
       ),
     );
@@ -222,6 +204,96 @@ class ReaderScreen extends ConsumerWidget {
       default:
         return null;
     }
+  }
+
+  Widget _buildChapterNavigation(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic chapter,
+  ) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _getAdjacentChapters(ref, chapter),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
+
+        final data = snapshot.data as Map<String, dynamic>;
+        final previousChapter = data['previous'];
+        final nextChapter = data['next'];
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            if (previousChapter != null)
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => ReaderScreen(
+                        bookId: bookId,
+                        chapterId: previousChapter.id,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.chevron_left),
+                label: const Text('Previous'),
+              )
+            else
+              const SizedBox.shrink(),
+            if (nextChapter != null)
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => ReaderScreen(
+                        bookId: bookId,
+                        chapterId: nextChapter.id,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.chevron_right),
+                label: const Text('Next'),
+                iconAlignment: IconAlignment.end,
+              )
+            else
+              const SizedBox.shrink(),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> _getAdjacentChapters(
+    WidgetRef ref,
+    dynamic chapter,
+  ) async {
+    final database = ref.read(databaseProvider);
+
+    // Get all chapters for this book
+    final allChapters =
+        await (database.select(database.chapters)
+              ..where((tbl) => tbl.bookId.equals(bookId))
+              ..orderBy([
+                (tbl) => drift.OrderingTerm(expression: tbl.orderIndex),
+              ]))
+            .get();
+
+    // Find current chapter index
+    final currentIndex = allChapters.indexWhere((ch) => ch.id == chapter.id);
+
+    if (currentIndex == -1) {
+      return {'previous': null, 'next': null};
+    }
+
+    return {
+      'previous': currentIndex > 0 ? allChapters[currentIndex - 1] : null,
+      'next': currentIndex < allChapters.length - 1
+          ? allChapters[currentIndex + 1]
+          : null,
+    };
   }
 
   void _showReaderSettings(BuildContext context, WidgetRef ref) {
