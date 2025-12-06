@@ -132,4 +132,213 @@ class BookRepository {
             .getSingle();
     return count.read(_db.chapters.id.count()) ?? 0;
   }
+
+  // Bookmarks operations
+
+  /// Get all bookmarks for a book
+  Future<List<Bookmark>> getBookmarksForBook(int bookId) async {
+    return await (_db.select(_db.bookmarks)
+          ..where((tbl) => tbl.bookId.equals(bookId))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]))
+        .get();
+  }
+
+  /// Create a bookmark
+  Future<int> createBookmark({
+    required int bookId,
+    required int chapterId,
+    required int position,
+    String? note,
+  }) async {
+    return await _db
+        .into(_db.bookmarks)
+        .insert(
+          BookmarksCompanion.insert(
+            uuid: _uuid.v4(),
+            bookId: bookId,
+            chapterId: chapterId,
+            position: position,
+            note: Value(note),
+          ),
+        );
+  }
+
+  /// Delete a bookmark
+  Future<void> deleteBookmark(int id) async {
+    await (_db.delete(_db.bookmarks)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  // Highlights operations
+
+  /// Get all highlights for a book
+  Future<List<Highlight>> getHighlightsForBook(int bookId) async {
+    return await (_db.select(_db.highlights)
+          ..where((tbl) => tbl.bookId.equals(bookId))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]))
+        .get();
+  }
+
+  /// Get highlights for a chapter
+  Future<List<Highlight>> getHighlightsForChapter(int chapterId) async {
+    return await (_db.select(
+      _db.highlights,
+    )..where((tbl) => tbl.chapterId.equals(chapterId))).get();
+  }
+
+  /// Create a highlight
+  Future<int> createHighlight({
+    required int bookId,
+    required int chapterId,
+    required int startPosition,
+    required int endPosition,
+    required String highlightedText,
+    String color = 'yellow',
+    String? note,
+  }) async {
+    return await _db
+        .into(_db.highlights)
+        .insert(
+          HighlightsCompanion.insert(
+            uuid: _uuid.v4(),
+            bookId: bookId,
+            chapterId: chapterId,
+            startPosition: startPosition,
+            endPosition: endPosition,
+            highlightedText: highlightedText,
+            color: Value(color),
+            note: Value(note),
+          ),
+        );
+  }
+
+  /// Update a highlight's note
+  Future<void> updateHighlightNote(int id, String? note) async {
+    await (_db.update(_db.highlights)..where((tbl) => tbl.id.equals(id))).write(
+      HighlightsCompanion(note: Value(note)),
+    );
+  }
+
+  /// Delete a highlight
+  Future<void> deleteHighlight(int id) async {
+    await (_db.delete(_db.highlights)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  // Notes operations
+
+  /// Get all notes for a book
+  Future<List<Note>> getNotesForBook(int bookId) async {
+    return await (_db.select(_db.notes)
+          ..where((tbl) => tbl.bookId.equals(bookId))
+          ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]))
+        .get();
+  }
+
+  /// Get notes for a chapter
+  Future<List<Note>> getNotesForChapter(int chapterId) async {
+    return await (_db.select(
+      _db.notes,
+    )..where((tbl) => tbl.chapterId.equals(chapterId))).get();
+  }
+
+  /// Create a note
+  Future<int> createNote({
+    required int bookId,
+    required int chapterId,
+    required int position,
+    required String content,
+  }) async {
+    return await _db
+        .into(_db.notes)
+        .insert(
+          NotesCompanion.insert(
+            uuid: _uuid.v4(),
+            bookId: bookId,
+            chapterId: chapterId,
+            position: position,
+            content: content,
+          ),
+        );
+  }
+
+  /// Update a note
+  Future<void> updateNote(int id, String content) async {
+    await (_db.update(_db.notes)..where((tbl) => tbl.id.equals(id))).write(
+      NotesCompanion(content: Value(content), updatedAt: Value(DateTime.now())),
+    );
+  }
+
+  /// Delete a note
+  Future<void> deleteNote(int id) async {
+    await (_db.delete(_db.notes)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  // Reading Progress operations
+
+  /// Get reading progress for a book
+  Future<ReadingProgressData?> getReadingProgress(int bookId) async {
+    return await (_db.select(
+      _db.readingProgress,
+    )..where((tbl) => tbl.bookId.equals(bookId))).getSingleOrNull();
+  }
+
+  /// Update or create reading progress
+  Future<void> updateReadingProgress({
+    required int bookId,
+    required int? lastChapterId,
+    required int lastPosition,
+    required double percentComplete,
+  }) async {
+    final existing = await getReadingProgress(bookId);
+
+    if (existing != null) {
+      await (_db.update(
+        _db.readingProgress,
+      )..where((tbl) => tbl.bookId.equals(bookId))).write(
+        ReadingProgressCompanion(
+          lastChapterId: Value(lastChapterId),
+          lastPosition: Value(lastPosition),
+          percentComplete: Value(percentComplete),
+          lastReadAt: Value(DateTime.now()),
+        ),
+      );
+    } else {
+      await _db
+          .into(_db.readingProgress)
+          .insert(
+            ReadingProgressCompanion.insert(
+              bookId: bookId,
+              lastChapterId: Value(lastChapterId),
+              lastPosition: Value(lastPosition),
+              percentComplete: Value(percentComplete),
+              lastReadAt: Value(DateTime.now()),
+            ),
+          );
+    }
+  }
+
+  /// Calculate reading progress percentage
+  Future<double> calculateReadingProgress(
+    int bookId,
+    int currentChapterId,
+    int currentPosition,
+  ) async {
+    final chapters = await getChaptersForBook(bookId);
+    if (chapters.isEmpty) return 0.0;
+
+    final currentChapterIndex = chapters.indexWhere(
+      (ch) => ch.id == currentChapterId,
+    );
+    if (currentChapterIndex == -1) return 0.0;
+
+    // Calculate based on chapters completed plus current chapter progress
+    final completedChapters = currentChapterIndex;
+    final currentChapter = chapters[currentChapterIndex];
+    final currentChapterProgress = currentChapter.wordCount > 0
+        ? (currentPosition / currentChapter.wordCount).clamp(0.0, 1.0)
+        : 0.0;
+
+    final totalProgress =
+        (completedChapters + currentChapterProgress) / chapters.length;
+    return (totalProgress * 100).clamp(0.0, 100.0);
+  }
 }

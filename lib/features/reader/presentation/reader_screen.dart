@@ -4,6 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
 import 'package:read_forge/features/reader/presentation/reader_preferences_provider.dart';
+import 'package:read_forge/features/reader/presentation/reading_progress_provider.dart';
+import 'package:read_forge/features/reader/presentation/bookmarks_dialog.dart';
+import 'package:read_forge/features/reader/presentation/highlights_dialog.dart';
+import 'package:read_forge/features/reader/presentation/notes_dialog.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
@@ -20,7 +24,7 @@ final chapterProvider = FutureProvider.family.autoDispose((
 });
 
 /// Simple reader screen for displaying chapter content
-class ReaderScreen extends ConsumerWidget {
+class ReaderScreen extends ConsumerStatefulWidget {
   final int bookId;
   final int chapterId;
 
@@ -31,8 +35,28 @@ class ReaderScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final chapterAsync = ref.watch(chapterProvider(chapterId));
+  ConsumerState<ReaderScreen> createState() => _ReaderScreenState();
+}
+
+class _ReaderScreenState extends ConsumerState<ReaderScreen> {
+  @override
+  void dispose() {
+    // Save reading progress when leaving the screen
+    final progressNotifier = ref.read(
+      readingProgressProvider(
+        ReadingProgressParams(
+          bookId: widget.bookId,
+          chapterId: widget.chapterId,
+        ),
+      ).notifier,
+    );
+    progressNotifier.saveProgress();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chapterAsync = ref.watch(chapterProvider(widget.chapterId));
     final preferences = ref.watch(readerPreferencesProvider);
 
     return Scaffold(
@@ -44,8 +68,23 @@ class ReaderScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.bookmark_border),
+            onPressed: () => _showBookmarksDialog(context),
+            tooltip: 'Bookmarks',
+          ),
+          IconButton(
+            icon: const Icon(Icons.highlight),
+            onPressed: () => _showHighlightsDialog(context),
+            tooltip: 'Highlights',
+          ),
+          IconButton(
+            icon: const Icon(Icons.note),
+            onPressed: () => _showNotesDialog(context),
+            tooltip: 'Notes',
+          ),
+          IconButton(
             icon: const Icon(Icons.text_fields),
-            onPressed: () => _showReaderSettings(context, ref),
+            onPressed: () => _showReaderSettings(context),
           ),
         ],
       ),
@@ -56,10 +95,10 @@ class ReaderScreen extends ConsumerWidget {
           }
 
           if (chapter.content == null || chapter.content!.isEmpty) {
-            return _buildEmptyContent(context, ref, chapter);
+            return _buildEmptyContent(context, chapter);
           }
 
-          return _buildReader(context, ref, chapter, preferences);
+          return _buildReader(context, chapter, preferences);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -73,14 +112,38 @@ class ReaderScreen extends ConsumerWidget {
           ),
         ),
       ),
+      floatingActionButton: chapterAsync.maybeWhen(
+        data: (chapter) {
+          if (chapter != null &&
+              chapter.content != null &&
+              chapter.content!.isNotEmpty) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'note_fab',
+                  onPressed: () => _addNote(context),
+                  tooltip: 'Add Note',
+                  child: const Icon(Icons.note_add),
+                ),
+                const SizedBox(height: 12),
+                FloatingActionButton(
+                  heroTag: 'bookmark_fab',
+                  onPressed: () => _addBookmark(context),
+                  tooltip: 'Add Bookmark',
+                  child: const Icon(Icons.bookmark_add),
+                ),
+              ],
+            );
+          }
+          return null;
+        },
+        orElse: () => null,
+      ),
     );
   }
 
-  Widget _buildEmptyContent(
-    BuildContext context,
-    WidgetRef ref,
-    dynamic chapter,
-  ) {
+  Widget _buildEmptyContent(BuildContext context, dynamic chapter) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -111,7 +174,7 @@ class ReaderScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => _generateChapterContent(context, ref, chapter),
+              onPressed: () => _generateChapterContent(context, chapter),
               icon: const Icon(Icons.auto_awesome),
               label: const Text('Generate Content'),
             ),
@@ -123,7 +186,6 @@ class ReaderScreen extends ConsumerWidget {
 
   Widget _buildReader(
     BuildContext context,
-    WidgetRef ref,
     dynamic chapter,
     dynamic preferences,
   ) {
@@ -134,9 +196,20 @@ class ReaderScreen extends ConsumerWidget {
     // Get font family
     final fontFamily = _getFontFamily(preferences.fontFamily);
 
+    // Get scroll controller from reading progress provider
+    final progressState = ref.watch(
+      readingProgressProvider(
+        ReadingProgressParams(
+          bookId: widget.bookId,
+          chapterId: widget.chapterId,
+        ),
+      ),
+    );
+
     return Container(
       color: backgroundColor,
       child: ListView(
+        controller: progressState.scrollController,
         padding: const EdgeInsets.all(24),
         children: [
           // Chapter title
@@ -198,14 +271,8 @@ class ReaderScreen extends ConsumerWidget {
                 color: textColor,
                 fontFamily: fontFamily,
               ),
-              strong: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-              em: TextStyle(
-                fontStyle: FontStyle.italic,
-                color: textColor,
-              ),
+              strong: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+              em: TextStyle(fontStyle: FontStyle.italic, color: textColor),
               blockquote: TextStyle(
                 fontSize: preferences.fontSize,
                 color: textColor.withValues(alpha: 0.8),
@@ -229,7 +296,7 @@ class ReaderScreen extends ConsumerWidget {
           const SizedBox(height: 48),
 
           // Navigation buttons
-          _buildChapterNavigation(context, ref, chapter),
+          _buildChapterNavigation(context, chapter),
         ],
       ),
     );
@@ -280,13 +347,9 @@ class ReaderScreen extends ConsumerWidget {
     return null;
   }
 
-  Widget _buildChapterNavigation(
-    BuildContext context,
-    WidgetRef ref,
-    dynamic chapter,
-  ) {
+  Widget _buildChapterNavigation(BuildContext context, dynamic chapter) {
     return FutureBuilder<Map<String, dynamic>>(
-      future: _getAdjacentChapters(ref, chapter),
+      future: _getAdjacentChapters(chapter),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const SizedBox.shrink();
@@ -302,10 +365,21 @@ class ReaderScreen extends ConsumerWidget {
             if (previousChapter != null)
               TextButton.icon(
                 onPressed: () {
+                  // Save progress before navigating
+                  final progressNotifier = ref.read(
+                    readingProgressProvider(
+                      ReadingProgressParams(
+                        bookId: widget.bookId,
+                        chapterId: widget.chapterId,
+                      ),
+                    ).notifier,
+                  );
+                  progressNotifier.saveProgress();
+
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => ReaderScreen(
-                        bookId: bookId,
+                        bookId: widget.bookId,
                         chapterId: previousChapter.id,
                       ),
                     ),
@@ -319,10 +393,21 @@ class ReaderScreen extends ConsumerWidget {
             if (nextChapter != null)
               TextButton.icon(
                 onPressed: () {
+                  // Save progress before navigating
+                  final progressNotifier = ref.read(
+                    readingProgressProvider(
+                      ReadingProgressParams(
+                        bookId: widget.bookId,
+                        chapterId: widget.chapterId,
+                      ),
+                    ).notifier,
+                  );
+                  progressNotifier.saveProgress();
+
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => ReaderScreen(
-                        bookId: bookId,
+                        bookId: widget.bookId,
                         chapterId: nextChapter.id,
                       ),
                     ),
@@ -340,16 +425,13 @@ class ReaderScreen extends ConsumerWidget {
     );
   }
 
-  Future<Map<String, dynamic>> _getAdjacentChapters(
-    WidgetRef ref,
-    dynamic chapter,
-  ) async {
+  Future<Map<String, dynamic>> _getAdjacentChapters(dynamic chapter) async {
     final database = ref.read(databaseProvider);
 
     // Get all chapters for this book
     final allChapters =
         await (database.select(database.chapters)
-              ..where((tbl) => tbl.bookId.equals(bookId))
+              ..where((tbl) => tbl.bookId.equals(widget.bookId))
               ..orderBy([
                 (tbl) => drift.OrderingTerm(expression: tbl.orderIndex),
               ]))
@@ -370,7 +452,7 @@ class ReaderScreen extends ConsumerWidget {
     };
   }
 
-  void _showReaderSettings(BuildContext context, WidgetRef ref) {
+  void _showReaderSettings(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -468,25 +550,21 @@ class ReaderScreen extends ConsumerWidget {
     );
   }
 
-  void _generateChapterContent(
-    BuildContext context,
-    WidgetRef ref,
-    dynamic chapter,
-  ) async {
+  void _generateChapterContent(BuildContext context, dynamic chapter) async {
     final llmService = LLMIntegrationService();
 
     // Get book info for context
     final database = ref.read(databaseProvider);
     final book = await (database.select(
       database.books,
-    )..where((tbl) => tbl.id.equals(bookId))).getSingleOrNull();
+    )..where((tbl) => tbl.id.equals(widget.bookId))).getSingleOrNull();
 
     if (book == null) return;
 
     // Get previous chapters for context
     final previousChapters =
         await (database.select(database.chapters)
-              ..where((tbl) => tbl.bookId.equals(bookId))
+              ..where((tbl) => tbl.bookId.equals(widget.bookId))
               ..where(
                 (tbl) => tbl.orderIndex.isSmallerThanValue(chapter.orderIndex),
               )
@@ -599,22 +677,18 @@ class ReaderScreen extends ConsumerWidget {
         );
         await Future.delayed(const Duration(milliseconds: 500));
         if (context.mounted) {
-          _showPasteChapterDialog(context, ref, chapter);
+          _showPasteChapterDialog(context, chapter);
         }
       }
     } else if (action == 'copy' && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Prompt copied to clipboard')),
       );
-      _showPasteChapterDialog(context, ref, chapter);
+      _showPasteChapterDialog(context, chapter);
     }
   }
 
-  void _showPasteChapterDialog(
-    BuildContext context,
-    WidgetRef ref,
-    dynamic chapter,
-  ) {
+  void _showPasteChapterDialog(BuildContext context, dynamic chapter) {
     final controller = TextEditingController();
 
     showDialog(
@@ -658,7 +732,7 @@ class ReaderScreen extends ConsumerWidget {
               final text = controller.text.trim();
               if (text.isNotEmpty) {
                 Navigator.of(context).pop();
-                _processChapterContent(context, ref, chapter, text);
+                _processChapterContent(context, chapter, text);
               }
             },
             icon: const Icon(Icons.check),
@@ -671,12 +745,13 @@ class ReaderScreen extends ConsumerWidget {
 
   void _processChapterContent(
     BuildContext context,
-    WidgetRef ref,
     dynamic chapter,
     String responseText,
   ) async {
     final llmService = LLMIntegrationService();
-    final validationResult = llmService.parseResponseWithValidation(responseText);
+    final validationResult = llmService.parseResponseWithValidation(
+      responseText,
+    );
 
     // Check for validation errors that should block import
     if (!validationResult.isValid) {
@@ -699,7 +774,7 @@ class ReaderScreen extends ConsumerWidget {
               FilledButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _showPasteChapterDialog(context, ref, chapter);
+                  _showPasteChapterDialog(context, chapter);
                 },
                 child: const Text('Try Again'),
               ),
@@ -724,16 +799,16 @@ class ReaderScreen extends ConsumerWidget {
 
     try {
       final database = ref.read(databaseProvider);
-      await (database.update(database.chapters)
-            ..where((tbl) => tbl.id.equals(chapter.id)))
-          .write(
-            ChaptersCompanion(
-              content: drift.Value(content),
-              status: const drift.Value('generated'),
-              wordCount: drift.Value(content.split(' ').length),
-              updatedAt: drift.Value(DateTime.now()),
-            ),
-          );
+      await (database.update(
+        database.chapters,
+      )..where((tbl) => tbl.id.equals(chapter.id))).write(
+        ChaptersCompanion(
+          content: drift.Value(content),
+          status: const drift.Value('generated'),
+          wordCount: drift.Value(content.split(' ').length),
+          updatedAt: drift.Value(DateTime.now()),
+        ),
+      );
 
       // Invalidate the chapter provider to refresh the UI
       ref.invalidate(chapterProvider(chapter.id));
@@ -812,5 +887,248 @@ You can format text like:
 
 *Enjoy creating and reading your AI-powered books!*
 ''';
+  }
+
+  // Dialog methods for bookmarks, highlights, and notes
+
+  void _showBookmarksDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => BookmarksDialog(
+        bookId: widget.bookId,
+        onBookmarkTap: (chapterId, position) {
+          if (chapterId == widget.chapterId) {
+            // Same chapter, scroll to position
+            final progressState = ref.read(
+              readingProgressProvider(
+                ReadingProgressParams(
+                  bookId: widget.bookId,
+                  chapterId: widget.chapterId,
+                ),
+              ),
+            );
+            if (progressState.scrollController.hasClients) {
+              final maxScroll =
+                  progressState.scrollController.position.maxScrollExtent;
+              final targetPosition = (position / 1000.0 * maxScroll).clamp(
+                0.0,
+                maxScroll,
+              );
+              progressState.scrollController.animateTo(
+                targetPosition,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+              );
+            }
+          } else {
+            // Different chapter, navigate
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) =>
+                    ReaderScreen(bookId: widget.bookId, chapterId: chapterId),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  void _showHighlightsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => HighlightsDialog(
+        bookId: widget.bookId,
+        onHighlightTap: (chapterId, startPosition) {
+          if (chapterId == widget.chapterId) {
+            // Same chapter, scroll to position
+            final progressState = ref.read(
+              readingProgressProvider(
+                ReadingProgressParams(
+                  bookId: widget.bookId,
+                  chapterId: widget.chapterId,
+                ),
+              ),
+            );
+            if (progressState.scrollController.hasClients) {
+              final maxScroll =
+                  progressState.scrollController.position.maxScrollExtent;
+              final targetPosition = (startPosition / 1000.0 * maxScroll).clamp(
+                0.0,
+                maxScroll,
+              );
+              progressState.scrollController.animateTo(
+                targetPosition,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+              );
+            }
+          } else {
+            // Different chapter, navigate
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) =>
+                    ReaderScreen(bookId: widget.bookId, chapterId: chapterId),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  void _showNotesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => NotesDialog(
+        bookId: widget.bookId,
+        onNoteTap: (chapterId, position) {
+          if (chapterId == widget.chapterId) {
+            // Same chapter, scroll to position
+            final progressState = ref.read(
+              readingProgressProvider(
+                ReadingProgressParams(
+                  bookId: widget.bookId,
+                  chapterId: widget.chapterId,
+                ),
+              ),
+            );
+            if (progressState.scrollController.hasClients) {
+              final maxScroll =
+                  progressState.scrollController.position.maxScrollExtent;
+              final targetPosition = (position / 1000.0 * maxScroll).clamp(
+                0.0,
+                maxScroll,
+              );
+              progressState.scrollController.animateTo(
+                targetPosition,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+              );
+            }
+          } else {
+            // Different chapter, navigate
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) =>
+                    ReaderScreen(bookId: widget.bookId, chapterId: chapterId),
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  // FAB action methods
+
+  void _addBookmark(BuildContext context) async {
+    final progressState = ref.read(
+      readingProgressProvider(
+        ReadingProgressParams(
+          bookId: widget.bookId,
+          chapterId: widget.chapterId,
+        ),
+      ),
+    );
+
+    final repository = ref.read(bookRepositoryProvider);
+
+    try {
+      await repository.createBookmark(
+        bookId: widget.bookId,
+        chapterId: widget.chapterId,
+        position: progressState.currentPosition,
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Bookmark added'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error adding bookmark: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _addNote(BuildContext context) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Note'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            hintText: 'Enter your note...',
+            border: OutlineInputBorder(),
+          ),
+          maxLines: 5,
+          textCapitalization: TextCapitalization.sentences,
+          autofocus: true,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final content = controller.text.trim();
+              if (content.isEmpty) return;
+
+              final progressState = ref.read(
+                readingProgressProvider(
+                  ReadingProgressParams(
+                    bookId: widget.bookId,
+                    chapterId: widget.chapterId,
+                  ),
+                ),
+              );
+
+              final repository = ref.read(bookRepositoryProvider);
+
+              try {
+                await repository.createNote(
+                  bookId: widget.bookId,
+                  chapterId: widget.chapterId,
+                  position: progressState.currentPosition,
+                  content: content,
+                );
+
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('Note added')));
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error adding note: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 }
