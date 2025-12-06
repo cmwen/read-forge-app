@@ -230,7 +230,11 @@ class BookDetailScreen extends ConsumerWidget {
     }
   }
 
-  void _generateTOCPrompt(BuildContext context, WidgetRef ref, dynamic book) async {
+  void _generateTOCPrompt(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+  ) async {
     final llmService = LLMIntegrationService();
     final prompt = llmService.generateTOCPromptWithFormat(
       book.title,
@@ -308,7 +312,7 @@ class BookDetailScreen extends ConsumerWidget {
         prompt,
         subject: 'Generate TOC for ${book.title}',
       );
-      
+
       if (shared && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -333,7 +337,7 @@ class BookDetailScreen extends ConsumerWidget {
 
   void _showPasteDialog(BuildContext context, WidgetRef ref, dynamic book) {
     final controller = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -353,10 +357,13 @@ class BookDetailScreen extends ConsumerWidget {
                 controller: controller,
                 maxLines: 10,
                 decoration: InputDecoration(
-                  hintText: 'Paste response here...\n\nSupports both JSON and plain text formats',
+                  hintText:
+                      'Paste response here...\n\nSupports both JSON and plain text formats',
                   border: const OutlineInputBorder(),
                   filled: true,
-                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  fillColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                 ),
               ),
             ],
@@ -383,7 +390,12 @@ class BookDetailScreen extends ConsumerWidget {
     );
   }
 
-  void _processTOCResponse(BuildContext context, WidgetRef ref, dynamic book, String responseText) async {
+  void _processTOCResponse(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+    String responseText,
+  ) async {
     final llmService = LLMIntegrationService();
     final response = llmService.parseResponse(responseText);
 
@@ -392,24 +404,28 @@ class BookDetailScreen extends ConsumerWidget {
       try {
         final database = ref.read(databaseProvider);
         final uuid = const Uuid();
-        
+
         for (final tocChapter in response.chapters) {
-          await database.into(database.chapters).insert(
-            ChaptersCompanion.insert(
-              uuid: uuid.v4(),
-              bookId: book.id,
-              title: tocChapter.title,
-              summary: drift.Value(tocChapter.summary),
-              orderIndex: tocChapter.number,
-              status: drift.Value('empty'),
-            ),
-          );
+          await database
+              .into(database.chapters)
+              .insert(
+                ChaptersCompanion.insert(
+                  uuid: uuid.v4(),
+                  bookId: book.id,
+                  title: tocChapter.title,
+                  summary: drift.Value(tocChapter.summary),
+                  orderIndex: tocChapter.number,
+                  status: drift.Value('empty'),
+                ),
+              );
         }
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Successfully imported ${response.chapters.length} chapters!'),
+              content: Text(
+                'Successfully imported ${response.chapters.length} chapters!',
+              ),
               backgroundColor: Colors.green,
             ),
           );

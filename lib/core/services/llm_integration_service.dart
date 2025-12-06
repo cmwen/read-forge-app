@@ -63,11 +63,13 @@ class LLMIntegrationService {
       if (match != null) {
         // Save previous chapter if exists
         if (currentTitle != null) {
-          chapters.add(TOCChapter(
-            number: chapterNumber - 1,
-            title: currentTitle,
-            summary: currentSummary?.trim(),
-          ));
+          chapters.add(
+            TOCChapter(
+              number: chapterNumber - 1,
+              title: currentTitle,
+              summary: currentSummary?.trim(),
+            ),
+          );
         }
 
         chapterNumber = int.tryParse(match.group(1)!) ?? chapterNumber;
@@ -102,21 +104,20 @@ class LLMIntegrationService {
 
     // Add last chapter
     if (currentTitle != null) {
-      chapters.add(TOCChapter(
-        number: chapterNumber - 1,
-        title: currentTitle,
-        summary: currentSummary?.trim(),
-      ));
+      chapters.add(
+        TOCChapter(
+          number: chapterNumber - 1,
+          title: currentTitle,
+          summary: currentSummary?.trim(),
+        ),
+      );
     }
 
     if (chapters.isEmpty) {
       return null;
     }
 
-    return TOCResponse(
-      bookTitle: 'Untitled',
-      chapters: chapters,
-    );
+    return TOCResponse(bookTitle: 'Untitled', chapters: chapters);
   }
 
   /// Generate a structured JSON prompt for TOC generation

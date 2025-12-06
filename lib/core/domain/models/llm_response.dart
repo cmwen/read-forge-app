@@ -6,10 +6,8 @@ abstract class LLMResponse {
   final String type;
   final DateTime timestamp;
 
-  LLMResponse({
-    required this.type,
-    DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.now();
+  LLMResponse({required this.type, DateTime? timestamp})
+    : timestamp = timestamp ?? DateTime.now();
 
   Map<String, dynamic> toJson();
 
@@ -53,7 +51,8 @@ class TOCResponse extends LLMResponse {
   factory TOCResponse.fromJson(Map<String, dynamic> json) {
     return TOCResponse(
       bookTitle: json['bookTitle'] as String? ?? '',
-      chapters: (json['chapters'] as List?)
+      chapters:
+          (json['chapters'] as List?)
               ?.map((e) => TOCChapter.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -80,11 +79,7 @@ class TOCChapter {
   final String title;
   final String? summary;
 
-  TOCChapter({
-    required this.number,
-    required this.title,
-    this.summary,
-  });
+  TOCChapter({required this.number, required this.title, this.summary});
 
   factory TOCChapter.fromJson(Map<String, dynamic> json) {
     return TOCChapter(
@@ -162,7 +157,8 @@ class ContextResponse extends LLMResponse {
     return ContextResponse(
       bookTitle: json['bookTitle'] as String? ?? '',
       setting: json['setting'] as String?,
-      characters: (json['characters'] as List?)
+      characters:
+          (json['characters'] as List?)
               ?.map((e) => Character.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -192,11 +188,7 @@ class Character {
   final String? description;
   final String? role;
 
-  Character({
-    required this.name,
-    this.description,
-    this.role,
-  });
+  Character({required this.name, this.description, this.role});
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
