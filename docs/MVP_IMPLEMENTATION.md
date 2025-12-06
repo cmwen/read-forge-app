@@ -1,12 +1,35 @@
 # ReadForge MVP Implementation
 
-**Status**: ✅ Complete  
-**Date**: December 5, 2025  
-**Version**: 0.1.0
+**Status**: 🚧 In Progress  
+**Date**: December 6, 2025  
+**Version**: 0.2.0
 
 ## Overview
 
 This document describes the MVP (Minimum Viable Product) implementation for ReadForge, an AI-powered book library app.
+
+## Recent Updates (December 6, 2025)
+
+### ✅ Markdown Support Added
+- **flutter_markdown_plus** package integrated for rendering Markdown content
+- Reader now supports full Markdown formatting:
+  - Headers (H1-H6) with responsive sizing based on font preferences
+  - Bold (**text**) and italic (*text*) formatting
+  - Lists (bulleted and numbered)
+  - Code blocks and inline code
+  - Blockquotes
+  - Horizontal rules
+- Sample text updated to demonstrate Markdown capabilities
+- LLM prompts updated to explicitly request Markdown formatting
+- Maintains backward compatibility with plain text content
+
+### ✅ Content Length Preferences Added
+- **Default Chapter Count** setting added to app settings
+- Users can choose from 5, 10, 15, 20, 25, or 30 chapters
+- Default value: 10 chapters
+- Setting accessible via Settings > Content Generation
+- Automatically applied to TOC generation prompts
+- Stored persistently in SharedPreferences
 
 ## Implemented Features
 
@@ -133,16 +156,22 @@ lib/
 
 ```yaml
 dependencies:
-  flutter_riverpod: ^2.6.1      # State management
-  drift: ^2.20.3                 # SQLite database
-  drift_flutter: ^0.2.0          # Flutter integration
-  sqlite3_flutter_libs: ^0.5.24 # SQLite native libs
-  uuid: ^4.5.1                   # UUID generation
-  intl: ^0.19.0                  # Internationalization
+  flutter_riverpod: ^2.6.1          # State management
+  drift: ^2.20.3                     # SQLite database
+  drift_flutter: ^0.2.0              # Flutter integration
+  sqlite3_flutter_libs: ^0.5.24     # SQLite native libs
+  uuid: ^4.5.1                       # UUID generation
+  intl: ^0.19.0                      # Internationalization
+  flutter_markdown_plus: ^1.0.5     # Markdown rendering (NEW)
+  share_plus: ^10.1.2                # Intent sharing
+  receive_sharing_intent: ^1.8.0    # Receive shared content
+  shared_preferences: ^2.3.0        # Settings storage
+  path_provider: ^2.1.0              # File paths
+  package_info_plus: ^8.1.2          # Version info
 
 dev_dependencies:
-  drift_dev: ^2.20.3             # Code generation
-  build_runner: ^2.4.13          # Build system
+  drift_dev: ^2.20.3                 # Code generation
+  build_runner: ^2.4.13              # Build system
 ```
 
 ## Core Workflows
@@ -172,15 +201,11 @@ dev_dependencies:
 
 ## Known Limitations (MVP)
 
-1. **No actual chapter content generation** - Placeholder sample text shown
-2. **No TOC parsing** - Prompt generated but parsing not implemented
-3. **No chapter navigation** - Previous/Next buttons are placeholders
-4. **No highlights/bookmarks** - Database schema exists but UI not implemented
-5. **No reader settings** - Font size, theme picker placeholders
-6. **No book editing** - Can only create, not edit
-7. **No book deletion confirmation** - Menu item exists but not wired up
-8. **No derivatives** - Schema supports but not implemented
-9. **No export** - Planned but not implemented
+1. **No highlights/bookmarks UI** - Database schema exists but UI not fully implemented
+2. **No book editing UI** - Can create but limited editing capabilities
+3. **No derivatives UI** - Schema supports but not implemented
+4. **No EPUB export** - Planned for future release
+5. **Limited file import** - Only JSON import supported currently
 
 ## Testing
 
@@ -191,14 +216,13 @@ dev_dependencies:
 
 ## Next Steps for Post-MVP
 
-1. **TOC Parsing**: Implement parsing of LLM-generated TOC
-2. **Chapter Content**: Add paste/edit functionality for chapters
-3. **Reader Features**: Implement highlights, bookmarks, and notes
-4. **Reader Settings**: Font size, theme, font family pickers
-5. **Book Management**: Edit, delete with confirmation, derivatives
-6. **Export**: JSON, EPUB, Markdown export functionality
-7. **Testing**: Add unit tests for repositories and providers
-8. **Performance**: Optimize database queries and caching
+1. **Reader Features**: Complete highlights, bookmarks, and notes UI
+2. **Book Management**: Edit book metadata, delete with confirmation, derivatives
+3. **EPUB Export**: Implement EPUB export functionality for cross-platform reading
+4. **Advanced Markdown**: Support for tables, images, and custom styling
+5. **Testing**: Add comprehensive unit tests for new features
+6. **Performance**: Optimize Markdown rendering for long chapters
+7. **Accessibility**: Ensure Markdown content is screen-reader friendly
 
 ## Build Instructions
 
