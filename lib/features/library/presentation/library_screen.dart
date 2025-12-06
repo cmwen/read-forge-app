@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/core/domain/models/book_model.dart';
 import 'package:read_forge/features/library/presentation/library_provider.dart';
 import 'package:read_forge/features/book/presentation/book_detail_screen.dart';
+import 'package:read_forge/features/settings/presentation/settings_screen.dart';
 
 /// Library screen showing all books
 class LibraryScreen extends ConsumerWidget {
@@ -16,6 +17,16 @@ class LibraryScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('ReadForge'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: booksAsync.when(
         data: (books) {
