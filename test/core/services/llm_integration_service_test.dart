@@ -281,9 +281,7 @@ void main() {
           1,
           'The Beginning',
           bookDescription: 'An epic journey',
-          previousChapterSummaries: [
-            'Introduction to the world',
-          ],
+          previousChapterSummaries: ['Introduction to the world'],
           context: 'Medieval fantasy setting',
         );
 
@@ -328,10 +326,7 @@ void main() {
           'Test Book',
           3,
           'Chapter Three',
-          previousChapterSummaries: [
-            'Chapter 1 summary',
-            'Chapter 2 summary',
-          ],
+          previousChapterSummaries: ['Chapter 1 summary', 'Chapter 2 summary'],
         );
 
         expect(prompt, contains('Chapter 1 summary'));

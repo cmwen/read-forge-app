@@ -151,11 +151,7 @@ void main() {
           'bookTitle': 'Test Book',
           'setting': 'Medieval fantasy world',
           'characters': [
-            {
-              'name': 'Hero',
-              'description': 'The protagonist',
-              'role': 'main',
-            },
+            {'name': 'Hero', 'description': 'The protagonist', 'role': 'main'},
           ],
           'themes': ['courage', 'friendship'],
           'timestamp': '2025-12-06T00:00:00.000Z',
@@ -173,11 +169,7 @@ void main() {
 
     group('LLMResponse.fromJson', () {
       test('should correctly identify TOC response', () {
-        final json = {
-          'type': 'toc',
-          'bookTitle': 'Test Book',
-          'chapters': [],
-        };
+        final json = {'type': 'toc', 'bookTitle': 'Test Book', 'chapters': []};
 
         final response = LLMResponse.fromJson(json);
 
@@ -212,10 +204,7 @@ void main() {
       });
 
       test('should return null for unknown type', () {
-        final json = {
-          'type': 'unknown',
-          'bookTitle': 'Test Book',
-        };
+        final json = {'type': 'unknown', 'bookTitle': 'Test Book'};
 
         final response = LLMResponse.fromJson(json);
 
@@ -223,9 +212,7 @@ void main() {
       });
 
       test('should return null for missing type', () {
-        final json = {
-          'bookTitle': 'Test Book',
-        };
+        final json = {'bookTitle': 'Test Book'};
 
         final response = LLMResponse.fromJson(json);
 
