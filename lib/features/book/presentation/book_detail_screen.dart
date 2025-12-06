@@ -420,6 +420,9 @@ class BookDetailScreen extends ConsumerWidget {
               );
         }
 
+        // Invalidate the chapters provider to refresh the UI
+        ref.invalidate(bookChaptersProvider(book.id));
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
