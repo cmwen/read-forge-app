@@ -583,11 +583,10 @@ class BookDetailScreen extends ConsumerWidget {
               if (title.isEmpty) return;
 
               final database = ref.read(databaseProvider);
-              await database
-                  .update(database.books)
-                  .replace(
+              await (database.update(database.books)
+                    ..where((tbl) => tbl.id.equals(book.id)))
+                  .write(
                     BooksCompanion(
-                      id: drift.Value(book.id),
                       title: drift.Value(title),
                       author: drift.Value(
                         authorController.text.trim().isEmpty

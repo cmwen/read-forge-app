@@ -651,11 +651,10 @@ class ReaderScreen extends ConsumerWidget {
 
     try {
       final database = ref.read(databaseProvider);
-      await database
-          .update(database.chapters)
-          .replace(
+      await (database.update(database.chapters)
+            ..where((tbl) => tbl.id.equals(chapter.id)))
+          .write(
             ChaptersCompanion(
-              id: drift.Value(chapter.id),
               content: drift.Value(content),
               status: const drift.Value('generated'),
               wordCount: drift.Value(content.split(' ').length),
