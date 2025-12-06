@@ -5,6 +5,7 @@ class AppSettings {
   final String tone; // 'casual', 'formal', 'neutral'
   final String vocabularyLevel; // 'simple', 'moderate', 'advanced'
   final String? favoriteAuthor;
+  final int suggestedChapters; // Default number of chapters to generate
 
   const AppSettings({
     this.writingStyle = 'balanced',
@@ -12,6 +13,7 @@ class AppSettings {
     this.tone = 'neutral',
     this.vocabularyLevel = 'moderate',
     this.favoriteAuthor,
+    this.suggestedChapters = 10,
   });
 
   AppSettings copyWith({
@@ -20,6 +22,7 @@ class AppSettings {
     String? tone,
     String? vocabularyLevel,
     String? favoriteAuthor,
+    int? suggestedChapters,
   }) {
     return AppSettings(
       writingStyle: writingStyle ?? this.writingStyle,
@@ -27,6 +30,7 @@ class AppSettings {
       tone: tone ?? this.tone,
       vocabularyLevel: vocabularyLevel ?? this.vocabularyLevel,
       favoriteAuthor: favoriteAuthor ?? this.favoriteAuthor,
+      suggestedChapters: suggestedChapters ?? this.suggestedChapters,
     );
   }
 
@@ -37,6 +41,7 @@ class AppSettings {
       'tone': tone,
       'vocabularyLevel': vocabularyLevel,
       'favoriteAuthor': favoriteAuthor,
+      'suggestedChapters': suggestedChapters,
     };
   }
 
@@ -47,6 +52,7 @@ class AppSettings {
       tone: json['tone'] as String? ?? 'neutral',
       vocabularyLevel: json['vocabularyLevel'] as String? ?? 'moderate',
       favoriteAuthor: json['favoriteAuthor'] as String?,
+      suggestedChapters: json['suggestedChapters'] as int? ?? 10,
     );
   }
 }

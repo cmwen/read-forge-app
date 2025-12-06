@@ -59,6 +59,7 @@ dependencies:
   
   # Package version info
   package_info_plus: ^8.1.2
+  flutter_markdown_plus: ^1.0.5
 
 dev_dependencies:
   flutter_test:

@@ -328,6 +328,7 @@ $context
 2. Maintain consistency with previous chapters
 3. Use vivid descriptions and compelling narrative
 4. Aim for approximately 1500-2000 words${preferencesSection.isNotEmpty ? '\n5. Follow the writing preferences specified above' : ''}
+5. **Use Markdown formatting** for better readability (headers, bold, italic, lists, etc.)
 
 ## Response Format
 Please respond with a JSON object in this exact format:
@@ -338,9 +339,9 @@ IMPORTANT:
 - The response must be valid JSON
 - Include "type": "chapter" to identify this as chapter content
 - The content field should contain the full chapter text
-- You can include markdown formatting in the content
+- **Use Markdown formatting** in the content (e.g., ## for headers, **bold**, *italic*, - for lists)
 
-Alternatively, you can respond with just the plain text content.
+Alternatively, you can respond with just the Markdown-formatted text content.
 ''';
   }
 }

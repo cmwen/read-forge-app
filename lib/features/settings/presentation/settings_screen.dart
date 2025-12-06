@@ -61,6 +61,25 @@ class SettingsScreen extends ConsumerWidget {
 
           const Divider(),
 
+          // Content Generation Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Content Generation',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.format_list_numbered),
+            title: const Text('Default Chapter Count'),
+            subtitle: Text('${settings.suggestedChapters} chapters'),
+            onTap: () => _showChapterCountPicker(context, notifier, settings),
+          ),
+
+          const Divider(),
+
           // About Section
           Padding(
             padding: const EdgeInsets.all(16),
@@ -328,6 +347,87 @@ class SettingsScreen extends ConsumerWidget {
       trailing: isSelected ? const Icon(Icons.check) : null,
       selected: isSelected,
       onTap: () => onTap(value),
+    );
+  }
+
+  void _showChapterCountPicker(
+    BuildContext context,
+    AppSettingsNotifier notifier,
+    dynamic settings,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Default Chapter Count'),
+        children: [
+          _buildOptionTile(
+            context,
+            '5 chapters',
+            'Short book',
+            '5',
+            '${settings.suggestedChapters}',
+            (value) {
+              notifier.setSuggestedChapters(int.parse(value));
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            '10 chapters',
+            'Standard book',
+            '10',
+            '${settings.suggestedChapters}',
+            (value) {
+              notifier.setSuggestedChapters(int.parse(value));
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            '15 chapters',
+            'Longer book',
+            '15',
+            '${settings.suggestedChapters}',
+            (value) {
+              notifier.setSuggestedChapters(int.parse(value));
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            '20 chapters',
+            'Full-length novel',
+            '20',
+            '${settings.suggestedChapters}',
+            (value) {
+              notifier.setSuggestedChapters(int.parse(value));
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            '25 chapters',
+            'Extended novel',
+            '25',
+            '${settings.suggestedChapters}',
+            (value) {
+              notifier.setSuggestedChapters(int.parse(value));
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            '30 chapters',
+            'Epic length',
+            '30',
+            '${settings.suggestedChapters}',
+            (value) {
+              notifier.setSuggestedChapters(int.parse(value));
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 
