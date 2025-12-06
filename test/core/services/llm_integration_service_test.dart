@@ -328,6 +328,38 @@ void main() {
           expect(result.isValid, false);
           expect(result.errorMessage, 'Unable to parse response');
         });
+
+        test('should NOT detect placeholder when it appears in valid JSON content', () {
+          // Real case: User pasted valid ChatGPT response with Chinese content
+          // that happens to mention clipboard text as part of the actual content
+          final validJsonWithPlaceholderInContent = '''
+          {
+            "type": "chapter",
+            "bookTitle": "Test Book",
+            "chapterNumber": 1,
+            "chapterTitle": "Test Chapter",
+            "content": "This chapter discusses how 您複製的文字簡訊和影像會自動顯示在此處 works in Android."
+          }
+          ''';
+
+          final result = service.parseResponseWithValidation(
+            validJsonWithPlaceholderInContent,
+          );
+
+          expect(result.isValid, true);
+          expect(result.response, isA<ChapterResponse>());
+          expect(result.errorMessage, null);
+        });
+
+        test('should detect placeholder when it is the only content', () {
+          // Only placeholder text, no valid JSON
+          final result = service.parseResponseWithValidation(
+            '  您複製的文字簡訊和影像會自動顯示在此處  ',
+          );
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Clipboard placeholder detected');
+        });
       });
     });
 

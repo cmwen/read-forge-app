@@ -68,19 +68,6 @@ class LLMIntegrationService {
       );
     }
 
-    // Check for common clipboard placeholder texts
-    final lowerText = text.trim().toLowerCase();
-    for (final pattern in _clipboardPlaceholders) {
-      if (lowerText.contains(pattern.toLowerCase())) {
-        return ParseValidationResult.error(
-          'Clipboard placeholder detected',
-          details: 'It looks like you pasted clipboard placeholder text. '
-              'Please copy the actual response from ChatGPT or your AI assistant '
-              'and try again.',
-        );
-      }
-    }
-
     // Try to parse as JSON first
     try {
       // Check if the text contains JSON
@@ -100,6 +87,21 @@ class LLMIntegrationService {
     final response = _parsePlainTextTOC(text);
     if (response != null) {
       return ParseValidationResult.success(response);
+    }
+
+    // Only check for clipboard placeholder if we couldn't parse valid content
+    // Check if the text is ONLY a clipboard placeholder (with minimal whitespace)
+    final trimmedText = text.trim();
+    final lowerText = trimmedText.toLowerCase();
+    for (final pattern in _clipboardPlaceholders) {
+      if (lowerText == pattern.toLowerCase()) {
+        return ParseValidationResult.error(
+          'Clipboard placeholder detected',
+          details: 'It looks like you pasted clipboard placeholder text. '
+              'Please copy the actual response from ChatGPT or your AI assistant '
+              'and try again.',
+        );
+      }
     }
 
     // No valid format detected
