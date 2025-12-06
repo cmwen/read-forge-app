@@ -811,7 +811,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       );
 
       // Invalidate the chapter provider to refresh the UI
-      ref.invalidate(chapterProvider(widget.chapterId));
+      ref.invalidate(chapterProvider(chapter.id));
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
