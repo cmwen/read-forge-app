@@ -639,7 +639,9 @@ class ReaderScreen extends ConsumerWidget {
     if (validationResult.response is ChapterResponse) {
       content = (validationResult.response as ChapterResponse).content;
     } else {
-      // Assume it's plain text (already validated as non-empty, non-placeholder)
+      // Use the original text as plain text content
+      // This is safe because validation has confirmed it's not empty or a placeholder
+      // Note: If user accidentally pastes a TOCResponse here, it will be treated as plain text
       content = responseText;
     }
 

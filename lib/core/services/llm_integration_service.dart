@@ -34,6 +34,14 @@ class ParseValidationResult {
 
 /// Service for integrating with external LLMs via Intent sharing
 class LLMIntegrationService {
+  /// Common clipboard placeholder texts that indicate invalid input
+  /// These are system-generated texts that appear when clipboard is empty
+  static const List<String> _clipboardPlaceholders = [
+    '您複製的文字簡訊和影像會自動顯示在此處', // Chinese Android clipboard
+    'Copied text messages and images will automatically appear here', // English variant
+    'Text you copy will appear here', // Common variant
+  ];
+
   /// Share a prompt with external LLM apps
   /// Returns true if sharing was successful
   Future<bool> sharePrompt(String prompt, {String? subject}) async {
@@ -61,14 +69,7 @@ class LLMIntegrationService {
     }
 
     // Check for common clipboard placeholder texts
-    final placeholderPatterns = [
-      '您複製的文字簡訊和影像會自動顯示在此處', // Chinese
-      'Copied text messages and images will automatically appear here', // English
-      'Text you copy will appear here', // Common variant
-      'Clipboard', // Generic
-    ];
-
-    for (final pattern in placeholderPatterns) {
+    for (final pattern in _clipboardPlaceholders) {
       if (text.trim().toLowerCase().contains(pattern.toLowerCase())) {
         return ParseValidationResult.error(
           'Clipboard placeholder detected',
