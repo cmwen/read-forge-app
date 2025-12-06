@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
+import 'package:read_forge/features/settings/domain/app_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// Settings screen for app-wide preferences
@@ -151,7 +152,7 @@ class SettingsScreen extends ConsumerWidget {
   void _showWritingStylePicker(
     BuildContext context,
     AppSettingsNotifier notifier,
-    dynamic settings,
+    AppSettings settings,
   ) {
     showDialog(
       context: context,
@@ -199,7 +200,7 @@ class SettingsScreen extends ConsumerWidget {
   void _showLanguagePicker(
     BuildContext context,
     AppSettingsNotifier notifier,
-    dynamic settings,
+    AppSettings settings,
   ) {
     final languages = [
       'English',
@@ -239,7 +240,7 @@ class SettingsScreen extends ConsumerWidget {
   void _showTonePicker(
     BuildContext context,
     AppSettingsNotifier notifier,
-    dynamic settings,
+    AppSettings settings,
   ) {
     showDialog(
       context: context,
@@ -287,7 +288,7 @@ class SettingsScreen extends ConsumerWidget {
   void _showVocabularyPicker(
     BuildContext context,
     AppSettingsNotifier notifier,
-    dynamic settings,
+    AppSettings settings,
   ) {
     showDialog(
       context: context,
@@ -353,80 +354,37 @@ class SettingsScreen extends ConsumerWidget {
   void _showChapterCountPicker(
     BuildContext context,
     AppSettingsNotifier notifier,
-    dynamic settings,
+    AppSettings settings,
   ) {
+    // Define chapter count options
+    final chapterOptions = [
+      (count: 5, label: 'Short book'),
+      (count: 10, label: 'Standard book'),
+      (count: 15, label: 'Longer book'),
+      (count: 20, label: 'Full-length novel'),
+      (count: 25, label: 'Extended novel'),
+      (count: 30, label: 'Epic length'),
+    ];
+
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
         title: const Text('Default Chapter Count'),
-        children: [
-          _buildOptionTile(
-            context,
-            '5 chapters',
-            'Short book',
-            '5',
-            '${settings.suggestedChapters}',
-            (value) {
-              notifier.setSuggestedChapters(int.parse(value));
-              Navigator.pop(context);
-            },
-          ),
-          _buildOptionTile(
-            context,
-            '10 chapters',
-            'Standard book',
-            '10',
-            '${settings.suggestedChapters}',
-            (value) {
-              notifier.setSuggestedChapters(int.parse(value));
-              Navigator.pop(context);
-            },
-          ),
-          _buildOptionTile(
-            context,
-            '15 chapters',
-            'Longer book',
-            '15',
-            '${settings.suggestedChapters}',
-            (value) {
-              notifier.setSuggestedChapters(int.parse(value));
-              Navigator.pop(context);
-            },
-          ),
-          _buildOptionTile(
-            context,
-            '20 chapters',
-            'Full-length novel',
-            '20',
-            '${settings.suggestedChapters}',
-            (value) {
-              notifier.setSuggestedChapters(int.parse(value));
-              Navigator.pop(context);
-            },
-          ),
-          _buildOptionTile(
-            context,
-            '25 chapters',
-            'Extended novel',
-            '25',
-            '${settings.suggestedChapters}',
-            (value) {
-              notifier.setSuggestedChapters(int.parse(value));
-              Navigator.pop(context);
-            },
-          ),
-          _buildOptionTile(
-            context,
-            '30 chapters',
-            'Epic length',
-            '30',
-            '${settings.suggestedChapters}',
-            (value) {
-              notifier.setSuggestedChapters(int.parse(value));
-              Navigator.pop(context);
-            },
-          ),
-        ],
+        children: chapterOptions
+            .map(
+              (option) => _buildOptionTile(
+                context,
+                '${option.count} chapters',
+                option.label,
+                '${option.count}',
+                '${settings.suggestedChapters}',
+                (value) {
+                  notifier.setSuggestedChapters(int.parse(value));
+                  Navigator.pop(context);
+                },
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -434,7 +392,7 @@ class SettingsScreen extends ConsumerWidget {
   void _showAuthorDialog(
     BuildContext context,
     AppSettingsNotifier notifier,
-    dynamic settings,
+    AppSettings settings,
   ) {
     final controller = TextEditingController(
       text: settings.favoriteAuthor ?? '',

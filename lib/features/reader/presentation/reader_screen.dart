@@ -214,7 +214,7 @@ class ReaderScreen extends ConsumerWidget {
               ),
               code: TextStyle(
                 fontSize: preferences.fontSize * 0.9,
-                fontFamily: 'monospace',
+                fontFamily: _getMonospaceFont(),
                 backgroundColor: textColor.withValues(alpha: 0.1),
                 color: textColor,
               ),
@@ -269,6 +269,15 @@ class ReaderScreen extends ConsumerWidget {
       default:
         return null;
     }
+  }
+
+  String? _getMonospaceFont() {
+    // Return null to use system default monospace font
+    // Different platforms will use their appropriate monospace fonts:
+    // - Android: Roboto Mono or Droid Sans Mono
+    // - iOS: Courier or Menlo
+    // - Web: monospace (which resolves to platform default)
+    return null;
   }
 
   Widget _buildChapterNavigation(
