@@ -69,8 +69,9 @@ class LLMIntegrationService {
     }
 
     // Check for common clipboard placeholder texts
+    final lowerText = text.trim().toLowerCase();
     for (final pattern in _clipboardPlaceholders) {
-      if (text.trim().toLowerCase().contains(pattern.toLowerCase())) {
+      if (lowerText.contains(pattern.toLowerCase())) {
         return ParseValidationResult.error(
           'Clipboard placeholder detected',
           details: 'It looks like you pasted clipboard placeholder text. '
