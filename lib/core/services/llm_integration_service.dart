@@ -210,6 +210,11 @@ class LLMIntegrationService {
     String? description,
     String? genre,
     int suggestedChapters = 10,
+    String? writingStyle,
+    String? language,
+    String? tone,
+    String? vocabularyLevel,
+    String? favoriteAuthor,
   }) {
     final exampleJson = {
       'type': 'toc',
@@ -228,17 +233,27 @@ class LLMIntegrationService {
       ],
     };
 
+    // Build writing preferences section
+    final preferencesSection = StringBuffer();
+    if (writingStyle != null || language != null || tone != null || vocabularyLevel != null || favoriteAuthor != null) {
+      preferencesSection.writeln('\n## Writing Preferences');
+      if (language != null) preferencesSection.writeln('- Language: $language');
+      if (writingStyle != null) preferencesSection.writeln('- Writing Style: $writingStyle');
+      if (tone != null) preferencesSection.writeln('- Tone: $tone');
+      if (vocabularyLevel != null) preferencesSection.writeln('- Vocabulary Level: $vocabularyLevel');
+      if (favoriteAuthor != null) preferencesSection.writeln('- Inspired by author: $favoriteAuthor');
+    }
+
     return '''
 Please create a detailed Table of Contents for a book.
 
 ## Book Information
 - Title: $bookTitle
-${description != null ? '- Description: $description\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}
-
+${description != null ? '- Description: $description\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}$preferencesSection
 ## Instructions
 1. Generate $suggestedChapters chapters with clear, descriptive titles
 2. Each chapter should have a brief 1-2 sentence summary
-3. Ensure chapters flow naturally and build upon each other
+3. Ensure chapters flow naturally and build upon each other${preferencesSection.isNotEmpty ? '\n4. Follow the writing preferences specified above' : ''}
 
 ## Response Format
 Please respond with a JSON object in this exact format:
@@ -266,6 +281,11 @@ Alternatively, you can respond in plain text format:
     String? bookDescription,
     List<String>? previousChapterSummaries,
     String? context,
+    String? writingStyle,
+    String? language,
+    String? tone,
+    String? vocabularyLevel,
+    String? favoriteAuthor,
   }) {
     final exampleJson = {
       'type': 'chapter',
@@ -274,6 +294,17 @@ Alternatively, you can respond in plain text format:
       'chapterTitle': chapterTitle,
       'content': 'Your generated chapter content here...',
     };
+
+    // Build writing preferences section
+    final preferencesSection = StringBuffer();
+    if (writingStyle != null || language != null || tone != null || vocabularyLevel != null || favoriteAuthor != null) {
+      preferencesSection.writeln('\n## Writing Preferences');
+      if (language != null) preferencesSection.writeln('- Language: $language');
+      if (writingStyle != null) preferencesSection.writeln('- Writing Style: $writingStyle');
+      if (tone != null) preferencesSection.writeln('- Tone: $tone');
+      if (vocabularyLevel != null) preferencesSection.writeln('- Vocabulary Level: $vocabularyLevel');
+      if (favoriteAuthor != null) preferencesSection.writeln('- Inspired by author: $favoriteAuthor');
+    }
 
     return '''
 Please write the content for a chapter in a book.
@@ -291,13 +322,12 @@ ${previousChapterSummaries.asMap().entries.map((e) => '${e.key + 1}. ${e.value}'
 ${context != null ? '''
 ## Context
 $context
-''' : ''}
-
+''' : ''}$preferencesSection
 ## Instructions
 1. Write engaging content that fits the chapter title
 2. Maintain consistency with previous chapters
 3. Use vivid descriptions and compelling narrative
-4. Aim for approximately 1500-2000 words
+4. Aim for approximately 1500-2000 words${preferencesSection.isNotEmpty ? '\n5. Follow the writing preferences specified above' : ''}
 
 ## Response Format
 Please respond with a JSON object in this exact format:

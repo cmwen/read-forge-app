@@ -56,6 +56,9 @@ dependencies:
   # Intent sharing for LLM integration
   share_plus: ^10.1.2
   receive_sharing_intent: ^1.8.0
+  
+  # Package version info
+  package_info_plus: ^8.1.2
 
 dev_dependencies:
   flutter_test:
