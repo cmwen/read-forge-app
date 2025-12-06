@@ -596,13 +596,54 @@ class ReaderScreen extends ConsumerWidget {
     String responseText,
   ) async {
     final llmService = LLMIntegrationService();
-    final response = llmService.parseResponse(responseText);
+    final validationResult = llmService.parseResponseWithValidation(responseText);
+
+    // Check for validation errors that should block import
+    if (!validationResult.isValid) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              validationResult.errorMessage ?? 'Invalid content',
+            ),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Details',
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(validationResult.errorMessage ?? 'Error'),
+                    content: Text(
+                      validationResult.errorDetails ??
+                          'Unable to import content',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      }
+      return;
+    }
 
     String content;
-    if (response is ChapterResponse) {
-      content = response.content;
+    if (validationResult.response is ChapterResponse) {
+      content = (validationResult.response as ChapterResponse).content;
     } else {
-      // Assume it's plain text
+      // Use the original text as plain text content
+      // This path is reached when:
+      // 1. Response is not valid JSON (validation treats it as plain text and returns null response)
+      // 2. Response is valid JSON but not a ChapterResponse (e.g., TOCResponse)
+      // In both cases, we use the original text which has been validated as non-empty and not a placeholder
       content = responseText;
     }
 

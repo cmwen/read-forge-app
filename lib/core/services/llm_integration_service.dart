@@ -2,8 +2,46 @@ import 'dart:convert';
 import 'package:share_plus/share_plus.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
 
+/// Validation result for LLM response parsing
+class ParseValidationResult {
+  final bool isValid;
+  final String? errorMessage;
+  final String? errorDetails;
+  final LLMResponse? response;
+
+  ParseValidationResult({
+    required this.isValid,
+    this.errorMessage,
+    this.errorDetails,
+    this.response,
+  });
+
+  factory ParseValidationResult.success(LLMResponse response) {
+    return ParseValidationResult(
+      isValid: true,
+      response: response,
+    );
+  }
+
+  factory ParseValidationResult.error(String message, {String? details}) {
+    return ParseValidationResult(
+      isValid: false,
+      errorMessage: message,
+      errorDetails: details,
+    );
+  }
+}
+
 /// Service for integrating with external LLMs via Intent sharing
 class LLMIntegrationService {
+  /// Common clipboard placeholder texts that indicate invalid input
+  /// These are system-generated texts that appear when clipboard is empty
+  static const List<String> _clipboardPlaceholders = [
+    '您複製的文字簡訊和影像會自動顯示在此處', // Chinese Android clipboard
+    'Copied text messages and images will automatically appear here', // English variant
+    'Text you copy will appear here', // Common variant
+  ];
+
   /// Share a prompt with external LLM apps
   /// Returns true if sharing was successful
   Future<bool> sharePrompt(String prompt, {String? subject}) async {
@@ -18,9 +56,18 @@ class LLMIntegrationService {
     }
   }
 
-  /// Parse LLM response from text
-  /// Attempts to parse as JSON first, then falls back to plain text parsing
-  LLMResponse? parseResponse(String text) {
+  /// Parse LLM response from text with detailed validation
+  /// Returns a ParseValidationResult with error details if parsing fails
+  ParseValidationResult parseResponseWithValidation(String text) {
+    // Check for empty or whitespace-only input
+    if (text.trim().isEmpty) {
+      return ParseValidationResult.error(
+        'Empty input',
+        details: 'The pasted text is empty. Please make sure you\'ve copied '
+            'the response from your AI assistant.',
+      );
+    }
+
     // Try to parse as JSON first
     try {
       // Check if the text contains JSON
@@ -29,7 +76,7 @@ class LLMIntegrationService {
         final jsonString = jsonMatch.group(0)!;
         final response = LLMResponse.fromJsonString(jsonString);
         if (response != null) {
-          return response;
+          return ParseValidationResult.success(response);
         }
       }
     } catch (e) {
@@ -37,7 +84,44 @@ class LLMIntegrationService {
     }
 
     // Try to parse as plain text TOC
-    return _parsePlainTextTOC(text);
+    final response = _parsePlainTextTOC(text);
+    if (response != null) {
+      return ParseValidationResult.success(response);
+    }
+
+    // Only check for clipboard placeholder if we couldn't parse valid content
+    // Check if the text is ONLY a clipboard placeholder (with minimal whitespace)
+    final trimmedText = text.trim();
+    final lowerText = trimmedText.toLowerCase();
+    for (final pattern in _clipboardPlaceholders) {
+      if (lowerText == pattern.toLowerCase()) {
+        return ParseValidationResult.error(
+          'Clipboard placeholder detected',
+          details: 'It looks like you pasted clipboard placeholder text. '
+              'Please copy the actual response from ChatGPT or your AI assistant '
+              'and try again.',
+        );
+      }
+    }
+
+    // No valid format detected
+    return ParseValidationResult.error(
+      'Unable to parse response',
+      details: 'The text doesn\'t match any expected format. Please ensure '
+          'the response is either:\n'
+          '• JSON format with type: "toc"\n'
+          '• Plain text numbered list like:\n'
+          '  1. Chapter Title - Summary\n'
+          '  2. Chapter Title - Summary',
+    );
+  }
+
+  /// Parse LLM response from text
+  /// Attempts to parse as JSON first, then falls back to plain text parsing
+  /// For backward compatibility - returns null if parsing fails
+  LLMResponse? parseResponse(String text) {
+    final result = parseResponseWithValidation(text);
+    return result.response;
   }
 
   /// Parse plain text TOC response

@@ -398,9 +398,10 @@ class BookDetailScreen extends ConsumerWidget {
     String responseText,
   ) async {
     final llmService = LLMIntegrationService();
-    final response = llmService.parseResponse(responseText);
+    final validationResult = llmService.parseResponseWithValidation(responseText);
 
-    if (response is TOCResponse) {
+    if (validationResult.isValid && validationResult.response is TOCResponse) {
+      final response = validationResult.response as TOCResponse;
       // Import chapters
       try {
         final database = ref.read(databaseProvider);
@@ -445,19 +446,17 @@ class BookDetailScreen extends ConsumerWidget {
         }
       }
     } else {
-      // Failed to parse
+      // Failed to parse - show detailed error message
       if (context.mounted) {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Parse Error'),
-            content: const Text(
-              'Could not parse the response. Please make sure the response is in the correct format:\n\n'
-              '• JSON format with type: "toc"\n'
-              '• Or plain text numbered list\n\n'
-              'Example:\n'
-              '1. Chapter Title - Summary\n'
-              '2. Chapter Title - Summary',
+            title: Text(validationResult.errorMessage ?? 'Parse Error'),
+            content: SingleChildScrollView(
+              child: Text(
+                validationResult.errorDetails ??
+                    'Could not parse the response. Please make sure the response is in the correct format.',
+              ),
             ),
             actions: [
               TextButton(

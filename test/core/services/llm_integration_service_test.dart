@@ -228,6 +228,139 @@ void main() {
           expect(result, null);
         });
       });
+
+      group('parseResponseWithValidation', () {
+        test('should return success for valid JSON TOC', () {
+          final jsonResponse = '''
+          {
+            "type": "toc",
+            "bookTitle": "Test Book",
+            "chapters": [
+              {
+                "number": 1,
+                "title": "Chapter One",
+                "summary": "First chapter"
+              }
+            ]
+          }
+          ''';
+
+          final result = service.parseResponseWithValidation(jsonResponse);
+
+          expect(result.isValid, true);
+          expect(result.response, isA<TOCResponse>());
+          expect(result.errorMessage, null);
+        });
+
+        test('should return success for valid plain text TOC', () {
+          final textResponse = '''
+          1. Chapter One - First chapter
+          2. Chapter Two - Second chapter
+          ''';
+
+          final result = service.parseResponseWithValidation(textResponse);
+
+          expect(result.isValid, true);
+          expect(result.response, isA<TOCResponse>());
+          expect(result.errorMessage, null);
+        });
+
+        test('should detect empty input', () {
+          final result = service.parseResponseWithValidation('');
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Empty input');
+          expect(result.errorDetails, contains('empty'));
+        });
+
+        test('should detect whitespace-only input', () {
+          final result = service.parseResponseWithValidation('   \n\n  \t  ');
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Empty input');
+        });
+
+        test('should detect Chinese clipboard placeholder', () {
+          final result = service.parseResponseWithValidation(
+            '您複製的文字簡訊和影像會自動顯示在此處',
+          );
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Clipboard placeholder detected');
+          expect(result.errorDetails, contains('placeholder'));
+          expect(result.errorDetails, contains('ChatGPT'));
+        });
+
+        test('should detect English clipboard placeholder', () {
+          final result = service.parseResponseWithValidation(
+            'Copied text messages and images will automatically appear here',
+          );
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Clipboard placeholder detected');
+        });
+
+        test('should detect clipboard placeholder case-insensitive', () {
+          final result = service.parseResponseWithValidation(
+            'TEXT YOU COPY WILL APPEAR HERE',
+          );
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Clipboard placeholder detected');
+        });
+
+        test('should return detailed error for unparseable text', () {
+          final result = service.parseResponseWithValidation(
+            'This is just random text without structure',
+          );
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Unable to parse response');
+          expect(result.errorDetails, contains('JSON format'));
+          expect(result.errorDetails, contains('numbered list'));
+        });
+
+        test('should handle text with partial JSON', () {
+          final result = service.parseResponseWithValidation(
+            'Here is some text { "incomplete": "json"',
+          );
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Unable to parse response');
+        });
+
+        test('should NOT detect placeholder when it appears in valid JSON content', () {
+          // Real case: User pasted valid ChatGPT response with Chinese content
+          // that happens to mention clipboard text as part of the actual content
+          final validJsonWithPlaceholderInContent = '''
+          {
+            "type": "chapter",
+            "bookTitle": "Test Book",
+            "chapterNumber": 1,
+            "chapterTitle": "Test Chapter",
+            "content": "This chapter discusses how 您複製的文字簡訊和影像會自動顯示在此處 works in Android."
+          }
+          ''';
+
+          final result = service.parseResponseWithValidation(
+            validJsonWithPlaceholderInContent,
+          );
+
+          expect(result.isValid, true);
+          expect(result.response, isA<ChapterResponse>());
+          expect(result.errorMessage, null);
+        });
+
+        test('should detect placeholder when it is the only content', () {
+          // Only placeholder text, no valid JSON
+          final result = service.parseResponseWithValidation(
+            '  您複製的文字簡訊和影像會自動顯示在此處  ',
+          );
+
+          expect(result.isValid, false);
+          expect(result.errorMessage, 'Clipboard placeholder detected');
+        });
+      });
     });
 
     group('generateTOCPromptWithFormat', () {
