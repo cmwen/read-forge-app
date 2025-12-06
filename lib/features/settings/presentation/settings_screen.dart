@@ -1,0 +1,382 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
+
+/// Settings screen for app-wide preferences
+class SettingsScreen extends ConsumerWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(appSettingsProvider);
+    final notifier = ref.read(appSettingsProvider.notifier);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings')),
+      body: ListView(
+        children: [
+          // Writing Preferences Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'Writing Preferences',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.style),
+            title: const Text('Writing Style'),
+            subtitle: Text(_getWritingStyleLabel(settings.writingStyle)),
+            onTap: () => _showWritingStylePicker(context, notifier, settings),
+          ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: const Text('Language'),
+            subtitle: Text(settings.language),
+            onTap: () => _showLanguagePicker(context, notifier, settings),
+          ),
+          ListTile(
+            leading: const Icon(Icons.mood),
+            title: const Text('Tone'),
+            subtitle: Text(_getToneLabel(settings.tone)),
+            onTap: () => _showTonePicker(context, notifier, settings),
+          ),
+          ListTile(
+            leading: const Icon(Icons.menu_book),
+            title: const Text('Vocabulary Level'),
+            subtitle: Text(_getVocabularyLabel(settings.vocabularyLevel)),
+            onTap: () => _showVocabularyPicker(context, notifier, settings),
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Favorite Author'),
+            subtitle: Text(
+              settings.favoriteAuthor ?? 'Not set (for style inspiration)',
+            ),
+            onTap: () => _showAuthorDialog(context, notifier, settings),
+          ),
+
+          const Divider(),
+
+          // About Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'About',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: const Text('Version'),
+            subtitle: const Text('0.1.0'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.description),
+            title: const Text('License'),
+            subtitle: const Text('MIT License'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getWritingStyleLabel(String style) {
+    switch (style) {
+      case 'creative':
+        return 'Creative - Imaginative and expressive';
+      case 'precise':
+        return 'Precise - Clear and concise';
+      case 'balanced':
+      default:
+        return 'Balanced - Moderate creativity';
+    }
+  }
+
+  String _getToneLabel(String tone) {
+    switch (tone) {
+      case 'casual':
+        return 'Casual - Friendly and relaxed';
+      case 'formal':
+        return 'Formal - Professional and serious';
+      case 'neutral':
+      default:
+        return 'Neutral - Balanced tone';
+    }
+  }
+
+  String _getVocabularyLabel(String level) {
+    switch (level) {
+      case 'simple':
+        return 'Simple - Easy to understand';
+      case 'advanced':
+        return 'Advanced - Rich vocabulary';
+      case 'moderate':
+      default:
+        return 'Moderate - Balanced vocabulary';
+    }
+  }
+
+  void _showWritingStylePicker(
+    BuildContext context,
+    AppSettingsNotifier notifier,
+    dynamic settings,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Writing Style'),
+        children: [
+          _buildOptionTile(
+            context,
+            'Creative',
+            'Imaginative and expressive',
+            'creative',
+            settings.writingStyle,
+            (value) {
+              notifier.setWritingStyle(value);
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            'Balanced',
+            'Moderate creativity',
+            'balanced',
+            settings.writingStyle,
+            (value) {
+              notifier.setWritingStyle(value);
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            'Precise',
+            'Clear and concise',
+            'precise',
+            settings.writingStyle,
+            (value) {
+              notifier.setWritingStyle(value);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLanguagePicker(
+    BuildContext context,
+    AppSettingsNotifier notifier,
+    dynamic settings,
+  ) {
+    final languages = [
+      'English',
+      'Spanish',
+      'French',
+      'German',
+      'Italian',
+      'Portuguese',
+      'Chinese',
+      'Japanese',
+      'Korean',
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Language'),
+        children: languages
+            .map(
+              (language) => _buildOptionTile(
+                context,
+                language,
+                null,
+                language,
+                settings.language,
+                (value) {
+                  notifier.setLanguage(value);
+                  Navigator.pop(context);
+                },
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  void _showTonePicker(
+    BuildContext context,
+    AppSettingsNotifier notifier,
+    dynamic settings,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Tone'),
+        children: [
+          _buildOptionTile(
+            context,
+            'Casual',
+            'Friendly and relaxed',
+            'casual',
+            settings.tone,
+            (value) {
+              notifier.setTone(value);
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            'Neutral',
+            'Balanced tone',
+            'neutral',
+            settings.tone,
+            (value) {
+              notifier.setTone(value);
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            'Formal',
+            'Professional and serious',
+            'formal',
+            settings.tone,
+            (value) {
+              notifier.setTone(value);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showVocabularyPicker(
+    BuildContext context,
+    AppSettingsNotifier notifier,
+    dynamic settings,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('Vocabulary Level'),
+        children: [
+          _buildOptionTile(
+            context,
+            'Simple',
+            'Easy to understand',
+            'simple',
+            settings.vocabularyLevel,
+            (value) {
+              notifier.setVocabularyLevel(value);
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            'Moderate',
+            'Balanced vocabulary',
+            'moderate',
+            settings.vocabularyLevel,
+            (value) {
+              notifier.setVocabularyLevel(value);
+              Navigator.pop(context);
+            },
+          ),
+          _buildOptionTile(
+            context,
+            'Advanced',
+            'Rich vocabulary',
+            'advanced',
+            settings.vocabularyLevel,
+            (value) {
+              notifier.setVocabularyLevel(value);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptionTile(
+    BuildContext context,
+    String title,
+    String? subtitle,
+    String value,
+    String currentValue,
+    void Function(String) onTap,
+  ) {
+    final isSelected = value == currentValue;
+    return ListTile(
+      title: Text(title),
+      subtitle: subtitle != null ? Text(subtitle) : null,
+      trailing: isSelected ? const Icon(Icons.check) : null,
+      selected: isSelected,
+      onTap: () => onTap(value),
+    );
+  }
+
+  void _showAuthorDialog(
+    BuildContext context,
+    AppSettingsNotifier notifier,
+    dynamic settings,
+  ) {
+    final controller = TextEditingController(
+      text: settings.favoriteAuthor ?? '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Favorite Author'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Enter the name of your favorite author for AI to emulate their writing style (optional).',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: 'Author Name',
+                hintText: 'e.g., J.K. Rowling',
+                border: OutlineInputBorder(),
+              ),
+              textCapitalization: TextCapitalization.words,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          if (settings.favoriteAuthor != null)
+            TextButton(
+              onPressed: () {
+                notifier.setFavoriteAuthor(null);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Clear'),
+            ),
+          FilledButton(
+            onPressed: () {
+              final author = controller.text.trim();
+              notifier.setFavoriteAuthor(author.isEmpty ? null : author);
+              Navigator.of(context).pop();
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+}

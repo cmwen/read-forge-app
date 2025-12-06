@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
+import 'package:read_forge/features/reader/presentation/reader_preferences_provider.dart';
+import 'package:read_forge/core/services/llm_integration_service.dart';
+import 'package:read_forge/core/domain/models/llm_response.dart';
+import 'package:read_forge/core/data/database.dart';
+import 'package:drift/drift.dart' as drift;
 
 /// Provider for a specific chapter
 final chapterProvider = FutureProvider.family.autoDispose((
@@ -25,6 +31,7 @@ class ReaderScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chapterAsync = ref.watch(chapterProvider(chapterId));
+    final preferences = ref.watch(readerPreferencesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -36,7 +43,7 @@ class ReaderScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.text_fields),
-            onPressed: () => _showReaderSettings(context),
+            onPressed: () => _showReaderSettings(context, ref),
           ),
         ],
       ),
@@ -47,10 +54,10 @@ class ReaderScreen extends ConsumerWidget {
           }
 
           if (chapter.content == null || chapter.content!.isEmpty) {
-            return _buildEmptyContent(context);
+            return _buildEmptyContent(context, ref, chapter);
           }
 
-          return _buildReader(context, chapter);
+          return _buildReader(context, chapter, preferences);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -67,7 +74,11 @@ class ReaderScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyContent(BuildContext context) {
+  Widget _buildEmptyContent(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic chapter,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -98,9 +109,7 @@ class ReaderScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () {
-                // TODO: Generate chapter prompt
-              },
+              onPressed: () => _generateChapterContent(context, ref, chapter),
               icon: const Icon(Icons.auto_awesome),
               label: const Text('Generate Content'),
             ),
@@ -110,101 +119,456 @@ class ReaderScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildReader(BuildContext context, dynamic chapter) {
-    // Sample text for demonstration if content is empty
-    final content = chapter.content ?? _getSampleText();
+  Widget _buildReader(
+    BuildContext context,
+    dynamic chapter,
+    dynamic preferences,
+  ) {
+    // Get theme colors
+    final backgroundColor = _getBackgroundColor(context, preferences.theme);
+    final textColor = _getTextColor(context, preferences.theme);
 
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        // Chapter title
-        Text(
-          chapter.title,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        const Divider(),
-        const SizedBox(height: 24),
+    // Get font family
+    final fontFamily = _getFontFamily(preferences.fontFamily);
 
-        // Chapter content
-        SelectableText(
-          content,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyLarge?.copyWith(height: 1.8, fontSize: 18),
-        ),
-
-        const SizedBox(height: 48),
-
-        // Navigation buttons
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton.icon(
-              onPressed: () {
-                // TODO: Navigate to previous chapter
-              },
-              icon: const Icon(Icons.chevron_left),
-              label: const Text('Previous'),
+    return Container(
+      color: backgroundColor,
+      child: ListView(
+        padding: const EdgeInsets.all(24),
+        children: [
+          // Chapter title
+          Text(
+            chapter.title,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: textColor,
+              fontFamily: fontFamily,
             ),
-            TextButton.icon(
-              onPressed: () {
-                // TODO: Navigate to next chapter
-              },
-              icon: const Icon(Icons.chevron_right),
-              label: const Text('Next'),
-              iconAlignment: IconAlignment.end,
+          ),
+          const SizedBox(height: 8),
+          Divider(color: textColor.withValues(alpha: 0.2)),
+          const SizedBox(height: 24),
+
+          // Chapter content
+          SelectableText(
+            chapter.content ?? _getSampleText(),
+            style: TextStyle(
+              height: 1.8,
+              fontSize: preferences.fontSize,
+              color: textColor,
+              fontFamily: fontFamily,
             ),
-          ],
-        ),
-      ],
+          ),
+
+          const SizedBox(height: 48),
+
+          // Navigation buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton.icon(
+                onPressed: () {
+                  // TODO: Navigate to previous chapter
+                },
+                icon: const Icon(Icons.chevron_left),
+                label: const Text('Previous'),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  // TODO: Navigate to next chapter
+                },
+                icon: const Icon(Icons.chevron_right),
+                label: const Text('Next'),
+                iconAlignment: IconAlignment.end,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  void _showReaderSettings(BuildContext context) {
+  Color _getBackgroundColor(BuildContext context, String theme) {
+    switch (theme) {
+      case 'dark':
+        return const Color(0xFF1E1E1E);
+      case 'sepia':
+        return const Color(0xFFF5E6D3);
+      case 'light':
+      default:
+        return Colors.white;
+    }
+  }
+
+  Color _getTextColor(BuildContext context, String theme) {
+    switch (theme) {
+      case 'dark':
+        return const Color(0xFFE0E0E0);
+      case 'sepia':
+        return const Color(0xFF5C4A3A);
+      case 'light':
+      default:
+        return Colors.black87;
+    }
+  }
+
+  String? _getFontFamily(String fontFamily) {
+    switch (fontFamily) {
+      case 'serif':
+        return 'serif';
+      case 'sans':
+        return null; // Use system default
+      case 'system':
+      default:
+        return null;
+    }
+  }
+
+  void _showReaderSettings(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Reader Settings',
-              style: Theme.of(context).textTheme.titleLarge,
+      isScrollControlled: true,
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final preferences = ref.watch(readerPreferencesProvider);
+          final notifier = ref.read(readerPreferencesProvider.notifier);
+
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Reader Settings',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 24),
+
+                // Font Size
+                Text(
+                  'Font Size',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Row(
+                  children: [
+                    Text('A', style: TextStyle(fontSize: 12)),
+                    Expanded(
+                      child: Slider(
+                        value: preferences.fontSize,
+                        min: 12.0,
+                        max: 32.0,
+                        divisions: 20,
+                        label: preferences.fontSize.toStringAsFixed(0),
+                        onChanged: (value) => notifier.setFontSize(value),
+                      ),
+                    ),
+                    Text('A', style: TextStyle(fontSize: 24)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Theme
+                Text('Theme', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(
+                      value: 'light',
+                      label: Text('Light'),
+                      icon: Icon(Icons.light_mode),
+                    ),
+                    ButtonSegment(
+                      value: 'dark',
+                      label: Text('Dark'),
+                      icon: Icon(Icons.dark_mode),
+                    ),
+                    ButtonSegment(
+                      value: 'sepia',
+                      label: Text('Sepia'),
+                      icon: Icon(Icons.auto_stories),
+                    ),
+                  ],
+                  selected: {preferences.theme},
+                  onSelectionChanged: (Set<String> newSelection) {
+                    notifier.setTheme(newSelection.first);
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // Font Family
+                Text(
+                  'Font Family',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(value: 'system', label: Text('System')),
+                    ButtonSegment(value: 'serif', label: Text('Serif')),
+                    ButtonSegment(value: 'sans', label: Text('Sans')),
+                  ],
+                  selected: {preferences.fontFamily},
+                  onSelectionChanged: (Set<String> newSelection) {
+                    notifier.setFontFamily(newSelection.first);
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.format_size),
-              title: const Text('Font Size'),
-              subtitle: const Text('Adjust text size'),
-              onTap: () {
-                // TODO: Font size picker
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.palette),
-              title: const Text('Theme'),
-              subtitle: const Text('Light, Dark, or Sepia'),
-              onTap: () {
-                // TODO: Theme picker
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.font_download),
-              title: const Text('Font Family'),
-              subtitle: const Text('Change reading font'),
-              onTap: () {
-                // TODO: Font family picker
-              },
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
+  }
+
+  void _generateChapterContent(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic chapter,
+  ) async {
+    final llmService = LLMIntegrationService();
+
+    // Get book info for context
+    final database = ref.read(databaseProvider);
+    final book = await (database.select(
+      database.books,
+    )..where((tbl) => tbl.id.equals(bookId))).getSingleOrNull();
+
+    if (book == null) return;
+
+    // Get previous chapters for context
+    final previousChapters =
+        await (database.select(database.chapters)
+              ..where((tbl) => tbl.bookId.equals(bookId))
+              ..where(
+                (tbl) => tbl.orderIndex.isSmallerThanValue(chapter.orderIndex),
+              )
+              ..orderBy([
+                (tbl) => drift.OrderingTerm(expression: tbl.orderIndex),
+              ]))
+            .get();
+
+    final previousSummaries = previousChapters
+        .where((ch) => ch.summary != null)
+        .map((ch) => ch.summary!)
+        .toList();
+
+    final prompt = llmService.generateChapterPromptWithFormat(
+      book.title,
+      chapter.orderIndex,
+      chapter.title,
+      bookDescription: book.description,
+      previousChapterSummaries: previousSummaries.isNotEmpty
+          ? previousSummaries
+          : null,
+    );
+
+    if (!context.mounted) return;
+
+    // Show dialog with options to share or copy
+    final action = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Generate Chapter Content'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Share this prompt with your preferred AI assistant to generate chapter content.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                ),
+                constraints: const BoxConstraints(maxHeight: 200),
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    prompt,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'After getting the response, come back and paste it here.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          OutlinedButton.icon(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: prompt));
+              Navigator.of(context).pop('copy');
+            },
+            icon: const Icon(Icons.copy),
+            label: const Text('Copy'),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(context).pop('share'),
+            icon: const Icon(Icons.share),
+            label: const Text('Share'),
+          ),
+        ],
+      ),
+    );
+
+    if (action == 'share' && context.mounted) {
+      final shared = await llmService.sharePrompt(
+        prompt,
+        subject: 'Generate content for ${chapter.title}',
+      );
+
+      if (shared && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Prompt shared! Paste the response when ready.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (context.mounted) {
+          _showPasteChapterDialog(context, ref, chapter);
+        }
+      }
+    } else if (action == 'copy' && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Prompt copied to clipboard')),
+      );
+      _showPasteChapterDialog(context, ref, chapter);
+    }
+  }
+
+  void _showPasteChapterDialog(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic chapter,
+  ) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Paste Chapter Content'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Paste the generated content from your AI assistant:',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                maxLines: 15,
+                decoration: InputDecoration(
+                  hintText:
+                      'Paste content here...\n\nSupports both JSON and plain text',
+                  border: const OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isNotEmpty) {
+                Navigator.of(context).pop();
+                _processChapterContent(context, ref, chapter, text);
+              }
+            },
+            icon: const Icon(Icons.check),
+            label: const Text('Import'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _processChapterContent(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic chapter,
+    String responseText,
+  ) async {
+    final llmService = LLMIntegrationService();
+    final response = llmService.parseResponse(responseText);
+
+    String content;
+    if (response is ChapterResponse) {
+      content = response.content;
+    } else {
+      // Assume it's plain text
+      content = responseText;
+    }
+
+    try {
+      final database = ref.read(databaseProvider);
+      await database
+          .update(database.chapters)
+          .replace(
+            ChaptersCompanion(
+              id: drift.Value(chapter.id),
+              content: drift.Value(content),
+              status: const drift.Value('generated'),
+              wordCount: drift.Value(content.split(' ').length),
+              updatedAt: drift.Value(DateTime.now()),
+            ),
+          );
+
+      // Invalidate the chapter provider to refresh the UI
+      ref.invalidate(chapterProvider(chapter.id));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Chapter content imported successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error importing content: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   String _getSampleText() {

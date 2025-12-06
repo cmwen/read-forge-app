@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -477,7 +478,11 @@ class BookDetailScreen extends ConsumerWidget {
     }
   }
 
-  void _showBookMenu(BuildContext context, WidgetRef ref) {
+  void _showBookMenu(BuildContext context, WidgetRef ref) async {
+    final bookAsync = ref.read(bookDetailProvider(bookId));
+    final book = bookAsync.value;
+    if (book == null) return;
+
     showModalBottomSheet(
       context: context,
       builder: (context) => ListView(
@@ -488,15 +493,7 @@ class BookDetailScreen extends ConsumerWidget {
             title: const Text('Edit Book Details'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Navigate to edit screen
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.copy),
-            title: const Text('Create Derivative'),
-            onTap: () {
-              Navigator.pop(context);
-              // TODO: Create derivative
+              _showEditBookDialog(context, ref, book);
             },
           ),
           ListTile(
@@ -504,7 +501,7 @@ class BookDetailScreen extends ConsumerWidget {
             title: const Text('Export Book'),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Export functionality
+              _exportBook(context, ref, book);
             },
           ),
           const Divider(),
@@ -516,11 +513,235 @@ class BookDetailScreen extends ConsumerWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Delete with confirmation
+              _confirmDeleteBook(context, ref, book);
             },
           ),
         ],
       ),
     );
+  }
+
+  void _showEditBookDialog(BuildContext context, WidgetRef ref, dynamic book) {
+    final titleController = TextEditingController(text: book.title);
+    final authorController = TextEditingController(text: book.author ?? '');
+    final descriptionController = TextEditingController(
+      text: book.description ?? '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Book Details'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: authorController,
+                decoration: const InputDecoration(
+                  labelText: 'Author',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                textCapitalization: TextCapitalization.sentences,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final title = titleController.text.trim();
+              if (title.isEmpty) return;
+
+              final database = ref.read(databaseProvider);
+              await database
+                  .update(database.books)
+                  .replace(
+                    BooksCompanion(
+                      id: drift.Value(book.id),
+                      title: drift.Value(title),
+                      author: drift.Value(
+                        authorController.text.trim().isEmpty
+                            ? null
+                            : authorController.text.trim(),
+                      ),
+                      description: drift.Value(
+                        descriptionController.text.trim().isEmpty
+                            ? null
+                            : descriptionController.text.trim(),
+                      ),
+                      updatedAt: drift.Value(DateTime.now()),
+                    ),
+                  );
+
+              // Invalidate the book provider to refresh
+              ref.invalidate(bookDetailProvider(book.id));
+
+              if (context.mounted) {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Book updated successfully')),
+                );
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteBook(BuildContext context, WidgetRef ref, dynamic book) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Book'),
+        content: Text(
+          'Are you sure you want to delete "${book.title}"? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final repository = ref.read(bookRepositoryProvider);
+              await repository.deleteBook(book.id);
+
+              if (context.mounted) {
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop(); // Go back to library
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Deleted "${book.title}"')),
+                );
+              }
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _exportBook(BuildContext context, WidgetRef ref, dynamic book) async {
+    final database = ref.read(databaseProvider);
+
+    // Get all chapters for this book
+    final chapters =
+        await (database.select(database.chapters)
+              ..where((tbl) => tbl.bookId.equals(book.id))
+              ..orderBy([
+                (tbl) => drift.OrderingTerm(expression: tbl.orderIndex),
+              ]))
+            .get();
+
+    // Create JSON export
+    final export = {
+      'book': {
+        'title': book.title,
+        'author': book.author,
+        'description': book.description,
+        'genre': book.genre,
+        'createdAt': book.createdAt.toIso8601String(),
+      },
+      'chapters': chapters
+          .map(
+            (ch) => {
+              'title': ch.title,
+              'summary': ch.summary,
+              'content': ch.content,
+              'orderIndex': ch.orderIndex,
+            },
+          )
+          .toList(),
+    };
+
+    final jsonString = const JsonEncoder.withIndent('  ').convert(export);
+
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Export Book'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Book exported as JSON. Copy the text below:',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                  constraints: const BoxConstraints(maxHeight: 300),
+                  child: SingleChildScrollView(
+                    child: SelectableText(
+                      jsonString,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: jsonString));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Copied to clipboard')),
+                );
+              },
+              icon: const Icon(Icons.copy),
+              label: const Text('Copy'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 }
