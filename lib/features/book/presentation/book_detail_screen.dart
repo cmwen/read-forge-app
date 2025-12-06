@@ -3,6 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/book/presentation/book_detail_provider.dart';
 import 'package:read_forge/features/reader/presentation/reader_screen.dart';
+import 'package:read_forge/core/services/llm_integration_service.dart';
+import 'package:read_forge/core/domain/models/llm_response.dart';
+import 'package:read_forge/core/providers/database_provider.dart';
+import 'package:read_forge/core/data/database.dart';
+import 'package:drift/drift.dart' as drift;
+import 'package:uuid/uuid.dart';
 
 /// Book detail screen showing TOC and book metadata
 class BookDetailScreen extends ConsumerWidget {
@@ -115,7 +121,7 @@ class BookDetailScreen extends ConsumerWidget {
                       ),
                     ),
                     FilledButton.icon(
-                      onPressed: () => _generateTOCPrompt(context, book),
+                      onPressed: () => _generateTOCPrompt(context, ref, book),
                       icon: const Icon(Icons.auto_awesome, size: 20),
                       label: const Text('Generate TOC'),
                     ),
@@ -224,20 +230,25 @@ class BookDetailScreen extends ConsumerWidget {
     }
   }
 
-  void _generateTOCPrompt(BuildContext context, dynamic book) {
-    final prompt = _buildTOCPrompt(book);
+  void _generateTOCPrompt(BuildContext context, WidgetRef ref, dynamic book) async {
+    final llmService = LLMIntegrationService();
+    final prompt = llmService.generateTOCPromptWithFormat(
+      book.title,
+      description: book.description,
+    );
 
-    showDialog(
+    // Show dialog with options to share or copy
+    final action = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('TOC Generation Prompt'),
+        title: const Text('Generate Table of Contents'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Copy this prompt and share it with your preferred AI assistant (ChatGPT, Claude, etc.):',
+                'Share this prompt with your preferred AI assistant (ChatGPT, Claude, etc.) to generate a table of contents.',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
@@ -246,12 +257,25 @@ class BookDetailScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                 ),
-                child: SelectableText(
-                  prompt,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                constraints: const BoxConstraints(maxHeight: 200),
+                child: SingleChildScrollView(
+                  child: SelectableText(
+                    prompt,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'After getting the response, come back and paste it here.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -260,37 +284,178 @@ class BookDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: const Text('Cancel'),
           ),
-          FilledButton.icon(
+          OutlinedButton.icon(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: prompt));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Prompt copied to clipboard')),
-              );
+              Navigator.of(context).pop('copy');
             },
             icon: const Icon(Icons.copy),
             label: const Text('Copy'),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(context).pop('share'),
+            icon: const Icon(Icons.share),
+            label: const Text('Share'),
+          ),
+        ],
+      ),
+    );
+
+    if (action == 'share' && context.mounted) {
+      final shared = await llmService.sharePrompt(
+        prompt,
+        subject: 'Generate TOC for ${book.title}',
+      );
+      
+      if (shared && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Prompt shared! Paste the response when ready.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+        // Show paste dialog after a short delay
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (context.mounted) {
+          _showPasteDialog(context, ref, book);
+        }
+      }
+    } else if (action == 'copy' && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Prompt copied to clipboard')),
+      );
+      // Show paste dialog
+      _showPasteDialog(context, ref, book);
+    }
+  }
+
+  void _showPasteDialog(BuildContext context, WidgetRef ref, dynamic book) {
+    final controller = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Paste LLM Response'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Paste the response from your AI assistant:',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                maxLines: 10,
+                decoration: InputDecoration(
+                  hintText: 'Paste response here...\n\nSupports both JSON and plain text formats',
+                  border: const OutlineInputBorder(),
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton.icon(
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isNotEmpty) {
+                Navigator.of(context).pop();
+                _processTOCResponse(context, ref, book, text);
+              }
+            },
+            icon: const Icon(Icons.check),
+            label: const Text('Import'),
           ),
         ],
       ),
     );
   }
 
-  String _buildTOCPrompt(dynamic book) {
-    return '''
-Please create a detailed Table of Contents for a book titled "${book.title}".
+  void _processTOCResponse(BuildContext context, WidgetRef ref, dynamic book, String responseText) async {
+    final llmService = LLMIntegrationService();
+    final response = llmService.parseResponse(responseText);
 
-${book.description != null ? 'Book Description: ${book.description}\n' : ''}
-Please generate a comprehensive TOC with chapter titles and brief summaries for each chapter.
+    if (response is TOCResponse) {
+      // Import chapters
+      try {
+        final database = ref.read(databaseProvider);
+        final uuid = const Uuid();
+        
+        for (final tocChapter in response.chapters) {
+          await database.into(database.chapters).insert(
+            ChaptersCompanion.insert(
+              uuid: uuid.v4(),
+              bookId: book.id,
+              title: tocChapter.title,
+              summary: drift.Value(tocChapter.summary),
+              orderIndex: tocChapter.number,
+              status: drift.Value('empty'),
+            ),
+          );
+        }
 
-Format your response as a numbered list:
-1. Chapter Title - Brief summary of what this chapter covers
-2. Chapter Title - Brief summary of what this chapter covers
-... and so on
-
-Make sure each chapter builds logically on the previous ones and creates a cohesive narrative or learning path.
-''';
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Successfully imported ${response.chapters.length} chapters!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error importing chapters: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } else {
+      // Failed to parse
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Parse Error'),
+            content: const Text(
+              'Could not parse the response. Please make sure the response is in the correct format:\n\n'
+              '• JSON format with type: "toc"\n'
+              '• Or plain text numbered list\n\n'
+              'Example:\n'
+              '1. Chapter Title - Summary\n'
+              '2. Chapter Title - Summary',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _showPasteDialog(context, ref, book);
+                },
+                child: const Text('Try Again'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 
   void _showBookMenu(BuildContext context, WidgetRef ref) {
