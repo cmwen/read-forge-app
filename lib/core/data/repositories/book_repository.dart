@@ -40,7 +40,7 @@ class BookRepository {
   }) async {
     // Use a placeholder title if none provided and it will be generated later
     final bookTitle = title ?? 'Untitled Book';
-    
+
     final id = await _db
         .into(_db.books)
         .insert(

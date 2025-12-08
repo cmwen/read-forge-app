@@ -382,15 +382,15 @@ Alternatively, you can respond with just the Markdown-formatted text content.
     String? language,
   }) {
     final context = StringBuffer();
-    
+
     if (description != null && description.isNotEmpty) {
       context.writeln('Description: $description');
     }
-    
+
     if (purpose != null && purpose.isNotEmpty) {
       context.writeln('Purpose/Goal: $purpose');
     }
-    
+
     if (genre != null && genre.isNotEmpty) {
       context.writeln('Genre: $genre');
     }

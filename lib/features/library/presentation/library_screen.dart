@@ -116,7 +116,11 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  void _showCreateBookDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
+  void _showCreateBookDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
     final purposeController = TextEditingController();
@@ -134,7 +138,9 @@ class LibraryScreen extends ConsumerWidget {
                 Text(
                   l10n.createBookInstructions,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -184,9 +190,11 @@ class LibraryScreen extends ConsumerWidget {
                 final title = titleController.text.trim();
                 final description = descriptionController.text.trim();
                 final purpose = purposeController.text.trim();
-                
+
                 // At least one field must be filled
-                if (title.isNotEmpty || description.isNotEmpty || purpose.isNotEmpty) {
+                if (title.isNotEmpty ||
+                    description.isNotEmpty ||
+                    purpose.isNotEmpty) {
                   Navigator.of(context).pop();
                   _createBook(context, ref, l10n, title, description, purpose);
                 } else {
@@ -217,14 +225,14 @@ class LibraryScreen extends ConsumerWidget {
   ) async {
     // If no title provided, we'll show a dialog to generate one with AI
     if (title == null || title.isEmpty) {
-      final contentType = description != null && description.isNotEmpty ? 'description' : 'purpose';
+      final contentType = description != null && description.isNotEmpty
+          ? 'description'
+          : 'purpose';
       final shouldGenerateTitle = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           title: Text(l10n.generateTitleWithAI),
-          content: Text(
-            l10n.noTitleProvidedPrompt(contentType),
-          ),
+          content: Text(l10n.noTitleProvidedPrompt(contentType)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -245,13 +253,15 @@ class LibraryScreen extends ConsumerWidget {
     }
 
     // Create book with provided information
-    final book = await ref.read(libraryProvider.notifier).createBook(
-      title: title,
-      description: description,
-      purpose: purpose,
-      isTitleGenerated: false,
-    );
-    
+    final book = await ref
+        .read(libraryProvider.notifier)
+        .createBook(
+          title: title,
+          description: description,
+          purpose: purpose,
+          isTitleGenerated: false,
+        );
+
     if (book != null && context.mounted) {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -302,9 +312,9 @@ class LibraryScreen extends ConsumerWidget {
                 child: SingleChildScrollView(
                   child: SelectableText(
                     prompt,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontFamily: 'monospace',
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
                   ),
                 ),
               ),
@@ -336,16 +346,24 @@ class LibraryScreen extends ConsumerWidget {
     );
 
     if (action == 'paste' && context.mounted) {
-      _pasteAndCreateWithGeneratedTitle(context, ref, l10n, description, purpose);
+      _pasteAndCreateWithGeneratedTitle(
+        context,
+        ref,
+        l10n,
+        description,
+        purpose,
+      );
     } else if (action == 'cancel' && context.mounted) {
       // Create book with placeholder title
-      final book = await ref.read(libraryProvider.notifier).createBook(
-        title: 'Untitled Book',
-        description: description,
-        purpose: purpose,
-        isTitleGenerated: false,
-      );
-      
+      final book = await ref
+          .read(libraryProvider.notifier)
+          .createBook(
+            title: 'Untitled Book',
+            description: description,
+            purpose: purpose,
+            isTitleGenerated: false,
+          );
+
       if (book != null && context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -369,21 +387,21 @@ class LibraryScreen extends ConsumerWidget {
 
     if (generatedTitle == null || generatedTitle.isEmpty) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.noTitleInClipboard),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.noTitleInClipboard)));
       }
-      
+
       // Create with placeholder
-      final book = await ref.read(libraryProvider.notifier).createBook(
-        title: 'Untitled Book',
-        description: description,
-        purpose: purpose,
-        isTitleGenerated: false,
-      );
-      
+      final book = await ref
+          .read(libraryProvider.notifier)
+          .createBook(
+            title: 'Untitled Book',
+            description: description,
+            purpose: purpose,
+            isTitleGenerated: false,
+          );
+
       if (book != null && context.mounted) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -395,13 +413,15 @@ class LibraryScreen extends ConsumerWidget {
     }
 
     // Create book with generated title
-    final book = await ref.read(libraryProvider.notifier).createBook(
-      title: generatedTitle,
-      description: description,
-      purpose: purpose,
-      isTitleGenerated: true,
-    );
-    
+    final book = await ref
+        .read(libraryProvider.notifier)
+        .createBook(
+          title: generatedTitle,
+          description: description,
+          purpose: purpose,
+          isTitleGenerated: true,
+        );
+
     if (book != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -409,7 +429,7 @@ class LibraryScreen extends ConsumerWidget {
           duration: const Duration(seconds: 3),
         ),
       );
-      
+
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => BookDetailScreen(bookId: book.id),
