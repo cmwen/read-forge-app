@@ -8,6 +8,8 @@ class BookModel {
   final String? subtitle;
   final String? author;
   final String? description;
+  final String? purpose;
+  final bool isTitleGenerated;
   final String? coverPath;
   final String? genre;
   final String status;
@@ -22,6 +24,8 @@ class BookModel {
     this.subtitle,
     this.author,
     this.description,
+    this.purpose,
+    this.isTitleGenerated = false,
     this.coverPath,
     this.genre,
     required this.status,
@@ -38,6 +42,8 @@ class BookModel {
       subtitle: book.subtitle,
       author: book.author,
       description: book.description,
+      purpose: book.purpose,
+      isTitleGenerated: book.isTitleGenerated,
       coverPath: book.coverPath,
       genre: book.genre,
       status: book.status,
@@ -54,6 +60,8 @@ class BookModel {
     String? subtitle,
     String? author,
     String? description,
+    String? purpose,
+    bool? isTitleGenerated,
     String? coverPath,
     String? genre,
     String? status,
@@ -68,6 +76,8 @@ class BookModel {
       subtitle: subtitle ?? this.subtitle,
       author: author ?? this.author,
       description: description ?? this.description,
+      purpose: purpose ?? this.purpose,
+      isTitleGenerated: isTitleGenerated ?? this.isTitleGenerated,
       coverPath: coverPath ?? this.coverPath,
       genre: genre ?? this.genre,
       status: status ?? this.status,

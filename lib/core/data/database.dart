@@ -11,6 +11,8 @@ class Books extends Table {
   TextColumn get subtitle => text().nullable()();
   TextColumn get author => text().nullable()();
   TextColumn get description => text().nullable()();
+  TextColumn get purpose => text().nullable()(); // Learning purpose/goal
+  BoolColumn get isTitleGenerated => boolean().withDefault(const Constant(false))(); // Track if title is AI-generated
   TextColumn get coverPath => text().nullable()();
   TextColumn get genre => text().nullable()();
   TextColumn get status => text().withDefault(
