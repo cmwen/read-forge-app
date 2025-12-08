@@ -6,6 +6,7 @@ import 'package:read_forge/features/library/presentation/library_provider.dart';
 import 'package:read_forge/features/book/presentation/book_detail_screen.dart';
 import 'package:read_forge/features/settings/presentation/settings_screen.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
+import 'package:read_forge/l10n/app_localizations.dart';
 
 /// Library screen showing all books
 class LibraryScreen extends ConsumerWidget {
@@ -14,14 +15,16 @@ class LibraryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final booksAsync = ref.watch(libraryProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ReadForge'),
+        title: Text(l10n.libraryTitle),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
+            tooltip: l10n.settings,
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -33,9 +36,9 @@ class LibraryScreen extends ConsumerWidget {
       body: booksAsync.when(
         data: (books) {
           if (books.isEmpty) {
-            return _buildEmptyState(context);
+            return _buildEmptyState(context, l10n);
           }
-          return _buildBookGrid(context, ref, books);
+          return _buildBookGrid(context, ref, books, l10n);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -44,25 +47,25 @@ class LibraryScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('Error loading books: $error'),
+              Text(l10n.errorLoadingBooks(error.toString())),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.read(libraryProvider.notifier).loadBooks(),
-                child: const Text('Retry'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showCreateBookDialog(context, ref),
+        onPressed: () => _showCreateBookDialog(context, ref, l10n),
         icon: const Icon(Icons.add),
-        label: const Text('New Book'),
+        label: Text(l10n.newBook),
       ),
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -74,12 +77,12 @@ class LibraryScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'No books yet',
+            l10n.noBooksYet,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
           Text(
-            'Tap the + button to create your first book',
+            l10n.tapToCreateFirstBook,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Theme.of(
                 context,
@@ -95,6 +98,7 @@ class LibraryScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     List<BookModel> books,
+    AppLocalizations l10n,
   ) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
@@ -112,7 +116,7 @@ class LibraryScreen extends ConsumerWidget {
     );
   }
 
-  void _showCreateBookDialog(BuildContext context, WidgetRef ref) {
+  void _showCreateBookDialog(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
     final purposeController = TextEditingController();
@@ -121,14 +125,14 @@ class LibraryScreen extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('Create New Book'),
+          title: Text(l10n.createNewBook),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Fill in at least one field below. If you don\'t provide a title, AI can generate one for you based on your description or purpose.',
+                  l10n.createBookInstructions,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
@@ -137,10 +141,10 @@ class LibraryScreen extends ConsumerWidget {
                 TextField(
                   controller: titleController,
                   autofocus: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Book Title (Optional)',
-                    hintText: 'Enter a title or leave empty for AI generation',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.bookTitleOptional,
+                    hintText: l10n.bookTitleHint,
+                    border: const OutlineInputBorder(),
                   ),
                   textCapitalization: TextCapitalization.words,
                   maxLines: 1,
@@ -148,10 +152,10 @@ class LibraryScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 TextField(
                   controller: descriptionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Description (Optional)',
-                    hintText: 'Describe what the book is about',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.descriptionOptional,
+                    hintText: l10n.descriptionHint,
+                    border: const OutlineInputBorder(),
                   ),
                   textCapitalization: TextCapitalization.sentences,
                   maxLines: 3,
@@ -159,10 +163,10 @@ class LibraryScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 TextField(
                   controller: purposeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Purpose/Learning Goal (Optional)',
-                    hintText: 'What do you want to learn from this book?',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.purposeOptional,
+                    hintText: l10n.purposeHint,
+                    border: const OutlineInputBorder(),
                   ),
                   textCapitalization: TextCapitalization.sentences,
                   maxLines: 3,
@@ -173,7 +177,7 @@ class LibraryScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -184,18 +188,18 @@ class LibraryScreen extends ConsumerWidget {
                 // At least one field must be filled
                 if (title.isNotEmpty || description.isNotEmpty || purpose.isNotEmpty) {
                   Navigator.of(context).pop();
-                  _createBook(context, ref, title, description, purpose);
+                  _createBook(context, ref, l10n, title, description, purpose);
                 } else {
                   // Show error
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill in at least one field'),
-                      duration: Duration(seconds: 2),
+                    SnackBar(
+                      content: Text(l10n.fillAtLeastOneField),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
                 }
               },
-              child: const Text('Create'),
+              child: Text(l10n.create),
             ),
           ],
         ),
@@ -206,34 +210,36 @@ class LibraryScreen extends ConsumerWidget {
   Future<void> _createBook(
     BuildContext context,
     WidgetRef ref,
+    AppLocalizations l10n,
     String? title,
     String? description,
     String? purpose,
   ) async {
     // If no title provided, we'll show a dialog to generate one with AI
     if (title == null || title.isEmpty) {
+      final contentType = description != null && description.isNotEmpty ? 'description' : 'purpose';
       final shouldGenerateTitle = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Generate Title with AI?'),
+          title: Text(l10n.generateTitleWithAI),
           content: Text(
-            'No title was provided. Would you like to use AI to generate a title based on your ${description != null && description.isNotEmpty ? 'description' : 'purpose'}?',
+            l10n.noTitleProvidedPrompt(contentType),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Skip'),
+              child: Text(l10n.skip),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Generate Title'),
+              child: Text(l10n.generateTitle),
             ),
           ],
         ),
       );
 
       if (shouldGenerateTitle == true && context.mounted) {
-        _showTitleGenerationDialog(context, ref, description, purpose);
+        _showTitleGenerationDialog(context, ref, l10n, description, purpose);
         return;
       }
     }
@@ -258,6 +264,7 @@ class LibraryScreen extends ConsumerWidget {
   void _showTitleGenerationDialog(
     BuildContext context,
     WidgetRef ref,
+    AppLocalizations l10n,
     String? description,
     String? purpose,
   ) async {
@@ -271,14 +278,14 @@ class LibraryScreen extends ConsumerWidget {
     final action = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Generate Book Title'),
+        title: Text(l10n.generateBookTitle),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Share this prompt with your AI assistant (ChatGPT, Claude, etc.) to generate a title.',
+                l10n.sharePromptWithAI,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
@@ -307,29 +314,29 @@ class LibraryScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop('cancel'),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () async {
               await Clipboard.setData(ClipboardData(text: prompt));
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Prompt copied to clipboard')),
+                  SnackBar(content: Text(l10n.promptCopiedToClipboard)),
                 );
               }
             },
-            child: const Text('Copy'),
+            child: Text(l10n.copy),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop('paste'),
-            child: const Text('Paste Title'),
+            child: Text(l10n.pasteTitle),
           ),
         ],
       ),
     );
 
     if (action == 'paste' && context.mounted) {
-      _pasteAndCreateWithGeneratedTitle(context, ref, description, purpose);
+      _pasteAndCreateWithGeneratedTitle(context, ref, l10n, description, purpose);
     } else if (action == 'cancel' && context.mounted) {
       // Create book with placeholder title
       final book = await ref.read(libraryProvider.notifier).createBook(
@@ -352,6 +359,7 @@ class LibraryScreen extends ConsumerWidget {
   Future<void> _pasteAndCreateWithGeneratedTitle(
     BuildContext context,
     WidgetRef ref,
+    AppLocalizations l10n,
     String? description,
     String? purpose,
   ) async {
@@ -362,8 +370,8 @@ class LibraryScreen extends ConsumerWidget {
     if (generatedTitle == null || generatedTitle.isEmpty) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No title found in clipboard. Creating book with placeholder title.'),
+          SnackBar(
+            content: Text(l10n.noTitleInClipboard),
           ),
         );
       }
@@ -397,7 +405,7 @@ class LibraryScreen extends ConsumerWidget {
     if (book != null && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Book created with AI-generated title: "$generatedTitle"'),
+          content: Text(l10n.bookCreatedWithTitle(generatedTitle)),
           duration: const Duration(seconds: 3),
         ),
       );
@@ -479,7 +487,7 @@ class _BookCard extends ConsumerWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _getStatusText(book.status),
+                          _getStatusText(book.status, context),
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
@@ -509,15 +517,16 @@ class _BookCard extends ConsumerWidget {
     }
   }
 
-  String _getStatusText(String status) {
+  String _getStatusText(String status, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case 'reading':
-        return 'Reading';
+        return l10n.reading;
       case 'completed':
-        return 'Completed';
+        return l10n.completed;
       case 'draft':
       default:
-        return 'Draft';
+        return l10n.draft;
     }
   }
 }
