@@ -4,8 +4,9 @@ A local-first AI-powered book creation and reading app. Create, manage, and read
 
 ## ✨ Features
 
-- 📖 **AI-Powered Content**: Generate book outlines and chapters using your favorite LLM (ChatGPT, Claude, etc.)
+- 📖 **AI-Powered Content**: Generate book outlines, titles, and chapters using your favorite LLM (ChatGPT, Claude, etc.)
 - 🎨 **Customizable Writing**: Set your preferred writing style, tone, vocabulary level, and favorite author for AI-generated content
+- 🌍 **Multi-Language Support**: Full internationalization with English, Spanish, and Chinese translations
 - 📱 **Local-First**: All data stored locally on your device - complete privacy and ownership
 - 🎯 **Material Design 3**: Beautiful, accessible UI with light, dark, and sepia reading themes
 - 📚 **Library Management**: Organize your AI-generated books in a clean, intuitive library
@@ -42,7 +43,11 @@ flutter run
 
 ### 1. Create a Book
 - Tap the **+** button in your library
-- Enter book title, author (optional), and description
+- Fill in at least one field:
+  - **Book Title** (Optional): Enter a title or leave empty for AI generation
+  - **Description** (Optional): Describe what the book is about
+  - **Purpose/Learning Goal** (Optional): What you want to learn from this book
+- If you don't provide a title, the app can generate one using AI based on your description or purpose
 - Your new book is created!
 
 ### 2. Generate Table of Contents
@@ -168,6 +173,13 @@ lib/
 - Check `flutter doctor -v` for any issues
 
 ## 📊 Recent Improvements
+
+### Latest Version
+- ✨ **Enhanced Book Creation**: Optional fields for title, description, and learning purpose
+- 🤖 **AI Title Generation**: Let AI generate book titles based on your description or purpose
+- 🌍 **Full Internationalization**: Support for English, Spanish, and Chinese languages
+- 📊 **Purpose Tracking**: Track learning goals for each book
+- 🔧 **Improved Database**: Added purpose field and AI-generated title tracking
 
 ### Version 0.1.0+1
 - ✨ User preferences now included in all AI prompts

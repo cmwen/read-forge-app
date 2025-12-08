@@ -1,54 +1,69 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 ---
-<BaseLayout title="min-flutter-template">
+<BaseLayout title="ReadForge">
   <section>
-    <h2>Welcome 👋</h2>
-    <p class="lead">A minimal <strong>Flutter</strong> app template for cross-platform development. Build for Android, iOS, Web, and Desktop from a single codebase.</p>
+    <h2>Welcome to ReadForge 📚</h2>
+    <p class="lead">A <strong>local-first AI-powered</strong> book creation and reading app. Create, manage, and read LLM-generated books with full data ownership and privacy.</p>
 
     <div class="card">
-      <h3>What's here</h3>
+      <h3>What's ReadForge?</h3>
       <ul>
-        <li>Short project overview and docs link</li>
-        <li>Quick links to repository and CI</li>
-        <li>Light Startlight-inspired theme</li>
+        <li>AI-powered book and chapter generation</li>
+        <li>Local-first data storage with complete privacy</li>
+        <li>Multi-language support (English, Spanish, Chinese)</li>
+        <li>Beautiful Material Design 3 reading experience</li>
       </ul>
     </div>
 
     <div class="card">
-      <h3>Features</h3>
+      <h3>✨ Key Features</h3>
       <ul>
-        <li>Flutter 3.10.1+ with Material Design 3</li>
-        <li>Cross-platform: Android, iOS, Web, macOS, Linux, Windows</li>
-        <li>Simple dependency management with pubspec.yaml</li>
-        <li>CI/CD workflows with signed release support</li>
-        <li>AI-friendly customization points</li>
+        <li><strong>AI Title Generation:</strong> Let AI create book titles based on your description or learning goals</li>
+        <li><strong>Flexible Book Creation:</strong> Provide a title, description, or learning purpose - or let AI help</li>
+        <li><strong>Customizable Writing:</strong> Set style, tone, vocabulary, and favorite author for AI content</li>
+        <li><strong>Multi-Language:</strong> Full interface support for English, Spanish, and Chinese</li>
+        <li><strong>Rich Reader:</strong> Adjustable fonts, themes (Light/Dark/Sepia), highlights, notes, and bookmarks</li>
+        <li><strong>100% Private:</strong> All data stored locally - no cloud, no tracking</li>
       </ul>
     </div>
 
     <div class="card">
-      <h3>Download / Release</h3>
-      <p class="lead">Get a packaged release from GitHub Releases (APK, App Bundle, Web).</p>
-      <p><a href="https://github.com/cmwen/min-android-app-template/releases/latest" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">Download latest release →</a></p>
+      <h3>🚀 How It Works</h3>
+      <ol>
+        <li><strong>Create a Book:</strong> Provide a title, description, or learning goal (or all three!)</li>
+        <li><strong>AI Title Generation:</strong> Skip the title and let AI generate one based on your description</li>
+        <li><strong>Generate TOC:</strong> Use AI to create a table of contents with chapter outlines</li>
+        <li><strong>Write Chapters:</strong> Generate chapter content with AI, with your writing preferences applied</li>
+        <li><strong>Read & Annotate:</strong> Enjoy your book with highlights, notes, and bookmarks</li>
+      </ol>
     </div>
 
     <div class="card">
-      <h3>Quick start</h3>
-      <p class="lead">Get started in minutes with Flutter.</p>
-      <pre style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;margin-top:8px;overflow:auto">git clone https://github.com/cmwen/min-android-app-template.git
-cd min-android-app-template
+      <h3>📥 Download</h3>
+      <p class="lead">Get the latest release for Android</p>
+      <p><a href="https://github.com/cmwen/read-forge-app/releases/latest" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">Download APK from GitHub Releases →</a></p>
+    </div>
+
+    <div class="card">
+      <h3>🛠️ Quick Start for Developers</h3>
+      <p class="lead">Build and run from source</p>
+      <pre style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;margin-top:8px;overflow:auto">git clone https://github.com/cmwen/read-forge-app.git
+cd read-forge-app
 flutter pub get
 flutter run</pre>
-      <p style="margin-top:8px"><a href="/install" style="color:var(--accent);text-decoration:none">Open full install guide →</a></p>
+      <p style="margin-top:8px"><a href="/install" style="color:var(--accent);text-decoration:none">View full installation guide →</a></p>
     </div>
 
     <div class="card">
-      <h3>Next steps</h3>
-      <ol>
-        <li>Customize <code>lib/main.dart</code> with your app</li>
-        <li>Update <code>pubspec.yaml</code> with your app name</li>
-        <li>Configure <code>astro/astro.config.mjs</code> for your GitHub Pages URL</li>
-      </ol>
+      <h3>🌍 Language Support</h3>
+      <p>ReadForge automatically uses your device language:</p>
+      <ul>
+        <li>🇬🇧 English</li>
+        <li>🇪🇸 Spanish (Español)</li>
+        <li>🇨🇳 Chinese (中文)</li>
+      </ul>
+      <p style="margin-top:8px">More languages coming soon! Contributions welcome.</p>
     </div>
   </section>
 </BaseLayout>

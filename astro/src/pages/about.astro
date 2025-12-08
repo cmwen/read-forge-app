@@ -1,17 +1,83 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 ---
-<BaseLayout title="About">
+<BaseLayout title="About ReadForge">
   <section>
-    <h2>About this site</h2>
-    <p>This small site is a lightweight static landing for the <code>min-android-app-template</code> Flutter repository. It's built with Astro and a Startlight-inspired theme so it's fast and easy to maintain.</p>
+    <h2>About ReadForge</h2>
+    <p>ReadForge is a local-first AI-powered book creation and reading application. It empowers you to create, manage, and read books generated with the help of Large Language Models (LLMs) like ChatGPT and Claude, while maintaining complete privacy and data ownership.</p>
 
     <div class="card">
-      <h3>How it works</h3>
+      <h3>🎯 Vision</h3>
+      <p>We believe in:</p>
+      <ul>
+        <li><strong>Privacy First:</strong> Your data belongs to you, stored locally on your device</li>
+        <li><strong>AI Augmentation:</strong> Use AI as a creative tool, not a replacement</li>
+        <li><strong>Learning Focus:</strong> Track learning goals and purposes for each book</li>
+        <li><strong>Accessibility:</strong> Multi-language support for users worldwide</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>✨ Core Features</h3>
+      <ul>
+        <li><strong>Flexible Book Creation:</strong> Optional fields for title, description, and learning purpose</li>
+        <li><strong>AI Title Generation:</strong> Generate compelling book titles based on your content</li>
+        <li><strong>Customizable AI Prompts:</strong> Control writing style, tone, and vocabulary</li>
+        <li><strong>Multi-Language UI:</strong> English, Spanish, and Chinese support</li>
+        <li><strong>Rich Reading Experience:</strong> Themes, highlights, notes, and bookmarks</li>
+        <li><strong>Offline-First:</strong> Works completely offline after content generation</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🛠️ Tech Stack</h3>
+      <ul>
+        <li><strong>Framework:</strong> Flutter 3.10.1+ with Dart 3.10.1+</li>
+        <li><strong>UI:</strong> Material Design 3</li>
+        <li><strong>Database:</strong> Drift (SQLite) for local-first storage</li>
+        <li><strong>State Management:</strong> Riverpod</li>
+        <li><strong>Internationalization:</strong> Flutter l10n with ARB files</li>
+        <li><strong>Build:</strong> Gradle 8.0+ with Java 17</li>
+        <li><strong>CI/CD:</strong> GitHub Actions</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🔐 Privacy & Security</h3>
+      <ul>
+        <li>✅ 100% local data storage</li>
+        <li>✅ No cloud synchronization</li>
+        <li>✅ No user tracking or analytics</li>
+        <li>✅ No external API calls (except when you explicitly share prompts)</li>
+        <li>✅ Full data ownership and control</li>
+        <li>✅ Export your books anytime</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>🌍 Open Source</h3>
+      <p>ReadForge is open source and welcomes contributions!</p>
+      <p><a href="https://github.com/cmwen/read-forge-app" target="_blank" rel="noopener">View on GitHub →</a></p>
+      <p style="margin-top:1rem">Contributions welcome for:</p>
+      <ul>
+        <li>New language translations</li>
+        <li>Bug fixes and improvements</li>
+        <li>Feature suggestions</li>
+        <li>Documentation</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>📄 License</h3>
+      <p>MIT License - Free to use, modify, and distribute</p>
+    </div>
+
+    <div class="card">
+      <h3>How this site works</h3>
       <ul>
         <li>Source in <code>/astro</code></li>
-        <li>Build uses <code>npm run build</code> to generate a static <code>dist/</code> folder</li>
-        <li>CI workflow deploys <code>dist/</code> to GitHub Pages when a GitHub Release is published (or on manual dispatch)</li>
+        <li>Built with Astro and Startlight-inspired theme</li>
+        <li>Deploys to GitHub Pages on release</li>
       </ul>
     </div>
   </section>
