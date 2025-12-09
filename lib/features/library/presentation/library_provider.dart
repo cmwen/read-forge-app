@@ -1,25 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:read_forge/core/data/repositories/book_repository.dart';
 import 'package:read_forge/core/domain/models/book_model.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
 
-/// State notifier for managing the library
-class LibraryNotifier extends StateNotifier<AsyncValue<List<BookModel>>> {
-  final BookRepository _repository;
+/// Notifier for managing the library
+class LibraryNotifier extends AsyncNotifier<List<BookModel>> {
+  @override
+  Future<List<BookModel>> build() async {
+    return await _loadBooks();
+  }
 
-  LibraryNotifier(this._repository) : super(const AsyncValue.loading()) {
-    loadBooks();
+  Future<List<BookModel>> _loadBooks() async {
+    final repository = ref.watch(bookRepositoryProvider);
+    return await repository.getAllBooks();
   }
 
   /// Load all books
   Future<void> loadBooks() async {
     state = const AsyncValue.loading();
-    try {
-      final books = await _repository.getAllBooks();
-      state = AsyncValue.data(books);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
+    state = await AsyncValue.guard(() async {
+      return await _loadBooks();
+    });
   }
 
   /// Create a new book
@@ -46,7 +46,8 @@ class LibraryNotifier extends StateNotifier<AsyncValue<List<BookModel>>> {
   /// Delete a book
   Future<void> deleteBook(int id) async {
     try {
-      await _repository.deleteBook(id);
+      final repository = ref.read(bookRepositoryProvider);
+      await repository.deleteBook(id);
       await loadBooks();
     } catch (e) {
       // Handle error
@@ -56,7 +57,6 @@ class LibraryNotifier extends StateNotifier<AsyncValue<List<BookModel>>> {
 
 /// Provider for the library
 final libraryProvider =
-    StateNotifierProvider<LibraryNotifier, AsyncValue<List<BookModel>>>((ref) {
-      final repository = ref.watch(bookRepositoryProvider);
-      return LibraryNotifier(repository);
-    });
+    AsyncNotifierProvider<LibraryNotifier, List<BookModel>>(
+      LibraryNotifier.new,
+    );

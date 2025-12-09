@@ -21,37 +21,35 @@ final readerPreferencesServiceProvider = Provider<ReaderPreferencesService>((
   return ReaderPreferencesService(prefs);
 });
 
-/// StateNotifier for managing reader preferences
-class ReaderPreferencesNotifier extends StateNotifier<ReaderPreferences> {
-  final ReaderPreferencesService _service;
-
-  ReaderPreferencesNotifier(this._service) : super(const ReaderPreferences()) {
-    _loadPreferences();
-  }
-
-  void _loadPreferences() {
-    state = _service.load();
+/// Notifier for managing reader preferences
+class ReaderPreferencesNotifier extends Notifier<ReaderPreferences> {
+  @override
+  ReaderPreferences build() {
+    final service = ref.watch(readerPreferencesServiceProvider);
+    return service.load();
   }
 
   Future<void> setFontSize(double size) async {
+    final service = ref.read(readerPreferencesServiceProvider);
     state = state.copyWith(fontSize: size);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setTheme(String theme) async {
+    final service = ref.read(readerPreferencesServiceProvider);
     state = state.copyWith(theme: theme);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setFontFamily(String fontFamily) async {
+    final service = ref.read(readerPreferencesServiceProvider);
     state = state.copyWith(fontFamily: fontFamily);
-    await _service.save(state);
+    await service.save(state);
   }
 }
 
 /// Provider for ReaderPreferencesNotifier
 final readerPreferencesProvider =
-    StateNotifierProvider<ReaderPreferencesNotifier, ReaderPreferences>((ref) {
-      final service = ref.watch(readerPreferencesServiceProvider);
-      return ReaderPreferencesNotifier(service);
-    });
+    NotifierProvider<ReaderPreferencesNotifier, ReaderPreferences>(
+      ReaderPreferencesNotifier.new,
+    );
