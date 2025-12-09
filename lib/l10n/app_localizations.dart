@@ -530,6 +530,444 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get saveAuthor;
+
+  /// Book details screen title when book is null
+  ///
+  /// In en, this message translates to:
+  /// **'Book Details'**
+  String get bookDetails;
+
+  /// Loading state text
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// Error state text
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// Message when book is not found
+  ///
+  /// In en, this message translates to:
+  /// **'Book not found'**
+  String get bookNotFound;
+
+  /// Error message with details
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorMessage(String error);
+
+  /// Author attribution text
+  ///
+  /// In en, this message translates to:
+  /// **'by {author}'**
+  String byAuthor(String author);
+
+  /// Reading progress percentage
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% Complete'**
+  String percentComplete(String percent);
+
+  /// Table of contents section title
+  ///
+  /// In en, this message translates to:
+  /// **'Table of Contents'**
+  String get tableOfContents;
+
+  /// Button to generate table of contents
+  ///
+  /// In en, this message translates to:
+  /// **'Generate TOC'**
+  String get generateTOC;
+
+  /// Message when no chapters exist
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters yet'**
+  String get noChaptersYet;
+
+  /// Instructions for generating TOC
+  ///
+  /// In en, this message translates to:
+  /// **'Generate a Table of Contents using AI to get started'**
+  String get generateTOCPrompt;
+
+  /// Error message when chapters fail to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading chapters: {error}'**
+  String errorLoadingChapters(String error);
+
+  /// Dialog title for TOC generation
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Table of Contents'**
+  String get generateTableOfContents;
+
+  /// Instructions for sharing TOC prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Share this prompt with your preferred AI assistant (ChatGPT, Claude, etc.) to generate a table of contents.'**
+  String get shareTOCPromptMessage;
+
+  /// Message about pasting response
+  ///
+  /// In en, this message translates to:
+  /// **'After getting the response, come back and paste it here.'**
+  String get afterGenerationMessage;
+
+  /// Share button text
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// Snackbar message after sharing prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt shared! Paste the response when ready.'**
+  String get promptSharedMessage;
+
+  /// Snackbar message after copying prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt copied to clipboard'**
+  String get promptCopied;
+
+  /// Dialog title for pasting LLM response
+  ///
+  /// In en, this message translates to:
+  /// **'Paste LLM Response'**
+  String get pasteLLMResponse;
+
+  /// Instructions for pasting response
+  ///
+  /// In en, this message translates to:
+  /// **'Paste the response from your AI assistant:'**
+  String get pasteResponseInstructions;
+
+  /// Hint text for paste field
+  ///
+  /// In en, this message translates to:
+  /// **'Paste response here...\n\nSupports both JSON and plain text formats'**
+  String get pasteHint;
+
+  /// Import button text
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get import;
+
+  /// Success message after importing chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully imported {count} chapters!'**
+  String chaptersImported(int count);
+
+  /// Error message when importing fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error importing chapters: {error}'**
+  String errorImportingChapters(String error);
+
+  /// Title for parse error dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Parse Error'**
+  String get parseError;
+
+  /// Default parse error message
+  ///
+  /// In en, this message translates to:
+  /// **'Could not parse the response. Please make sure the response is in the correct format.'**
+  String get parseErrorMessage;
+
+  /// OK button text
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// Try again button text
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// Menu option to edit book
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Book Details'**
+  String get editBookDetails;
+
+  /// Menu option to export book
+  ///
+  /// In en, this message translates to:
+  /// **'Export Book'**
+  String get exportBook;
+
+  /// Menu option to delete book
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Book'**
+  String get deleteBook;
+
+  /// Title field label
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// Author field label
+  ///
+  /// In en, this message translates to:
+  /// **'Author'**
+  String get author;
+
+  /// Description field label
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// Save button text
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Success message after updating book
+  ///
+  /// In en, this message translates to:
+  /// **'Book updated successfully'**
+  String get bookUpdated;
+
+  /// Confirmation message for deleting book
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{title}\"? This action cannot be undone.'**
+  String confirmDeleteBook(String title);
+
+  /// Delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Message after deleting book
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted \"{title}\"'**
+  String bookDeleted(String title);
+
+  /// Export dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'Book exported as JSON. Copy the text below:'**
+  String get bookExported;
+
+  /// Close button text
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// Snackbar message after copying
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// Reader screen default title
+  ///
+  /// In en, this message translates to:
+  /// **'Reader'**
+  String get reader;
+
+  /// Bookmarks tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get bookmarks;
+
+  /// Highlights tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Highlights'**
+  String get highlights;
+
+  /// Notes tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notes;
+
+  /// Message when chapter is not found
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter not found'**
+  String get chapterNotFound;
+
+  /// Message when chapter has no content
+  ///
+  /// In en, this message translates to:
+  /// **'No content yet'**
+  String get noContentYet;
+
+  /// Instructions for generating content
+  ///
+  /// In en, this message translates to:
+  /// **'Generate content for this chapter using AI'**
+  String get generateContentPrompt;
+
+  /// Button to generate chapter content
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Content'**
+  String get generateContent;
+
+  /// Previous chapter button
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// Next chapter button
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// Font size label
+  ///
+  /// In en, this message translates to:
+  /// **'Font Size'**
+  String get fontSize;
+
+  /// Theme label
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get theme;
+
+  /// Light theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get light;
+
+  /// Dark theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get dark;
+
+  /// Sepia theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Sepia'**
+  String get sepia;
+
+  /// Font family label
+  ///
+  /// In en, this message translates to:
+  /// **'Font Family'**
+  String get fontFamily;
+
+  /// System font option
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get system;
+
+  /// Serif font option
+  ///
+  /// In en, this message translates to:
+  /// **'Serif'**
+  String get serif;
+
+  /// Sans serif font option
+  ///
+  /// In en, this message translates to:
+  /// **'Sans'**
+  String get sans;
+
+  /// Dialog title for content generation
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Chapter Content'**
+  String get generateChapterContent;
+
+  /// Instructions for sharing chapter prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Share this prompt with your preferred AI assistant (ChatGPT, Claude, etc.) to generate chapter content.'**
+  String get shareChapterPromptMessage;
+
+  /// Dialog title for pasting chapter content
+  ///
+  /// In en, this message translates to:
+  /// **'Paste Chapter Content'**
+  String get pasteChapterContent;
+
+  /// Success message after importing content
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter content imported successfully!'**
+  String get contentImported;
+
+  /// Error message when importing content fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error importing content: {error}'**
+  String errorImportingContent(String error);
+
+  /// Add note dialog title and tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Add Note'**
+  String get addNote;
+
+  /// Add bookmark tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Add Bookmark'**
+  String get addBookmark;
+
+  /// Snackbar message after adding bookmark
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark added'**
+  String get bookmarkAdded;
+
+  /// Error message when adding bookmark fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error adding bookmark: {error}'**
+  String errorAddingBookmark(String error);
+
+  /// Snackbar message after adding note
+  ///
+  /// In en, this message translates to:
+  /// **'Note added'**
+  String get noteAdded;
+
+  /// Error message when adding note fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error adding note: {error}'**
+  String errorAddingNote(String error);
+
+  /// Success message when book title is updated from TOC response
+  ///
+  /// In en, this message translates to:
+  /// **'Book title updated to: \"{title}\"'**
+  String bookTitleUpdated(String title);
 }
 
 class _AppLocalizationsDelegate
