@@ -6,7 +6,7 @@ A local-first AI-powered book creation and reading app. Create, manage, and read
 
 - 📖 **AI-Powered Content**: Generate book outlines, titles, and chapters using your favorite LLM (ChatGPT, Claude, etc.)
 - 🎨 **Customizable Writing**: Set your preferred writing style, tone, vocabulary level, and favorite author for AI-generated content
-- 🌍 **Multi-Language Support**: Full internationalization with English, Spanish, and Chinese translations
+- 🌍 **Multi-Language Support**: Full internationalization with 12 languages (English, Spanish, Chinese, French, German, Portuguese, Japanese, Korean, Arabic, Hindi, Russian)
 - 📱 **Local-First**: All data stored locally on your device - complete privacy and ownership
 - 🎯 **Material Design 3**: Beautiful, accessible UI with light, dark, and sepia reading themes
 - 📚 **Library Management**: Organize your AI-generated books in a clean, intuitive library
@@ -177,7 +177,7 @@ lib/
 ### Latest Version
 - ✨ **Enhanced Book Creation**: Optional fields for title, description, and learning purpose
 - 🤖 **AI Title Generation**: Let AI generate book titles based on your description or purpose
-- 🌍 **Full Internationalization**: Support for English, Spanish, and Chinese languages
+- 🌍 **Full Internationalization**: Support for 12 languages including English, Spanish, Chinese (Simplified & Traditional), French, German, Portuguese, Japanese, Korean, Arabic, Hindi, and Russian
 - 📊 **Purpose Tracking**: Track learning goals for each book
 - 🔧 **Improved Database**: Added purpose field and AI-generated title tracking
 

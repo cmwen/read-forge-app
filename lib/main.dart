@@ -25,7 +25,16 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         Locale('en'), // English
         Locale('es'), // Spanish
-        Locale('zh'), // Chinese
+        Locale('zh'), // Chinese (Simplified)
+        Locale('zh', 'TW'), // Chinese (Traditional) - Taiwan
+        Locale('fr'), // French
+        Locale('de'), // German
+        Locale('pt'), // Portuguese
+        Locale('ja'), // Japanese
+        Locale('ko'), // Korean
+        Locale('ar'), // Arabic
+        Locale('hi'), // Hindi
+        Locale('ru'), // Russian
       ],
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),

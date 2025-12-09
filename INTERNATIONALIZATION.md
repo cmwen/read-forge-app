@@ -6,7 +6,16 @@ ReadForge supports multiple languages to make the app accessible to users worldw
 
 - 🇬🇧 **English** (en) - Default
 - 🇪🇸 **Spanish** (es)
-- 🇨🇳 **Chinese** (zh)
+- 🇨🇳 **Chinese Simplified** (zh)
+- 🇹🇼 **Chinese Traditional** (zh_TW) - Taiwan
+- 🇫🇷 **French** (fr)
+- 🇩🇪 **German** (de)
+- 🇵🇹 **Portuguese** (pt)
+- 🇯🇵 **Japanese** (ja)
+- 🇰🇷 **Korean** (ko)
+- 🇸🇦 **Arabic** (ar)
+- 🇮🇳 **Hindi** (hi)
+- 🇷🇺 **Russian** (ru)
 
 ## How Language Selection Works
 
