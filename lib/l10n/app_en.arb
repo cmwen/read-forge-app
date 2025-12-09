@@ -299,5 +299,357 @@
   "saveAuthor": "Save",
   "@saveAuthor": {
     "description": "Button to save favorite author"
+  },
+  "bookDetails": "Book Details",
+  "@bookDetails": {
+    "description": "Book details screen title when book is null"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading state text"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error state text"
+  },
+  "bookNotFound": "Book not found",
+  "@bookNotFound": {
+    "description": "Message when book is not found"
+  },
+  "errorMessage": "Error: {error}",
+  "@errorMessage": {
+    "description": "Error message with details",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "byAuthor": "by {author}",
+  "@byAuthor": {
+    "description": "Author attribution text",
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
+  "percentComplete": "{percent}% Complete",
+  "@percentComplete": {
+    "description": "Reading progress percentage",
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "tableOfContents": "Table of Contents",
+  "@tableOfContents": {
+    "description": "Table of contents section title"
+  },
+  "generateTOC": "Generate TOC",
+  "@generateTOC": {
+    "description": "Button to generate table of contents"
+  },
+  "noChaptersYet": "No chapters yet",
+  "@noChaptersYet": {
+    "description": "Message when no chapters exist"
+  },
+  "generateTOCPrompt": "Generate a Table of Contents using AI to get started",
+  "@generateTOCPrompt": {
+    "description": "Instructions for generating TOC"
+  },
+  "errorLoadingChapters": "Error loading chapters: {error}",
+  "@errorLoadingChapters": {
+    "description": "Error message when chapters fail to load",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "generateTableOfContents": "Generate Table of Contents",
+  "@generateTableOfContents": {
+    "description": "Dialog title for TOC generation"
+  },
+  "shareTOCPromptMessage": "Share this prompt with your preferred AI assistant (ChatGPT, Claude, etc.) to generate a table of contents.",
+  "@shareTOCPromptMessage": {
+    "description": "Instructions for sharing TOC prompt"
+  },
+  "afterGenerationMessage": "After getting the response, come back and paste it here.",
+  "@afterGenerationMessage": {
+    "description": "Message about pasting response"
+  },
+  "share": "Share",
+  "@share": {
+    "description": "Share button text"
+  },
+  "promptSharedMessage": "Prompt shared! Paste the response when ready.",
+  "@promptSharedMessage": {
+    "description": "Snackbar message after sharing prompt"
+  },
+  "promptCopied": "Prompt copied to clipboard",
+  "@promptCopied": {
+    "description": "Snackbar message after copying prompt"
+  },
+  "pasteLLMResponse": "Paste LLM Response",
+  "@pasteLLMResponse": {
+    "description": "Dialog title for pasting LLM response"
+  },
+  "pasteResponseInstructions": "Paste the response from your AI assistant:",
+  "@pasteResponseInstructions": {
+    "description": "Instructions for pasting response"
+  },
+  "pasteHint": "Paste response here...\n\nSupports both JSON and plain text formats",
+  "@pasteHint": {
+    "description": "Hint text for paste field"
+  },
+  "import": "Import",
+  "@import": {
+    "description": "Import button text"
+  },
+  "chaptersImported": "Successfully imported {count} chapters!",
+  "@chaptersImported": {
+    "description": "Success message after importing chapters",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "errorImportingChapters": "Error importing chapters: {error}",
+  "@errorImportingChapters": {
+    "description": "Error message when importing fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "parseError": "Parse Error",
+  "@parseError": {
+    "description": "Title for parse error dialog"
+  },
+  "parseErrorMessage": "Could not parse the response. Please make sure the response is in the correct format.",
+  "@parseErrorMessage": {
+    "description": "Default parse error message"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button text"
+  },
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Try again button text"
+  },
+  "editBookDetails": "Edit Book Details",
+  "@editBookDetails": {
+    "description": "Menu option to edit book"
+  },
+  "exportBook": "Export Book",
+  "@exportBook": {
+    "description": "Menu option to export book"
+  },
+  "deleteBook": "Delete Book",
+  "@deleteBook": {
+    "description": "Menu option to delete book"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Title field label"
+  },
+  "author": "Author",
+  "@author": {
+    "description": "Author field label"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Description field label"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "bookUpdated": "Book updated successfully",
+  "@bookUpdated": {
+    "description": "Success message after updating book"
+  },
+  "confirmDeleteBook": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+  "@confirmDeleteBook": {
+    "description": "Confirmation message for deleting book",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "bookDeleted": "Deleted \"{title}\"",
+  "@bookDeleted": {
+    "description": "Message after deleting book",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "bookExported": "Book exported as JSON. Copy the text below:",
+  "@bookExported": {
+    "description": "Export dialog message"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+  "copiedToClipboard": "Copied to clipboard",
+  "@copiedToClipboard": {
+    "description": "Snackbar message after copying"
+  },
+  "reader": "Reader",
+  "@reader": {
+    "description": "Reader screen default title"
+  },
+  "bookmarks": "Bookmarks",
+  "@bookmarks": {
+    "description": "Bookmarks tooltip"
+  },
+  "highlights": "Highlights",
+  "@highlights": {
+    "description": "Highlights tooltip"
+  },
+  "notes": "Notes",
+  "@notes": {
+    "description": "Notes tooltip"
+  },
+  "chapterNotFound": "Chapter not found",
+  "@chapterNotFound": {
+    "description": "Message when chapter is not found"
+  },
+  "noContentYet": "No content yet",
+  "@noContentYet": {
+    "description": "Message when chapter has no content"
+  },
+  "generateContentPrompt": "Generate content for this chapter using AI",
+  "@generateContentPrompt": {
+    "description": "Instructions for generating content"
+  },
+  "generateContent": "Generate Content",
+  "@generateContent": {
+    "description": "Button to generate chapter content"
+  },
+  "previous": "Previous",
+  "@previous": {
+    "description": "Previous chapter button"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next chapter button"
+  },
+  "fontSize": "Font Size",
+  "@fontSize": {
+    "description": "Font size label"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme label"
+  },
+  "light": "Light",
+  "@light": {
+    "description": "Light theme option"
+  },
+  "dark": "Dark",
+  "@dark": {
+    "description": "Dark theme option"
+  },
+  "sepia": "Sepia",
+  "@sepia": {
+    "description": "Sepia theme option"
+  },
+  "fontFamily": "Font Family",
+  "@fontFamily": {
+    "description": "Font family label"
+  },
+  "system": "System",
+  "@system": {
+    "description": "System font option"
+  },
+  "serif": "Serif",
+  "@serif": {
+    "description": "Serif font option"
+  },
+  "sans": "Sans",
+  "@sans": {
+    "description": "Sans serif font option"
+  },
+  "generateChapterContent": "Generate Chapter Content",
+  "@generateChapterContent": {
+    "description": "Dialog title for content generation"
+  },
+  "shareChapterPromptMessage": "Share this prompt with your preferred AI assistant (ChatGPT, Claude, etc.) to generate chapter content.",
+  "@shareChapterPromptMessage": {
+    "description": "Instructions for sharing chapter prompt"
+  },
+  "pasteChapterContent": "Paste Chapter Content",
+  "@pasteChapterContent": {
+    "description": "Dialog title for pasting chapter content"
+  },
+  "contentImported": "Chapter content imported successfully!",
+  "@contentImported": {
+    "description": "Success message after importing content"
+  },
+  "errorImportingContent": "Error importing content: {error}",
+  "@errorImportingContent": {
+    "description": "Error message when importing content fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addNote": "Add Note",
+  "@addNote": {
+    "description": "Add note dialog title and tooltip"
+  },
+  "addBookmark": "Add Bookmark",
+  "@addBookmark": {
+    "description": "Add bookmark tooltip"
+  },
+  "bookmarkAdded": "Bookmark added",
+  "@bookmarkAdded": {
+    "description": "Snackbar message after adding bookmark"
+  },
+  "errorAddingBookmark": "Error adding bookmark: {error}",
+  "@errorAddingBookmark": {
+    "description": "Error message when adding bookmark fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "noteAdded": "Note added",
+  "@noteAdded": {
+    "description": "Snackbar message after adding note"
+  },
+  "errorAddingNote": "Error adding note: {error}",
+  "@errorAddingNote": {
+    "description": "Error message when adding note fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "bookTitleUpdated": "Book title updated to: \"{title}\"",
+  "@bookTitleUpdated": {
+    "description": "Success message when book title is updated from TOC response",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   }
 }

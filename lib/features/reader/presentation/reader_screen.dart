@@ -13,6 +13,7 @@ import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
+import 'package:read_forge/l10n/app_localizations.dart';
 
 /// Provider for a specific chapter
 final chapterProvider = FutureProvider.family.autoDispose((
@@ -58,29 +59,30 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   Widget build(BuildContext context) {
     final chapterAsync = ref.watch(chapterProvider(widget.chapterId));
     final preferences = ref.watch(readerPreferencesProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: chapterAsync.when(
-          data: (chapter) => Text(chapter?.title ?? 'Reader'),
-          loading: () => const Text('Loading...'),
-          error: (error, stackTrace) => const Text('Error'),
+          data: (chapter) => Text(chapter?.title ?? l10n.reader),
+          loading: () => Text(l10n.loading),
+          error: (error, stackTrace) => Text(l10n.error),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.bookmark_border),
             onPressed: () => _showBookmarksDialog(context),
-            tooltip: 'Bookmarks',
+            tooltip: l10n.bookmarks,
           ),
           IconButton(
             icon: const Icon(Icons.highlight),
             onPressed: () => _showHighlightsDialog(context),
-            tooltip: 'Highlights',
+            tooltip: l10n.highlights,
           ),
           IconButton(
             icon: const Icon(Icons.note),
             onPressed: () => _showNotesDialog(context),
-            tooltip: 'Notes',
+            tooltip: l10n.notes,
           ),
           IconButton(
             icon: const Icon(Icons.text_fields),
@@ -91,14 +93,14 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       body: chapterAsync.when(
         data: (chapter) {
           if (chapter == null) {
-            return const Center(child: Text('Chapter not found'));
+            return Center(child: Text(l10n.chapterNotFound));
           }
 
           if (chapter.content == null || chapter.content!.isEmpty) {
-            return _buildEmptyContent(context, chapter);
+            return _buildEmptyContent(context, chapter, l10n);
           }
 
-          return _buildReader(context, chapter, preferences);
+          return _buildReader(context, chapter, preferences, l10n);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -107,7 +109,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('Error: $error'),
+              Text(l10n.errorMessage(error.toString())),
             ],
           ),
         ),
@@ -123,14 +125,14 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                 FloatingActionButton(
                   heroTag: 'note_fab',
                   onPressed: () => _addNote(context),
-                  tooltip: 'Add Note',
+                  tooltip: l10n.addNote,
                   child: const Icon(Icons.note_add),
                 ),
                 const SizedBox(height: 12),
                 FloatingActionButton(
                   heroTag: 'bookmark_fab',
                   onPressed: () => _addBookmark(context),
-                  tooltip: 'Add Bookmark',
+                  tooltip: l10n.addBookmark,
                   child: const Icon(Icons.bookmark_add),
                 ),
               ],
@@ -143,7 +145,11 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     );
   }
 
-  Widget _buildEmptyContent(BuildContext context, dynamic chapter) {
+  Widget _buildEmptyContent(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -159,12 +165,12 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'No content yet',
+              l10n.noContentYet,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
             Text(
-              'Generate content for this chapter using AI',
+              l10n.generateContentPrompt,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(
                   context,
@@ -174,9 +180,9 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () => _generateChapterContent(context, chapter),
+              onPressed: () => _generateChapterContent(context, chapter, l10n),
               icon: const Icon(Icons.auto_awesome),
-              label: const Text('Generate Content'),
+              label: Text(l10n.generateContent),
             ),
           ],
         ),
@@ -188,6 +194,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     BuildContext context,
     dynamic chapter,
     dynamic preferences,
+    AppLocalizations l10n,
   ) {
     // Get theme colors
     final backgroundColor = _getBackgroundColor(context, preferences.theme);
@@ -348,6 +355,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   }
 
   Widget _buildChapterNavigation(BuildContext context, dynamic chapter) {
+    final l10n = AppLocalizations.of(context)!;
     return FutureBuilder<Map<String, dynamic>>(
       future: _getAdjacentChapters(chapter),
       builder: (context, snapshot) {
@@ -386,7 +394,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                   );
                 },
                 icon: const Icon(Icons.chevron_left),
-                label: const Text('Previous'),
+                label: Text(l10n.previous),
               )
             else
               const SizedBox.shrink(),
@@ -414,7 +422,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                   );
                 },
                 icon: const Icon(Icons.chevron_right),
-                label: const Text('Next'),
+                label: Text(l10n.next),
                 iconAlignment: IconAlignment.end,
               )
             else
@@ -453,6 +461,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   }
 
   void _showReaderSettings(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -468,19 +477,19 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Reader Settings',
+                  l10n.settings,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 24),
 
                 // Font Size
                 Text(
-                  'Font Size',
+                  l10n.fontSize,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Row(
                   children: [
-                    Text('A', style: TextStyle(fontSize: 12)),
+                    const Text('A', style: TextStyle(fontSize: 12)),
                     Expanded(
                       child: Slider(
                         value: preferences.fontSize,
@@ -491,30 +500,33 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                         onChanged: (value) => notifier.setFontSize(value),
                       ),
                     ),
-                    Text('A', style: TextStyle(fontSize: 24)),
+                    const Text('A', style: TextStyle(fontSize: 24)),
                   ],
                 ),
                 const SizedBox(height: 16),
 
                 // Theme
-                Text('Theme', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  l10n.theme,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 SegmentedButton<String>(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: 'light',
-                      label: Text('Light'),
-                      icon: Icon(Icons.light_mode),
+                      label: Text(l10n.light),
+                      icon: const Icon(Icons.light_mode),
                     ),
                     ButtonSegment(
                       value: 'dark',
-                      label: Text('Dark'),
-                      icon: Icon(Icons.dark_mode),
+                      label: Text(l10n.dark),
+                      icon: const Icon(Icons.dark_mode),
                     ),
                     ButtonSegment(
                       value: 'sepia',
-                      label: Text('Sepia'),
-                      icon: Icon(Icons.auto_stories),
+                      label: Text(l10n.sepia),
+                      icon: const Icon(Icons.auto_stories),
                     ),
                   ],
                   selected: {preferences.theme},
@@ -526,15 +538,15 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
 
                 // Font Family
                 Text(
-                  'Font Family',
+                  l10n.fontFamily,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
                 SegmentedButton<String>(
-                  segments: const [
-                    ButtonSegment(value: 'system', label: Text('System')),
-                    ButtonSegment(value: 'serif', label: Text('Serif')),
-                    ButtonSegment(value: 'sans', label: Text('Sans')),
+                  segments: [
+                    ButtonSegment(value: 'system', label: Text(l10n.system)),
+                    ButtonSegment(value: 'serif', label: Text(l10n.serif)),
+                    ButtonSegment(value: 'sans', label: Text(l10n.sans)),
                   ],
                   selected: {preferences.fontFamily},
                   onSelectionChanged: (Set<String> newSelection) {
@@ -550,7 +562,11 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     );
   }
 
-  void _generateChapterContent(BuildContext context, dynamic chapter) async {
+  void _generateChapterContent(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) async {
     final llmService = LLMIntegrationService();
 
     // Get book info for context
@@ -600,14 +616,14 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     final action = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Generate Chapter Content'),
+        title: Text(l10n.generateChapterContent),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Share this prompt with your preferred AI assistant to generate chapter content.',
+                l10n.shareChapterPromptMessage,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
@@ -632,7 +648,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                'After getting the response, come back and paste it here.',
+                l10n.afterGenerationMessage,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -643,7 +659,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           OutlinedButton.icon(
             onPressed: () {
@@ -651,12 +667,12 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
               Navigator.of(context).pop('copy');
             },
             icon: const Icon(Icons.copy),
-            label: const Text('Copy'),
+            label: Text(l10n.copy),
           ),
           FilledButton.icon(
             onPressed: () => Navigator.of(context).pop('share'),
             icon: const Icon(Icons.share),
-            label: const Text('Share'),
+            label: Text(l10n.share),
           ),
         ],
       ),
@@ -670,31 +686,35 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
 
       if (shared && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Prompt shared! Paste the response when ready.'),
-            duration: Duration(seconds: 3),
+          SnackBar(
+            content: Text(l10n.promptSharedMessage),
+            duration: const Duration(seconds: 3),
           ),
         );
         await Future.delayed(const Duration(milliseconds: 500));
         if (context.mounted) {
-          _showPasteChapterDialog(context, chapter);
+          _showPasteChapterDialog(context, chapter, l10n);
         }
       }
     } else if (action == 'copy' && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Prompt copied to clipboard')),
-      );
-      _showPasteChapterDialog(context, chapter);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.promptCopied)));
+      _showPasteChapterDialog(context, chapter, l10n);
     }
   }
 
-  void _showPasteChapterDialog(BuildContext context, dynamic chapter) {
+  void _showPasteChapterDialog(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) {
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Paste Chapter Content'),
+        title: Text(l10n.pasteChapterContent),
         content: SizedBox(
           width: double.maxFinite,
           child: Column(
@@ -702,7 +722,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Paste the generated content from your AI assistant:',
+                l10n.pasteResponseInstructions,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
@@ -710,8 +730,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                 controller: controller,
                 maxLines: 15,
                 decoration: InputDecoration(
-                  hintText:
-                      'Paste content here...\n\nSupports both JSON and plain text',
+                  hintText: l10n.pasteHint,
                   border: const OutlineInputBorder(),
                   filled: true,
                   fillColor: Theme.of(
@@ -725,18 +744,18 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton.icon(
             onPressed: () {
               final text = controller.text.trim();
               if (text.isNotEmpty) {
                 Navigator.of(context).pop();
-                _processChapterContent(context, chapter, text);
+                _processChapterContent(context, chapter, text, l10n);
               }
             },
             icon: const Icon(Icons.check),
-            label: const Text('Import'),
+            label: Text(l10n.import),
           ),
         ],
       ),
@@ -747,6 +766,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     BuildContext context,
     dynamic chapter,
     String responseText,
+    AppLocalizations l10n,
   ) async {
     final llmService = LLMIntegrationService();
     final validationResult = llmService.parseResponseWithValidation(
@@ -759,24 +779,23 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(validationResult.errorMessage ?? 'Parse Error'),
+            title: Text(validationResult.errorMessage ?? l10n.parseError),
             content: SingleChildScrollView(
               child: Text(
-                validationResult.errorDetails ??
-                    'Unable to import content. Please check the format.',
+                validationResult.errorDetails ?? l10n.parseErrorMessage,
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+                child: Text(l10n.ok),
               ),
               FilledButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _showPasteChapterDialog(context, chapter);
+                  _showPasteChapterDialog(context, chapter, l10n);
                 },
-                child: const Text('Try Again'),
+                child: Text(l10n.tryAgain),
               ),
             ],
           ),
@@ -815,8 +834,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Chapter content imported successfully!'),
+          SnackBar(
+            content: Text(l10n.contentImported),
             backgroundColor: Colors.green,
           ),
         );
@@ -825,7 +844,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error importing content: $e'),
+            content: Text(l10n.errorImportingContent(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -1042,18 +1061,20 @@ You can format text like:
       );
 
       if (context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Bookmark added'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(l10n.bookmarkAdded),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
     } catch (e) {
       if (context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding bookmark: $e'),
+            content: Text(l10n.errorAddingBookmark(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -1062,12 +1083,13 @@ You can format text like:
   }
 
   void _addNote(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add Note'),
+        title: Text(l10n.addNote),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
@@ -1081,7 +1103,7 @@ You can format text like:
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -1111,21 +1133,21 @@ You can format text like:
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(
                     context,
-                  ).showSnackBar(const SnackBar(content: Text('Note added')));
+                  ).showSnackBar(SnackBar(content: Text(l10n.noteAdded)));
                 }
               } catch (e) {
                 if (context.mounted) {
                   Navigator.of(context).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Error adding note: $e'),
+                      content: Text(l10n.errorAddingNote(e.toString())),
                       backgroundColor: Colors.red,
                     ),
                   );
                 }
               }
             },
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),
