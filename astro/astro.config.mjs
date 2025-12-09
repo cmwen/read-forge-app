@@ -19,7 +19,7 @@ import { defineConfig } from 'astro/config';
 // ============================================================================
 
 const GITHUB_USERNAME = 'cmwen';
-const REPO_NAME = 'min-android-app-template';
+const REPO_NAME = 'read-forge-app';
 
 export default defineConfig({
   site: `https://${GITHUB_USERNAME}.github.io`,
