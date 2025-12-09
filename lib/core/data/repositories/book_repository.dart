@@ -34,19 +34,25 @@ class BookRepository {
     String? subtitle,
     String? author,
     String? description,
+    String? purpose,
     String? genre,
+    bool isTitleGenerated = false,
   }) async {
+    final bookTitle = title;
+
     final id = await _db
         .into(_db.books)
         .insert(
           BooksCompanion.insert(
             uuid: _uuid.v4(),
-            title: title,
+            title: bookTitle,
             subtitle: Value(subtitle),
             author: Value(author),
             description: Value(description),
+            purpose: Value(purpose),
             genre: Value(genre),
             status: const Value('draft'),
+            isTitleGenerated: Value(isTitleGenerated),
           ),
         );
 

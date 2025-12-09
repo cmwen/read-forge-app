@@ -23,9 +23,19 @@ class LibraryNotifier extends StateNotifier<AsyncValue<List<BookModel>>> {
   }
 
   /// Create a new book
-  Future<BookModel?> createBook(String title) async {
+  Future<BookModel?> createBook({
+    required String title,
+    String? description,
+    String? purpose,
+    bool isTitleGenerated = false,
+  }) async {
     try {
-      final book = await _repository.createBook(title: title);
+      final book = await _repository.createBook(
+        title: title,
+        description: description,
+        purpose: purpose,
+        isTitleGenerated: isTitleGenerated,
+      );
       await loadBooks(); // Reload the list
       return book;
     } catch (e) {

@@ -1,0 +1,190 @@
+{
+  "@@locale": "en",
+  "appTitle": "ReadForge",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  
+  "libraryTitle": "ReadForge",
+  "@libraryTitle": {
+    "description": "Title shown in the library screen"
+  },
+  
+  "newBook": "New Book",
+  "@newBook": {
+    "description": "Button to create a new book"
+  },
+  
+  "noBooksYet": "No books yet",
+  "@noBooksYet": {
+    "description": "Message when library is empty"
+  },
+  
+  "tapToCreateFirstBook": "Tap the + button to create your first book",
+  "@tapToCreateFirstBook": {
+    "description": "Instructions for creating first book"
+  },
+  
+  "createNewBook": "Create New Book",
+  "@createNewBook": {
+    "description": "Dialog title for creating a new book"
+  },
+  
+  "createBookInstructions": "Fill in at least one field below. If you don't provide a title, AI can generate one for you based on your description or purpose.",
+  "@createBookInstructions": {
+    "description": "Instructions in the create book dialog"
+  },
+  
+  "bookTitleOptional": "Book Title (Optional)",
+  "@bookTitleOptional": {
+    "description": "Label for book title field"
+  },
+  
+  "bookTitleHint": "Enter a title or leave empty for AI generation",
+  "@bookTitleHint": {
+    "description": "Hint text for book title field"
+  },
+  
+  "descriptionOptional": "Description (Optional)",
+  "@descriptionOptional": {
+    "description": "Label for description field"
+  },
+  
+  "descriptionHint": "Describe what the book is about",
+  "@descriptionHint": {
+    "description": "Hint text for description field"
+  },
+  
+  "purposeOptional": "Purpose/Learning Goal (Optional)",
+  "@purposeOptional": {
+    "description": "Label for purpose field"
+  },
+  
+  "purposeHint": "What do you want to learn from this book?",
+  "@purposeHint": {
+    "description": "Hint text for purpose field"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  
+  "create": "Create",
+  "@create": {
+    "description": "Create button text"
+  },
+  
+  "fillAtLeastOneField": "Please fill in at least one field",
+  "@fillAtLeastOneField": {
+    "description": "Error message when no fields are filled"
+  },
+  
+  "generateTitleWithAI": "Generate Title with AI?",
+  "@generateTitleWithAI": {
+    "description": "Dialog title for AI title generation"
+  },
+  
+  "noTitleProvidedPrompt": "No title was provided. Would you like to use AI to generate a title based on your {contentType}?",
+  "@noTitleProvidedPrompt": {
+    "description": "Prompt asking user if they want AI title generation",
+    "placeholders": {
+      "contentType": {
+        "type": "String",
+        "example": "description"
+      }
+    }
+  },
+  
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button text"
+  },
+  
+  "generateTitle": "Generate Title",
+  "@generateTitle": {
+    "description": "Button to generate title with AI"
+  },
+  
+  "generateBookTitle": "Generate Book Title",
+  "@generateBookTitle": {
+    "description": "Dialog title for generating book title"
+  },
+  
+  "sharePromptWithAI": "Share this prompt with your AI assistant (ChatGPT, Claude, etc.) to generate a title.",
+  "@sharePromptWithAI": {
+    "description": "Instructions for using AI to generate title"
+  },
+  
+  "copy": "Copy",
+  "@copy": {
+    "description": "Copy button text"
+  },
+  
+  "pasteTitle": "Paste Title",
+  "@pasteTitle": {
+    "description": "Button to paste generated title"
+  },
+  
+  "promptCopiedToClipboard": "Prompt copied to clipboard",
+  "@promptCopiedToClipboard": {
+    "description": "Snackbar message when prompt is copied"
+  },
+  
+  "noTitleInClipboard": "No title found in clipboard. Creating book with placeholder title.",
+  "@noTitleInClipboard": {
+    "description": "Message when clipboard is empty"
+  },
+  
+  "bookCreatedWithTitle": "Book created with AI-generated title: \"{title}\"",
+  "@bookCreatedWithTitle": {
+    "description": "Success message with generated title",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "The Art of Programming"
+      }
+    }
+  },
+  
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings button text"
+  },
+  
+  "reading": "Reading",
+  "@reading": {
+    "description": "Status: Reading"
+  },
+  
+  "completed": "Completed",
+  "@completed": {
+    "description": "Status: Completed"
+  },
+  
+  "draft": "Draft",
+  "@draft": {
+    "description": "Status: Draft"
+  },
+  
+  "errorLoadingBooks": "Error loading books: {error}",
+  "@errorLoadingBooks": {
+    "description": "Error message when books fail to load",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Database error"
+      }
+    }
+  },
+  
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+  
+  "untitledBook": "Untitled Book",
+  "@untitledBook": {
+    "description": "Placeholder title for books without a title"
+  }
+}

@@ -372,4 +372,54 @@ IMPORTANT:
 Alternatively, you can respond with just the Markdown-formatted text content.
 ''';
   }
+
+  /// Generate a prompt for creating a book title based on description or purpose
+  String generateBookTitlePrompt({
+    String? description,
+    String? purpose,
+    String? genre,
+    String? writingStyle,
+    String? language,
+  }) {
+    final context = StringBuffer();
+
+    if (description != null && description.isNotEmpty) {
+      context.writeln('Description: $description');
+    }
+
+    if (purpose != null && purpose.isNotEmpty) {
+      context.writeln('Purpose/Goal: $purpose');
+    }
+
+    if (genre != null && genre.isNotEmpty) {
+      context.writeln('Genre: $genre');
+    }
+
+    final preferencesSection = StringBuffer();
+    if (language != null) {
+      preferencesSection.writeln('- Language: $language');
+    }
+    if (writingStyle != null) {
+      preferencesSection.writeln('- Writing Style: $writingStyle');
+    }
+
+    return '''
+Please generate a compelling book title based on the following information:
+
+${context.toString()}
+${preferencesSection.isNotEmpty ? '\n## Preferences\n$preferencesSection' : ''}
+## Instructions
+1. Create a clear, engaging book title
+2. The title should be concise (2-8 words ideally)
+3. Reflect the content or purpose described above
+4. Make it memorable and appealing to readers
+${language != null ? '5. Generate the title in $language' : ''}
+
+## Response Format
+Please respond with ONLY the book title, nothing else. Do not include quotes, prefixes, or explanations.
+
+Example response:
+The Art of Learning Programming
+''';
+  }
 }

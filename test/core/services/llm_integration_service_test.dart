@@ -329,10 +329,12 @@ void main() {
           expect(result.errorMessage, 'Unable to parse response');
         });
 
-        test('should NOT detect placeholder when it appears in valid JSON content', () {
-          // Real case: User pasted valid ChatGPT response with Chinese content
-          // that happens to mention clipboard text as part of the actual content
-          final validJsonWithPlaceholderInContent = '''
+        test(
+          'should NOT detect placeholder when it appears in valid JSON content',
+          () {
+            // Real case: User pasted valid ChatGPT response with Chinese content
+            // that happens to mention clipboard text as part of the actual content
+            final validJsonWithPlaceholderInContent = '''
           {
             "type": "chapter",
             "bookTitle": "Test Book",
@@ -342,14 +344,15 @@ void main() {
           }
           ''';
 
-          final result = service.parseResponseWithValidation(
-            validJsonWithPlaceholderInContent,
-          );
+            final result = service.parseResponseWithValidation(
+              validJsonWithPlaceholderInContent,
+            );
 
-          expect(result.isValid, true);
-          expect(result.response, isA<ChapterResponse>());
-          expect(result.errorMessage, null);
-        });
+            expect(result.isValid, true);
+            expect(result.response, isA<ChapterResponse>());
+            expect(result.errorMessage, null);
+          },
+        );
 
         test('should detect placeholder when it is the only content', () {
           // Only placeholder text, no valid JSON
