@@ -30,7 +30,8 @@ class LibraryNotifier extends AsyncNotifier<List<BookModel>> {
     bool isTitleGenerated = false,
   }) async {
     try {
-      final book = await _repository.createBook(
+      final repository = ref.read(bookRepositoryProvider);
+      final book = await repository.createBook(
         title: title,
         description: description,
         purpose: purpose,

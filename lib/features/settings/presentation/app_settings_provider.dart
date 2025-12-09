@@ -35,8 +35,9 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
   }
 
   Future<void> setUILanguage(String languageCode) async {
+    final service = ref.read(appSettingsServiceProvider);
     state = state.copyWith(uiLanguageCode: languageCode);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setTone(String tone) async {
