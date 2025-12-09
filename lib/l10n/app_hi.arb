@@ -1,0 +1,183 @@
+{
+  "@@locale": "hi",
+  "appTitle": "ReadForge",
+  "libraryTitle": "ReadForge",
+  "newBook": "नई पुस्तक",
+  "noBooksYet": "अभी तक कोई पुस्तक नहीं",
+  "tapToCreateFirstBook": "अपनी पहली पुस्तक बनाने के लिए + बटन पर टैप करें",
+  "createNewBook": "नई पुस्तक बनाएं",
+  "createBookInstructions": "नीचे कम से कम एक फ़ील्ड भरें। यदि आप शीर्षक नहीं देते हैं, तो AI आपके विवरण या उद्देश्य के आधार पर एक शीर्षक बना सकता है।",
+  "bookTitleOptional": "पुस्तक का शीर्षक (वैकल्पिक)",
+  "bookTitleHint": "एक शीर्षक दर्ज करें या AI द्वारा बनाने के लिए खाली छोड़ दें",
+  "descriptionOptional": "विवरण (वैकल्पिक)",
+  "descriptionHint": "पुस्तक के बारे में बताएं",
+  "purposeOptional": "उद्देश्य/सीखने का लक्ष्य (वैकल्पिक)",
+  "purposeHint": "आप इस पुस्तक से क्या सीखना चाहते हैं?",
+  "cancel": "रद्द करें",
+  "create": "बनाएं",
+  "fillAtLeastOneField": "कृपया कम से कम एक फ़ील्ड भरें",
+  "generateTitleWithAI": "AI से शीर्षक बनाएं?",
+  "noTitleProvidedPrompt": "कोई शीर्षक नहीं दिया गया। क्या आप अपने {contentType} के आधार पर शीर्षक बनाने के लिए AI का उपयोग करना चाहते हैं?",
+  "skip": "छोड़ें",
+  "generateTitle": "शीर्षक बनाएं",
+  "generateBookTitle": "पुस्तक का शीर्षक बनाएं",
+  "sharePromptWithAI": "शीर्षक बनाने के लिए इस प्रॉम्प्ट को अपने AI सहायक (ChatGPT, Claude, आदि) के साथ साझा करें।",
+  "copy": "कॉपी करें",
+  "pasteTitle": "शीर्षक पेस्ट करें",
+  "promptCopiedToClipboard": "प्रॉम्प्ट क्लिपबोर्ड पर कॉपी किया गया",
+  "noTitleInClipboard": "क्लिपबोर्ड में कोई शीर्षक नहीं मिला। प्लेसहोल्डर शीर्षक के साथ पुस्तक बना रहे हैं।",
+  "bookCreatedWithTitle": "AI-जनित शीर्षक के साथ पुस्तक बनाई गई: \"{title}\"",
+  "settings": "सेटिंग्स",
+  "reading": "पढ़ रहे हैं",
+  "completed": "पूर्ण",
+  "draft": "ड्राफ़्ट",
+  "errorLoadingBooks": "पुस्तकें लोड करने में त्रुटि: {error}",
+  "retry": "पुनः प्रयास करें",
+  "untitledBook": "शीर्षक रहित पुस्तक",
+  "settingsTitle": "सेटिंग्स",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "लेखन प्राथमिकताएं",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "सामग्री निर्माण",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "बारे में",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "लेखन शैली",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "रचनात्मक - कल्पनाशील और अभिव्यक्तिपूर्ण",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "संतुलित - मध्यम रचनात्मकता",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "सटीक - स्पष्ट और संक्षिप्त",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "सामग्री भाषा",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "यूआई भाषा",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "सिस्टम डिफ़ॉल्ट",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "स्वर",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "आकस्मिक - मैत्रीपूर्ण और आरामदायक",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "तटस्थ - संतुलित स्वर",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "औपचारिक - व्यावसायिक और गंभीर",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "शब्दावली स्तर",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "सरल - समझने में आसान",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "मध्यम - संतुलित शब्दावली",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "उन्नत - समृद्ध शब्दावली",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "पसंदीदा लेखक",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "उदा.: जे.के. राउलिंग",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "अपने पसंदीदा लेखक का नाम दर्ज करें ताकि कृत्रिम बुद्धिमत्ता उनकी लेखन शैली की नकल कर सके (वैकल्पिक)।",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "डिफ़ॉल्ट अध्याय संख्या",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count} अध्याय",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "छोटी किताब",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "मानक किताब",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "लंबी किताब",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "पूर्ण लंबाई उपन्यास",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "विस्तारित उपन्यास",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "महाकाव्य लंबाई",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "संस्करण",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "लाइसेंस",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "MIT लाइसेंस",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "साफ करें",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "सहेजें",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
+}

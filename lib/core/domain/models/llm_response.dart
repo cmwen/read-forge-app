@@ -16,6 +16,8 @@ abstract class LLMResponse {
     if (type == null) return null;
 
     switch (type) {
+      case 'title':
+        return TitleResponse.fromJson(json);
       case 'toc':
         return TOCResponse.fromJson(json);
       case 'chapter':
@@ -133,6 +135,35 @@ class ChapterResponse extends LLMResponse {
       'chapterNumber': chapterNumber,
       'chapterTitle': chapterTitle,
       'content': content,
+      'timestamp': timestamp.toIso8601String(),
+    };
+  }
+}
+
+/// Response containing generated book title and description
+class TitleResponse extends LLMResponse {
+  final String title;
+  final String? description;
+
+  TitleResponse({required this.title, this.description, super.timestamp})
+    : super(type: 'title');
+
+  factory TitleResponse.fromJson(Map<String, dynamic> json) {
+    return TitleResponse(
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String?,
+      timestamp: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'] as String)
+          : null,
+    );
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type,
+      'title': title,
+      if (description != null) 'description': description,
       'timestamp': timestamp.toIso8601String(),
     };
   }

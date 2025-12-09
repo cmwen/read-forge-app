@@ -71,6 +71,32 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _purposeMeta = const VerificationMeta(
+    'purpose',
+  );
+  @override
+  late final GeneratedColumn<String> purpose = GeneratedColumn<String>(
+    'purpose',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isTitleGeneratedMeta = const VerificationMeta(
+    'isTitleGenerated',
+  );
+  @override
+  late final GeneratedColumn<bool> isTitleGenerated = GeneratedColumn<bool>(
+    'is_title_generated',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_title_generated" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _coverPathMeta = const VerificationMeta(
     'coverPath',
   );
@@ -144,6 +170,8 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
     subtitle,
     author,
     description,
+    purpose,
+    isTitleGenerated,
     coverPath,
     genre,
     status,
@@ -200,6 +228,21 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
         description.isAcceptableOrUnknown(
           data['description']!,
           _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('purpose')) {
+      context.handle(
+        _purposeMeta,
+        purpose.isAcceptableOrUnknown(data['purpose']!, _purposeMeta),
+      );
+    }
+    if (data.containsKey('is_title_generated')) {
+      context.handle(
+        _isTitleGeneratedMeta,
+        isTitleGenerated.isAcceptableOrUnknown(
+          data['is_title_generated']!,
+          _isTitleGeneratedMeta,
         ),
       );
     }
@@ -275,6 +318,14 @@ class $BooksTable extends Books with TableInfo<$BooksTable, Book> {
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       ),
+      purpose: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}purpose'],
+      ),
+      isTitleGenerated: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_title_generated'],
+      )!,
       coverPath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}cover_path'],
@@ -315,6 +366,8 @@ class Book extends DataClass implements Insertable<Book> {
   final String? subtitle;
   final String? author;
   final String? description;
+  final String? purpose;
+  final bool isTitleGenerated;
   final String? coverPath;
   final String? genre;
   final String status;
@@ -328,6 +381,8 @@ class Book extends DataClass implements Insertable<Book> {
     this.subtitle,
     this.author,
     this.description,
+    this.purpose,
+    required this.isTitleGenerated,
     this.coverPath,
     this.genre,
     required this.status,
@@ -350,6 +405,10 @@ class Book extends DataClass implements Insertable<Book> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
+    if (!nullToAbsent || purpose != null) {
+      map['purpose'] = Variable<String>(purpose);
+    }
+    map['is_title_generated'] = Variable<bool>(isTitleGenerated);
     if (!nullToAbsent || coverPath != null) {
       map['cover_path'] = Variable<String>(coverPath);
     }
@@ -379,6 +438,10 @@ class Book extends DataClass implements Insertable<Book> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
+      purpose: purpose == null && nullToAbsent
+          ? const Value.absent()
+          : Value(purpose),
+      isTitleGenerated: Value(isTitleGenerated),
       coverPath: coverPath == null && nullToAbsent
           ? const Value.absent()
           : Value(coverPath),
@@ -406,6 +469,8 @@ class Book extends DataClass implements Insertable<Book> {
       subtitle: serializer.fromJson<String?>(json['subtitle']),
       author: serializer.fromJson<String?>(json['author']),
       description: serializer.fromJson<String?>(json['description']),
+      purpose: serializer.fromJson<String?>(json['purpose']),
+      isTitleGenerated: serializer.fromJson<bool>(json['isTitleGenerated']),
       coverPath: serializer.fromJson<String?>(json['coverPath']),
       genre: serializer.fromJson<String?>(json['genre']),
       status: serializer.fromJson<String>(json['status']),
@@ -424,6 +489,8 @@ class Book extends DataClass implements Insertable<Book> {
       'subtitle': serializer.toJson<String?>(subtitle),
       'author': serializer.toJson<String?>(author),
       'description': serializer.toJson<String?>(description),
+      'purpose': serializer.toJson<String?>(purpose),
+      'isTitleGenerated': serializer.toJson<bool>(isTitleGenerated),
       'coverPath': serializer.toJson<String?>(coverPath),
       'genre': serializer.toJson<String?>(genre),
       'status': serializer.toJson<String>(status),
@@ -440,6 +507,8 @@ class Book extends DataClass implements Insertable<Book> {
     Value<String?> subtitle = const Value.absent(),
     Value<String?> author = const Value.absent(),
     Value<String?> description = const Value.absent(),
+    Value<String?> purpose = const Value.absent(),
+    bool? isTitleGenerated,
     Value<String?> coverPath = const Value.absent(),
     Value<String?> genre = const Value.absent(),
     String? status,
@@ -453,6 +522,8 @@ class Book extends DataClass implements Insertable<Book> {
     subtitle: subtitle.present ? subtitle.value : this.subtitle,
     author: author.present ? author.value : this.author,
     description: description.present ? description.value : this.description,
+    purpose: purpose.present ? purpose.value : this.purpose,
+    isTitleGenerated: isTitleGenerated ?? this.isTitleGenerated,
     coverPath: coverPath.present ? coverPath.value : this.coverPath,
     genre: genre.present ? genre.value : this.genre,
     status: status ?? this.status,
@@ -470,6 +541,10 @@ class Book extends DataClass implements Insertable<Book> {
       description: data.description.present
           ? data.description.value
           : this.description,
+      purpose: data.purpose.present ? data.purpose.value : this.purpose,
+      isTitleGenerated: data.isTitleGenerated.present
+          ? data.isTitleGenerated.value
+          : this.isTitleGenerated,
       coverPath: data.coverPath.present ? data.coverPath.value : this.coverPath,
       genre: data.genre.present ? data.genre.value : this.genre,
       status: data.status.present ? data.status.value : this.status,
@@ -490,6 +565,8 @@ class Book extends DataClass implements Insertable<Book> {
           ..write('subtitle: $subtitle, ')
           ..write('author: $author, ')
           ..write('description: $description, ')
+          ..write('purpose: $purpose, ')
+          ..write('isTitleGenerated: $isTitleGenerated, ')
           ..write('coverPath: $coverPath, ')
           ..write('genre: $genre, ')
           ..write('status: $status, ')
@@ -508,6 +585,8 @@ class Book extends DataClass implements Insertable<Book> {
     subtitle,
     author,
     description,
+    purpose,
+    isTitleGenerated,
     coverPath,
     genre,
     status,
@@ -525,6 +604,8 @@ class Book extends DataClass implements Insertable<Book> {
           other.subtitle == this.subtitle &&
           other.author == this.author &&
           other.description == this.description &&
+          other.purpose == this.purpose &&
+          other.isTitleGenerated == this.isTitleGenerated &&
           other.coverPath == this.coverPath &&
           other.genre == this.genre &&
           other.status == this.status &&
@@ -540,6 +621,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
   final Value<String?> subtitle;
   final Value<String?> author;
   final Value<String?> description;
+  final Value<String?> purpose;
+  final Value<bool> isTitleGenerated;
   final Value<String?> coverPath;
   final Value<String?> genre;
   final Value<String> status;
@@ -553,6 +636,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.subtitle = const Value.absent(),
     this.author = const Value.absent(),
     this.description = const Value.absent(),
+    this.purpose = const Value.absent(),
+    this.isTitleGenerated = const Value.absent(),
     this.coverPath = const Value.absent(),
     this.genre = const Value.absent(),
     this.status = const Value.absent(),
@@ -567,6 +652,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
     this.subtitle = const Value.absent(),
     this.author = const Value.absent(),
     this.description = const Value.absent(),
+    this.purpose = const Value.absent(),
+    this.isTitleGenerated = const Value.absent(),
     this.coverPath = const Value.absent(),
     this.genre = const Value.absent(),
     this.status = const Value.absent(),
@@ -582,6 +669,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
     Expression<String>? subtitle,
     Expression<String>? author,
     Expression<String>? description,
+    Expression<String>? purpose,
+    Expression<bool>? isTitleGenerated,
     Expression<String>? coverPath,
     Expression<String>? genre,
     Expression<String>? status,
@@ -596,6 +685,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
       if (subtitle != null) 'subtitle': subtitle,
       if (author != null) 'author': author,
       if (description != null) 'description': description,
+      if (purpose != null) 'purpose': purpose,
+      if (isTitleGenerated != null) 'is_title_generated': isTitleGenerated,
       if (coverPath != null) 'cover_path': coverPath,
       if (genre != null) 'genre': genre,
       if (status != null) 'status': status,
@@ -612,6 +703,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
     Value<String?>? subtitle,
     Value<String?>? author,
     Value<String?>? description,
+    Value<String?>? purpose,
+    Value<bool>? isTitleGenerated,
     Value<String?>? coverPath,
     Value<String?>? genre,
     Value<String>? status,
@@ -626,6 +719,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
       subtitle: subtitle ?? this.subtitle,
       author: author ?? this.author,
       description: description ?? this.description,
+      purpose: purpose ?? this.purpose,
+      isTitleGenerated: isTitleGenerated ?? this.isTitleGenerated,
       coverPath: coverPath ?? this.coverPath,
       genre: genre ?? this.genre,
       status: status ?? this.status,
@@ -655,6 +750,12 @@ class BooksCompanion extends UpdateCompanion<Book> {
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
+    }
+    if (purpose.present) {
+      map['purpose'] = Variable<String>(purpose.value);
+    }
+    if (isTitleGenerated.present) {
+      map['is_title_generated'] = Variable<bool>(isTitleGenerated.value);
     }
     if (coverPath.present) {
       map['cover_path'] = Variable<String>(coverPath.value);
@@ -686,6 +787,8 @@ class BooksCompanion extends UpdateCompanion<Book> {
           ..write('subtitle: $subtitle, ')
           ..write('author: $author, ')
           ..write('description: $description, ')
+          ..write('purpose: $purpose, ')
+          ..write('isTitleGenerated: $isTitleGenerated, ')
           ..write('coverPath: $coverPath, ')
           ..write('genre: $genre, ')
           ..write('status: $status, ')
@@ -3416,6 +3519,8 @@ typedef $$BooksTableCreateCompanionBuilder =
       Value<String?> subtitle,
       Value<String?> author,
       Value<String?> description,
+      Value<String?> purpose,
+      Value<bool> isTitleGenerated,
       Value<String?> coverPath,
       Value<String?> genre,
       Value<String> status,
@@ -3431,6 +3536,8 @@ typedef $$BooksTableUpdateCompanionBuilder =
       Value<String?> subtitle,
       Value<String?> author,
       Value<String?> description,
+      Value<String?> purpose,
+      Value<bool> isTitleGenerated,
       Value<String?> coverPath,
       Value<String?> genre,
       Value<String> status,
@@ -3573,6 +3680,16 @@ class $$BooksTableFilterComposer extends Composer<_$AppDatabase, $BooksTable> {
 
   ColumnFilters<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get purpose => $composableBuilder(
+    column: $table.purpose,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isTitleGenerated => $composableBuilder(
+    column: $table.isTitleGenerated,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3771,6 +3888,16 @@ class $$BooksTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get purpose => $composableBuilder(
+    column: $table.purpose,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isTitleGenerated => $composableBuilder(
+    column: $table.isTitleGenerated,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get coverPath => $composableBuilder(
     column: $table.coverPath,
     builder: (column) => ColumnOrderings(column),
@@ -3828,6 +3955,14 @@ class $$BooksTableAnnotationComposer
 
   GeneratedColumn<String> get description => $composableBuilder(
     column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get purpose =>
+      $composableBuilder(column: $table.purpose, builder: (column) => column);
+
+  GeneratedColumn<bool> get isTitleGenerated => $composableBuilder(
+    column: $table.isTitleGenerated,
     builder: (column) => column,
   );
 
@@ -4017,6 +4152,8 @@ class $$BooksTableTableManager
                 Value<String?> subtitle = const Value.absent(),
                 Value<String?> author = const Value.absent(),
                 Value<String?> description = const Value.absent(),
+                Value<String?> purpose = const Value.absent(),
+                Value<bool> isTitleGenerated = const Value.absent(),
                 Value<String?> coverPath = const Value.absent(),
                 Value<String?> genre = const Value.absent(),
                 Value<String> status = const Value.absent(),
@@ -4030,6 +4167,8 @@ class $$BooksTableTableManager
                 subtitle: subtitle,
                 author: author,
                 description: description,
+                purpose: purpose,
+                isTitleGenerated: isTitleGenerated,
                 coverPath: coverPath,
                 genre: genre,
                 status: status,
@@ -4045,6 +4184,8 @@ class $$BooksTableTableManager
                 Value<String?> subtitle = const Value.absent(),
                 Value<String?> author = const Value.absent(),
                 Value<String?> description = const Value.absent(),
+                Value<String?> purpose = const Value.absent(),
+                Value<bool> isTitleGenerated = const Value.absent(),
                 Value<String?> coverPath = const Value.absent(),
                 Value<String?> genre = const Value.absent(),
                 Value<String> status = const Value.absent(),
@@ -4058,6 +4199,8 @@ class $$BooksTableTableManager
                 subtitle: subtitle,
                 author: author,
                 description: description,
+                purpose: purpose,
+                isTitleGenerated: isTitleGenerated,
                 coverPath: coverPath,
                 genre: genre,
                 status: status,

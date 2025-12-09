@@ -11,6 +11,7 @@ import 'package:read_forge/core/data/database.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:uuid/uuid.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
+import 'package:read_forge/l10n/app_localizations.dart';
 
 /// Provider for book reading progress
 final bookReadingProgressProvider = FutureProvider.family
@@ -30,13 +31,14 @@ class BookDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bookAsync = ref.watch(bookDetailProvider(bookId));
     final chaptersAsync = ref.watch(bookChaptersProvider(bookId));
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
         title: bookAsync.when(
-          data: (book) => Text(book?.title ?? 'Book Details'),
-          loading: () => const Text('Loading...'),
-          error: (error, stackTrace) => const Text('Error'),
+          data: (book) => Text(book?.title ?? l10n.bookDetails),
+          loading: () => Text(l10n.loading),
+          error: (error, stackTrace) => Text(l10n.error),
         ),
         actions: [
           IconButton(
@@ -48,9 +50,9 @@ class BookDetailScreen extends ConsumerWidget {
       body: bookAsync.when(
         data: (book) {
           if (book == null) {
-            return const Center(child: Text('Book not found'));
+            return Center(child: Text(l10n.bookNotFound));
           }
-          return _buildBookDetail(context, ref, book, chaptersAsync);
+          return _buildBookDetail(context, ref, book, chaptersAsync, l10n);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -59,7 +61,7 @@ class BookDetailScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              Text('Error: $error'),
+              Text(l10n.errorMessage(error.toString())),
             ],
           ),
         ),
@@ -72,6 +74,7 @@ class BookDetailScreen extends ConsumerWidget {
     WidgetRef ref,
     dynamic book,
     AsyncValue chaptersAsync,
+    AppLocalizations l10n,
   ) {
     return SingleChildScrollView(
       child: Column(
@@ -99,7 +102,7 @@ class BookDetailScreen extends ConsumerWidget {
                 if (book.author != null) ...[
                   const SizedBox(height: 8),
                   Text(
-                    'by ${book.author}',
+                    l10n.byAuthor(book.author!),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ],
@@ -135,7 +138,9 @@ class BookDetailScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    '${progress.toStringAsFixed(1)}% Complete',
+                                    l10n.percentComplete(
+                                      progress.toStringAsFixed(1),
+                                    ),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
@@ -184,15 +189,16 @@ class BookDetailScreen extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Table of Contents',
+                      l10n.tableOfContents,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     FilledButton.icon(
-                      onPressed: () => _generateTOCPrompt(context, ref, book),
+                      onPressed: () =>
+                          _generateTOCPrompt(context, ref, book, l10n),
                       icon: const Icon(Icons.auto_awesome, size: 20),
-                      label: const Text('Generate TOC'),
+                      label: Text(l10n.generateTOC),
                     ),
                   ],
                 ),
@@ -200,7 +206,7 @@ class BookDetailScreen extends ConsumerWidget {
                 chaptersAsync.when(
                   data: (chapters) {
                     if (chapters.isEmpty) {
-                      return _buildEmptyChapters(context);
+                      return _buildEmptyChapters(context, l10n);
                     }
                     return _buildChaptersList(context, chapters);
                   },
@@ -211,7 +217,7 @@ class BookDetailScreen extends ConsumerWidget {
                     ),
                   ),
                   error: (error, stack) =>
-                      Text('Error loading chapters: $error'),
+                      Text(l10n.errorLoadingChapters(error.toString())),
                 ),
               ],
             ),
@@ -221,7 +227,7 @@ class BookDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyChapters(BuildContext context) {
+  Widget _buildEmptyChapters(BuildContext context, AppLocalizations l10n) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -236,12 +242,12 @@ class BookDetailScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No chapters yet',
+              l10n.noChaptersYet,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              'Generate a Table of Contents using AI to get started',
+              l10n.generateTOCPrompt,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(
                   context,
@@ -303,6 +309,7 @@ class BookDetailScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     dynamic book,
+    AppLocalizations l10n,
   ) async {
     final llmService = LLMIntegrationService();
     final settings = ref.read(appSettingsProvider);
@@ -321,14 +328,14 @@ class BookDetailScreen extends ConsumerWidget {
     final action = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Generate Table of Contents'),
+        title: Text(l10n.generateTableOfContents),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Share this prompt with your preferred AI assistant (ChatGPT, Claude, etc.) to generate a table of contents.',
+                l10n.shareTOCPromptMessage,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
@@ -353,7 +360,7 @@ class BookDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'After getting the response, come back and paste it here.',
+                l10n.afterGenerationMessage,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -364,7 +371,7 @@ class BookDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           OutlinedButton.icon(
             onPressed: () {
@@ -372,12 +379,12 @@ class BookDetailScreen extends ConsumerWidget {
               Navigator.of(context).pop('copy');
             },
             icon: const Icon(Icons.copy),
-            label: const Text('Copy'),
+            label: Text(l10n.copy),
           ),
           FilledButton.icon(
             onPressed: () => Navigator.of(context).pop('share'),
             icon: const Icon(Icons.share),
-            label: const Text('Share'),
+            label: Text(l10n.share),
           ),
         ],
       ),
@@ -391,33 +398,38 @@ class BookDetailScreen extends ConsumerWidget {
 
       if (shared && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Prompt shared! Paste the response when ready.'),
-            duration: Duration(seconds: 3),
+          SnackBar(
+            content: Text(l10n.promptSharedMessage),
+            duration: const Duration(seconds: 3),
           ),
         );
         // Show paste dialog after a short delay
         await Future.delayed(const Duration(milliseconds: 500));
         if (context.mounted) {
-          _showPasteDialog(context, ref, book);
+          _showPasteDialog(context, ref, book, l10n);
         }
       }
     } else if (action == 'copy' && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Prompt copied to clipboard')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.promptCopied)));
       // Show paste dialog
-      _showPasteDialog(context, ref, book);
+      _showPasteDialog(context, ref, book, l10n);
     }
   }
 
-  void _showPasteDialog(BuildContext context, WidgetRef ref, dynamic book) {
+  void _showPasteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+    AppLocalizations l10n,
+  ) {
     final controller = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Paste LLM Response'),
+        title: Text(l10n.pasteLLMResponse),
         content: SizedBox(
           width: double.maxFinite,
           child: Column(
@@ -425,7 +437,7 @@ class BookDetailScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Paste the response from your AI assistant:',
+                l10n.pasteResponseInstructions,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
@@ -433,8 +445,7 @@ class BookDetailScreen extends ConsumerWidget {
                 controller: controller,
                 maxLines: 10,
                 decoration: InputDecoration(
-                  hintText:
-                      'Paste response here...\n\nSupports both JSON and plain text formats',
+                  hintText: l10n.pasteHint,
                   border: const OutlineInputBorder(),
                   filled: true,
                   fillColor: Theme.of(
@@ -448,18 +459,18 @@ class BookDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton.icon(
             onPressed: () {
               final text = controller.text.trim();
               if (text.isNotEmpty) {
                 Navigator.of(context).pop();
-                _processTOCResponse(context, ref, book, text);
+                _processTOCResponse(context, ref, book, text, l10n);
               }
             },
             icon: const Icon(Icons.check),
-            label: const Text('Import'),
+            label: Text(l10n.import),
           ),
         ],
       ),
@@ -471,6 +482,7 @@ class BookDetailScreen extends ConsumerWidget {
     WidgetRef ref,
     dynamic book,
     String responseText,
+    AppLocalizations l10n,
   ) async {
     final llmService = LLMIntegrationService();
     final validationResult = llmService.parseResponseWithValidation(
@@ -483,6 +495,33 @@ class BookDetailScreen extends ConsumerWidget {
       try {
         final database = ref.read(databaseProvider);
         final uuid = const Uuid();
+
+        // Update book title if provided and different from "Untitled"
+        if (response.bookTitle.isNotEmpty &&
+            response.bookTitle != 'Untitled' &&
+            (book.title == l10n.untitledBook || book.title.isEmpty)) {
+          await (database.update(
+            database.books,
+          )..where((tbl) => tbl.id.equals(book.id))).write(
+            BooksCompanion(
+              title: drift.Value(response.bookTitle),
+              updatedAt: drift.Value(DateTime.now()),
+            ),
+          );
+
+          // Invalidate book provider to refresh
+          ref.invalidate(bookDetailProvider(book.id));
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.bookTitleUpdated(response.bookTitle)),
+                backgroundColor: Colors.blue,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        }
 
         for (final tocChapter in response.chapters) {
           await database
@@ -505,9 +544,7 @@ class BookDetailScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                'Successfully imported ${response.chapters.length} chapters!',
-              ),
+              content: Text(l10n.chaptersImported(response.chapters.length)),
               backgroundColor: Colors.green,
             ),
           );
@@ -516,7 +553,7 @@ class BookDetailScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error importing chapters: $e'),
+              content: Text(l10n.errorImportingChapters(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -528,24 +565,23 @@ class BookDetailScreen extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(validationResult.errorMessage ?? 'Parse Error'),
+            title: Text(validationResult.errorMessage ?? l10n.parseError),
             content: SingleChildScrollView(
               child: Text(
-                validationResult.errorDetails ??
-                    'Could not parse the response. Please make sure the response is in the correct format.',
+                validationResult.errorDetails ?? l10n.parseErrorMessage,
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+                child: Text(l10n.ok),
               ),
               FilledButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _showPasteDialog(context, ref, book);
+                  _showPasteDialog(context, ref, book, l10n);
                 },
-                child: const Text('Try Again'),
+                child: Text(l10n.tryAgain),
               ),
             ],
           ),
@@ -559,6 +595,8 @@ class BookDetailScreen extends ConsumerWidget {
     final book = bookAsync.value;
     if (book == null) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet(
       context: context,
       builder: (context) => ListView(
@@ -566,7 +604,7 @@ class BookDetailScreen extends ConsumerWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.edit),
-            title: const Text('Edit Book Details'),
+            title: Text(l10n.editBookDetails),
             onTap: () {
               Navigator.pop(context);
               _showEditBookDialog(context, ref, book);
@@ -574,7 +612,7 @@ class BookDetailScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.file_download),
-            title: const Text('Export Book'),
+            title: Text(l10n.exportBook),
             onTap: () {
               Navigator.pop(context);
               _exportBook(context, ref, book);
@@ -583,9 +621,9 @@ class BookDetailScreen extends ConsumerWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.delete, color: Colors.red),
-            title: const Text(
-              'Delete Book',
-              style: TextStyle(color: Colors.red),
+            title: Text(
+              l10n.deleteBook,
+              style: const TextStyle(color: Colors.red),
             ),
             onTap: () {
               Navigator.pop(context);
@@ -598,6 +636,7 @@ class BookDetailScreen extends ConsumerWidget {
   }
 
   void _showEditBookDialog(BuildContext context, WidgetRef ref, dynamic book) {
+    final l10n = AppLocalizations.of(context)!;
     final titleController = TextEditingController(text: book.title);
     final authorController = TextEditingController(text: book.author ?? '');
     final descriptionController = TextEditingController(
@@ -607,34 +646,34 @@ class BookDetailScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Edit Book Details'),
+        title: Text(l10n.editBookDetails),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.title,
+                  border: const OutlineInputBorder(),
                 ),
                 textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: authorController,
-                decoration: const InputDecoration(
-                  labelText: 'Author',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.author,
+                  border: const OutlineInputBorder(),
                 ),
                 textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.description,
+                  border: const OutlineInputBorder(),
                 ),
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
@@ -645,7 +684,7 @@ class BookDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -677,12 +716,12 @@ class BookDetailScreen extends ConsumerWidget {
 
               if (context.mounted) {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Book updated successfully')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.bookUpdated)));
               }
             },
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -690,17 +729,16 @@ class BookDetailScreen extends ConsumerWidget {
   }
 
   void _confirmDeleteBook(BuildContext context, WidgetRef ref, dynamic book) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Book'),
-        content: Text(
-          'Are you sure you want to delete "${book.title}"? This action cannot be undone.',
-        ),
+        title: Text(l10n.deleteBook),
+        content: Text(l10n.confirmDeleteBook(book.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -711,14 +749,14 @@ class BookDetailScreen extends ConsumerWidget {
                 Navigator.of(context).pop(); // Close dialog
                 Navigator.of(context).pop(); // Go back to library
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Deleted "${book.title}"')),
+                  SnackBar(content: Text(l10n.bookDeleted(book.title))),
                 );
               }
             },
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -726,6 +764,7 @@ class BookDetailScreen extends ConsumerWidget {
   }
 
   void _exportBook(BuildContext context, WidgetRef ref, dynamic book) async {
+    final l10n = AppLocalizations.of(context)!;
     final database = ref.read(databaseProvider);
 
     // Get all chapters for this book
@@ -764,14 +803,14 @@ class BookDetailScreen extends ConsumerWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Export Book'),
+          title: Text(l10n.exportBook),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Book exported as JSON. Copy the text below:',
+                  l10n.bookExported,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 16),
@@ -802,17 +841,17 @@ class BookDetailScreen extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
+              child: Text(l10n.close),
             ),
             FilledButton.icon(
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: jsonString));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Copied to clipboard')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.copiedToClipboard)));
               },
               icon: const Icon(Icons.copy),
-              label: const Text('Copy'),
+              label: Text(l10n.copy),
             ),
           ],
         ),

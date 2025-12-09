@@ -66,6 +66,21 @@ class LLMIntegrationService {
       );
     }
 
+    // Check for clipboard placeholder first (before trying to parse as content)
+    final trimmedText = text.trim();
+    final lowerText = trimmedText.toLowerCase();
+    for (final pattern in _clipboardPlaceholders) {
+      if (lowerText == pattern.toLowerCase()) {
+        return ParseValidationResult.error(
+          'Clipboard placeholder detected',
+          details:
+              'It looks like you pasted clipboard placeholder text. '
+              'Please copy the actual response from ChatGPT or your AI assistant '
+              'and try again.',
+        );
+      }
+    }
+
     // Try to parse as JSON first
     try {
       // Check if the text contains JSON
@@ -82,25 +97,15 @@ class LLMIntegrationService {
     }
 
     // Try to parse as plain text TOC
-    final response = _parsePlainTextTOC(text);
-    if (response != null) {
-      return ParseValidationResult.success(response);
+    final tocResponse = _parsePlainTextTOC(text);
+    if (tocResponse != null) {
+      return ParseValidationResult.success(tocResponse);
     }
 
-    // Only check for clipboard placeholder if we couldn't parse valid content
-    // Check if the text is ONLY a clipboard placeholder (with minimal whitespace)
-    final trimmedText = text.trim();
-    final lowerText = trimmedText.toLowerCase();
-    for (final pattern in _clipboardPlaceholders) {
-      if (lowerText == pattern.toLowerCase()) {
-        return ParseValidationResult.error(
-          'Clipboard placeholder detected',
-          details:
-              'It looks like you pasted clipboard placeholder text. '
-              'Please copy the actual response from ChatGPT or your AI assistant '
-              'and try again.',
-        );
-      }
+    // Try to parse as plain text title response
+    final titleResponse = _parsePlainTextTitle(text);
+    if (titleResponse != null) {
+      return ParseValidationResult.success(titleResponse);
     }
 
     // No valid format detected
@@ -109,7 +114,8 @@ class LLMIntegrationService {
       details:
           'The text doesn\'t match any expected format. Please ensure '
           'the response is either:\n'
-          '• JSON format with type: "toc"\n'
+          '• JSON format with type: "title", "toc", or "chapter"\n'
+          '• Plain text title (optionally with description on next line)\n'
           '• Plain text numbered list like:\n'
           '  1. Chapter Title - Summary\n'
           '  2. Chapter Title - Summary',
@@ -202,6 +208,70 @@ class LLMIntegrationService {
     }
 
     return TOCResponse(bookTitle: 'Untitled', chapters: chapters);
+  }
+
+  /// Parse plain text title response
+  /// Expects format:
+  /// Title on first line
+  /// Description (optional) on second line
+  /// Only parses if the first line looks like a title (not a sentence with multiple phrases)
+  TitleResponse? _parsePlainTextTitle(String text) {
+    final lines = text
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+
+    if (lines.isEmpty) {
+      return null;
+    }
+
+    final title = lines[0];
+    final description = lines.length > 1 ? lines[1] : null;
+
+    // Validation checks:
+    // 1. Title should be 3-200 characters
+    if (title.length < 3 || title.length > 200) {
+      return null;
+    }
+
+    // 2. Title should not contain phrases that look like instructions/explanations
+    // (those indicate unparseable text, not a title)
+    final lowerTitle = title.toLowerCase();
+    const sentenceMarkers = [
+      'without structure',
+      'is just',
+      'this is',
+      'you can',
+      'would be',
+      'should be',
+      'here is',
+    ];
+    if (sentenceMarkers.any((marker) => lowerTitle.contains(marker))) {
+      return null;
+    }
+
+    // 3. Title should have reasonable capitalization (not all lowercase explanations)
+    // Count uppercase letters - a title should have at least one
+    final uppercaseCount = title
+        .split('')
+        .where((c) => c == c.toUpperCase() && c != c.toLowerCase())
+        .length;
+    if (uppercaseCount == 0 && !title.startsWith(RegExp(r'\d'))) {
+      // No uppercase and doesn't start with number - likely a sentence, not a title
+      return null;
+    }
+
+    // 4. Title should not end with common sentence endings
+    if (title.endsWith('?') ||
+        (title.endsWith('.') &&
+            !title.contains('Mr.') &&
+            !title.contains('Dr.'))) {
+      // Question mark or period suggests a sentence, not a title
+      return null;
+    }
+
+    return TitleResponse(title: title, description: description);
   }
 
   /// Generate a structured JSON prompt for TOC generation
@@ -370,6 +440,73 @@ IMPORTANT:
 - **Use Markdown formatting** in the content (e.g., ## for headers, **bold**, *italic*, - for lists)
 
 Alternatively, you can respond with just the Markdown-formatted text content.
+''';
+  }
+
+  /// Generate a prompt for creating a book title based on description or purpose
+  String generateBookTitlePrompt({
+    String? description,
+    String? purpose,
+    String? genre,
+    String? writingStyle,
+    String? language,
+  }) {
+    final exampleJson = {
+      'type': 'title',
+      'title': 'The Art of Learning Programming',
+      'description':
+          'A comprehensive guide to mastering programming fundamentals and best practices',
+    };
+
+    final context = StringBuffer();
+
+    if (description != null && description.isNotEmpty) {
+      context.writeln('Description: $description');
+    }
+
+    if (purpose != null && purpose.isNotEmpty) {
+      context.writeln('Purpose/Goal: $purpose');
+    }
+
+    if (genre != null && genre.isNotEmpty) {
+      context.writeln('Genre: $genre');
+    }
+
+    final preferencesSection = StringBuffer();
+    if (language != null) {
+      preferencesSection.writeln('- Language: $language');
+    }
+    if (writingStyle != null) {
+      preferencesSection.writeln('- Writing Style: $writingStyle');
+    }
+
+    return '''
+Please generate a compelling book title and description based on the following information:
+
+${context.toString()}
+${preferencesSection.isNotEmpty ? '\n## Preferences\n$preferencesSection' : ''}
+## Instructions
+1. Create a clear, engaging book title (2-8 words ideally)
+2. Generate a brief, engaging description (1-2 sentences) - ALWAYS include a description, it is required
+3. The title and description should reflect the content or purpose described above
+4. Make them memorable and appealing to readers
+${language != null ? '5. Generate in $language' : ''}
+
+## Response Format
+Please respond with a JSON object in this exact format:
+
+${const JsonEncoder.withIndent('  ').convert(exampleJson)}
+
+IMPORTANT:
+- The response must be valid JSON
+- Include "type": "title" to identify this as a title generation response
+- The "title" field is required
+- The "description" field is REQUIRED (always include it, not optional)
+- Do not include quotes or escape characters in the title or description values
+
+Alternatively, if you prefer plain text, respond with just the title on the first line and description on the second line:
+The Art of Learning Programming
+A comprehensive guide to mastering programming fundamentals and best practices
 ''';
   }
 }

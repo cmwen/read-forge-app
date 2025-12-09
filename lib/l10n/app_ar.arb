@@ -1,0 +1,183 @@
+{
+  "@@locale": "ar",
+  "appTitle": "ReadForge",
+  "libraryTitle": "ReadForge",
+  "newBook": "كتاب جديد",
+  "noBooksYet": "لا توجد كتب بعد",
+  "tapToCreateFirstBook": "اضغط على زر + لإنشاء كتابك الأول",
+  "createNewBook": "إنشاء كتاب جديد",
+  "createBookInstructions": "املأ حقلاً واحداً على الأقل أدناه. إذا لم تقدم عنواناً، يمكن للذكاء الاصطناعي إنشاء واحد لك بناءً على وصفك أو هدفك.",
+  "bookTitleOptional": "عنوان الكتاب (اختياري)",
+  "bookTitleHint": "أدخل عنواناً أو اتركه فارغاً للتوليد بالذكاء الاصطناعي",
+  "descriptionOptional": "الوصف (اختياري)",
+  "descriptionHint": "صف محتوى الكتاب",
+  "purposeOptional": "الغرض/الهدف التعليمي (اختياري)",
+  "purposeHint": "ماذا تريد أن تتعلم من هذا الكتاب؟",
+  "cancel": "إلغاء",
+  "create": "إنشاء",
+  "fillAtLeastOneField": "يرجى ملء حقل واحد على الأقل",
+  "generateTitleWithAI": "إنشاء عنوان بالذكاء الاصطناعي؟",
+  "noTitleProvidedPrompt": "لم يتم تقديم عنوان. هل تريد استخدام الذكاء الاصطناعي لإنشاء عنوان بناءً على {contentType} الخاص بك؟",
+  "skip": "تخطي",
+  "generateTitle": "إنشاء عنوان",
+  "generateBookTitle": "إنشاء عنوان الكتاب",
+  "sharePromptWithAI": "شارك هذا الموجه مع مساعد الذكاء الاصطناعي الخاص بك (ChatGPT أو Claude أو غيرها) لإنشاء عنوان.",
+  "copy": "نسخ",
+  "pasteTitle": "لصق العنوان",
+  "promptCopiedToClipboard": "تم نسخ الموجه إلى الحافظة",
+  "noTitleInClipboard": "لم يتم العثور على عنوان في الحافظة. إنشاء كتاب بعنوان مؤقت.",
+  "bookCreatedWithTitle": "تم إنشاء كتاب بعنوان من الذكاء الاصطناعي: \"{title}\"",
+  "settings": "الإعدادات",
+  "reading": "جارٍ القراءة",
+  "completed": "مكتمل",
+  "draft": "مسودة",
+  "errorLoadingBooks": "خطأ في تحميل الكتب: {error}",
+  "retry": "إعادة المحاولة",
+  "untitledBook": "كتاب بدون عنوان",
+  "settingsTitle": "الإعدادات",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "تفضيلات الكتابة",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "توليد المحتوى",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "حول",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "نمط الكتابة",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "إبداعي - خيالي وتعبيري",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "متوازن - إبداع معتدل",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "دقيق - واضح وموجز",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "لغة المحتوى",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "لغة الواجهة",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "افتراضي النظام",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "النبرة",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "عرضي - ودود وممتع",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "محايد - نبرة متوازنة",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "رسمي - احترافي وجاد",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "مستوى المفردات",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "بسيط - سهل الفهم",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "معتدل - مفردات متوازنة",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "متقدم - مفردات غنية",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "المؤلف المفضل",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "على سبيل المثال: J.K. Rowling",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "أدخل اسم مؤلفك المفضل حتى تحاكي الذكاء الاصطناعي أسلوب كتابته (اختياري).",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "عدد الفصول الافتراضي",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count} فصول",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "كتاب قصير",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "كتاب قياسي",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "كتاب أطول",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "رواية طويلة",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "رواية موسعة",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "طول ملحمي",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "الإصدار",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "الترخيص",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "ترخيص MIT",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "مسح",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "حفظ",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
+}

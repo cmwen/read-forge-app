@@ -1,0 +1,183 @@
+{
+  "@@locale": "ru",
+  "appTitle": "ReadForge",
+  "libraryTitle": "ReadForge",
+  "newBook": "Новая Книга",
+  "noBooksYet": "Пока нет книг",
+  "tapToCreateFirstBook": "Нажмите кнопку +, чтобы создать вашу первую книгу",
+  "createNewBook": "Создать Новую Книгу",
+  "createBookInstructions": "Заполните хотя бы одно поле ниже. Если вы не укажете название, ИИ может создать его для вас на основе вашего описания или цели.",
+  "bookTitleOptional": "Название Книги (Необязательно)",
+  "bookTitleHint": "Введите название или оставьте пустым для генерации ИИ",
+  "descriptionOptional": "Описание (Необязательно)",
+  "descriptionHint": "Опишите, о чём книга",
+  "purposeOptional": "Цель/Учебная Задача (Необязательно)",
+  "purposeHint": "Что вы хотите узнать из этой книги?",
+  "cancel": "Отмена",
+  "create": "Создать",
+  "fillAtLeastOneField": "Пожалуйста, заполните хотя бы одно поле",
+  "generateTitleWithAI": "Создать Название с Помощью ИИ?",
+  "noTitleProvidedPrompt": "Название не было указано. Хотите использовать ИИ для создания названия на основе вашего {contentType}?",
+  "skip": "Пропустить",
+  "generateTitle": "Создать Название",
+  "generateBookTitle": "Создать Название Книги",
+  "sharePromptWithAI": "Поделитесь этим запросом с вашим ИИ-помощником (ChatGPT, Claude и т.д.) для создания названия.",
+  "copy": "Копировать",
+  "pasteTitle": "Вставить Название",
+  "promptCopiedToClipboard": "Запрос скопирован в буфер обмена",
+  "noTitleInClipboard": "Название не найдено в буфере обмена. Создаём книгу с временным названием.",
+  "bookCreatedWithTitle": "Книга создана с названием, сгенерированным ИИ: \"{title}\"",
+  "settings": "Настройки",
+  "reading": "Читаю",
+  "completed": "Завершено",
+  "draft": "Черновик",
+  "errorLoadingBooks": "Ошибка загрузки книг: {error}",
+  "retry": "Повторить",
+  "untitledBook": "Книга Без Названия",
+  "settingsTitle": "Параметры",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "Предпочтения письма",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "Генерация контента",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "О программе",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "Стиль письма",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "Творческий - Воображаемый и выразительный",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "Сбалансированный - Умеренная творчество",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "Точный - Четкий и лаконичный",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "Язык контента",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "Язык интерфейса",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "По умолчанию системы",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "Тон",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "Непринужденный - Дружелюбный и расслабленный",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "Нейтральный - Сбалансированный тон",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "Официальный - Профессиональный и серьезный",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "Уровень словарного запаса",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "Простой - Легко понять",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "Умеренный - Сбалансированный словарь",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "Продвинутый - Богатый словарь",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "Любимый автор",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "напр., Дж. К. Роулинг",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "Введите имя вашего любимого автора, чтобы ИИ подражал их стилю письма (опционально).",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "Количество глав по умолчанию",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count} глав",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "Короткая книга",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "Стандартная книга",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "Более длинная книга",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "Полнометражный роман",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "Расширенный роман",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "Эпическая длина",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "Версия",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "Лицензия",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "Лицензия MIT",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "Очистить",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "Сохранить",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
+}

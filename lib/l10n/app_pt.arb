@@ -1,0 +1,183 @@
+{
+  "@@locale": "pt",
+  "appTitle": "ReadForge",
+  "libraryTitle": "ReadForge",
+  "newBook": "Novo Livro",
+  "noBooksYet": "Ainda não há livros",
+  "tapToCreateFirstBook": "Toque no botão + para criar seu primeiro livro",
+  "createNewBook": "Criar Novo Livro",
+  "createBookInstructions": "Preencha pelo menos um campo abaixo. Se você não fornecer um título, a IA pode gerar um para você com base em sua descrição ou objetivo.",
+  "bookTitleOptional": "Título do Livro (Opcional)",
+  "bookTitleHint": "Digite um título ou deixe vazio para geração por IA",
+  "descriptionOptional": "Descrição (Opcional)",
+  "descriptionHint": "Descreva sobre o que é o livro",
+  "purposeOptional": "Propósito/Objetivo de Aprendizagem (Opcional)",
+  "purposeHint": "O que você quer aprender com este livro?",
+  "cancel": "Cancelar",
+  "create": "Criar",
+  "fillAtLeastOneField": "Por favor, preencha pelo menos um campo",
+  "generateTitleWithAI": "Gerar Título com IA?",
+  "noTitleProvidedPrompt": "Nenhum título foi fornecido. Gostaria de usar a IA para gerar um título com base em sua {contentType}?",
+  "skip": "Pular",
+  "generateTitle": "Gerar Título",
+  "generateBookTitle": "Gerar Título do Livro",
+  "sharePromptWithAI": "Compartilhe este prompt com seu assistente de IA (ChatGPT, Claude, etc.) para gerar um título.",
+  "copy": "Copiar",
+  "pasteTitle": "Colar Título",
+  "promptCopiedToClipboard": "Prompt copiado para a área de transferência",
+  "noTitleInClipboard": "Nenhum título encontrado na área de transferência. Criando livro com título provisório.",
+  "bookCreatedWithTitle": "Livro criado com título gerado por IA: \"{title}\"",
+  "settings": "Configurações",
+  "reading": "Lendo",
+  "completed": "Concluído",
+  "draft": "Rascunho",
+  "errorLoadingBooks": "Erro ao carregar livros: {error}",
+  "retry": "Tentar Novamente",
+  "untitledBook": "Livro Sem Título",
+  "settingsTitle": "Configurações",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "Preferências de Escrita",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "Geração de Conteúdo",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "Sobre",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "Estilo de Escrita",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "Criativo - Imaginativo e expressivo",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "Equilibrado - Criatividade moderada",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "Preciso - Claro e conciso",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "Idioma do Conteúdo",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "Idioma da Interface",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "Padrão do Sistema",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "Tom",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "Casual - Amigável e descontraído",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "Neutro - Tom equilibrado",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "Formal - Profissional e sério",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "Nível de Vocabulário",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "Simples - Fácil de entender",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "Moderado - Vocabulário equilibrado",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "Avançado - Vocabulário rico",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "Autor Favorito",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "ex., J.K. Rowling",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "Digite o nome do seu autor favorito para que a IA emule seu estilo de escrita (opcional).",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "Contagem de Capítulos Padrão",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count} capítulos",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "Livro curto",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "Livro padrão",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "Livro mais longo",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "Romance completo",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "Romance estendido",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "Comprimento épico",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "Versão",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "Licença",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "Licença MIT",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "Limpar",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "Salvar",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
+}

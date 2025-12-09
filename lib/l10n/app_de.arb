@@ -1,0 +1,183 @@
+{
+  "@@locale": "de",
+  "appTitle": "ReadForge",
+  "libraryTitle": "ReadForge",
+  "newBook": "Neues Buch",
+  "noBooksYet": "Noch keine Bücher",
+  "tapToCreateFirstBook": "Tippen Sie auf die + Schaltfläche, um Ihr erstes Buch zu erstellen",
+  "createNewBook": "Neues Buch Erstellen",
+  "createBookInstructions": "Füllen Sie mindestens ein Feld unten aus. Wenn Sie keinen Titel angeben, kann die KI einen für Sie basierend auf Ihrer Beschreibung oder Ihrem Zweck generieren.",
+  "bookTitleOptional": "Buchtitel (Optional)",
+  "bookTitleHint": "Geben Sie einen Titel ein oder lassen Sie es leer für KI-Generierung",
+  "descriptionOptional": "Beschreibung (Optional)",
+  "descriptionHint": "Beschreiben Sie, worum es in dem Buch geht",
+  "purposeOptional": "Zweck/Lernziel (Optional)",
+  "purposeHint": "Was möchten Sie aus diesem Buch lernen?",
+  "cancel": "Abbrechen",
+  "create": "Erstellen",
+  "fillAtLeastOneField": "Bitte füllen Sie mindestens ein Feld aus",
+  "generateTitleWithAI": "Titel mit KI Generieren?",
+  "noTitleProvidedPrompt": "Kein Titel angegeben. Möchten Sie die KI verwenden, um einen Titel basierend auf Ihrer {contentType} zu generieren?",
+  "skip": "Überspringen",
+  "generateTitle": "Titel Generieren",
+  "generateBookTitle": "Buchtitel Generieren",
+  "sharePromptWithAI": "Teilen Sie diese Eingabeaufforderung mit Ihrem KI-Assistenten (ChatGPT, Claude usw.), um einen Titel zu generieren.",
+  "copy": "Kopieren",
+  "pasteTitle": "Titel Einfügen",
+  "promptCopiedToClipboard": "Eingabeaufforderung in Zwischenablage kopiert",
+  "noTitleInClipboard": "Kein Titel in der Zwischenablage gefunden. Erstelle Buch mit Platzhaltertitel.",
+  "bookCreatedWithTitle": "Buch mit KI-generiertem Titel erstellt: \"{title}\"",
+  "settings": "Einstellungen",
+  "reading": "Lesen",
+  "completed": "Abgeschlossen",
+  "draft": "Entwurf",
+  "errorLoadingBooks": "Fehler beim Laden der Bücher: {error}",
+  "retry": "Wiederholen",
+  "untitledBook": "Buch Ohne Titel",
+  "settingsTitle": "Einstellungen",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "Schreibpräferenzen",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "Inhaltsgenerierung",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "Über",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "Schreibstil",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "Kreativ - Fantasievoll und ausdrucksstark",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "Ausgewogen - Moderate Kreativität",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "Präzise - Klar und prägnant",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "Inhaltssprache",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "Schnittstellensprache",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "Systemstandard",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "Ton",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "Lässig - Freundlich und entspannt",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "Neutral - Ausgewogener Ton",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "Formal - Professionell und ernst",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "Wortschatzstufe",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "Einfach - Leicht verständlich",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "Moderat - Ausgewogener Wortschatz",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "Fortgeschritten - Reicher Wortschatz",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "Lieblingsautor",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "z. B. J.K. Rowling",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "Geben Sie den Namen Ihres Lieblingsautors ein, damit die KI seinen Schreibstil nachahmt (optional).",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "Standardkapitelanzahl",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count} Kapitel",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "Kurzes Buch",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "Standardbuch",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "Längeres Buch",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "Vollständiger Roman",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "Erweiterter Roman",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "Epische Länge",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "Version",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "Lizenz",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "MIT-Lizenz",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "Löschen",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "Speichern",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
+}

@@ -1,19 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:read_forge/features/library/presentation/library_screen.dart';
+import 'package:read_forge/features/settings/presentation/locale_provider.dart';
+import 'package:read_forge/l10n/app_localizations.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
 /// The root widget of the application.
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp(
-      title: 'ReadForge',
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'), // English
+        Locale('es'), // Spanish
+        Locale('zh'), // Chinese (Simplified)
+        Locale('zh', 'TW'), // Chinese (Traditional) - Taiwan
+        Locale('fr'), // French
+        Locale('de'), // German
+        Locale('pt'), // Portuguese
+        Locale('ja'), // Japanese
+        Locale('ko'), // Korean
+        Locale('ar'), // Arabic
+        Locale('hi'), // Hindi
+        Locale('ru'), // Russian
+      ],
+      locale: locale,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         useMaterial3: true,

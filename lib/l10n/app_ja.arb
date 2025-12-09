@@ -1,0 +1,183 @@
+{
+  "@@locale": "ja",
+  "appTitle": "ReadForge",
+  "libraryTitle": "ReadForge",
+  "newBook": "新しい本",
+  "noBooksYet": "まだ本がありません",
+  "tapToCreateFirstBook": "+ ボタンをタップして最初の本を作成してください",
+  "createNewBook": "新しい本を作成",
+  "createBookInstructions": "以下の少なくとも1つのフィールドを入力してください。タイトルを指定しない場合、AIが説明または目的に基づいてタイトルを生成できます。",
+  "bookTitleOptional": "本のタイトル（オプション）",
+  "bookTitleHint": "タイトルを入力するか、AI生成のために空白のままにしてください",
+  "descriptionOptional": "説明（オプション）",
+  "descriptionHint": "この本の内容を説明してください",
+  "purposeOptional": "目的/学習目標（オプション）",
+  "purposeHint": "この本から何を学びたいですか？",
+  "cancel": "キャンセル",
+  "create": "作成",
+  "fillAtLeastOneField": "少なくとも1つのフィールドを入力してください",
+  "generateTitleWithAI": "AIでタイトルを生成しますか？",
+  "noTitleProvidedPrompt": "タイトルが指定されていません。{contentType}に基づいてAIでタイトルを生成しますか？",
+  "skip": "スキップ",
+  "generateTitle": "タイトルを生成",
+  "generateBookTitle": "本のタイトルを生成",
+  "sharePromptWithAI": "このプロンプトをAIアシスタント（ChatGPT、Claudeなど）と共有してタイトルを生成してください。",
+  "copy": "コピー",
+  "pasteTitle": "タイトルを貼り付け",
+  "promptCopiedToClipboard": "プロンプトがクリップボードにコピーされました",
+  "noTitleInClipboard": "クリップボードにタイトルが見つかりませんでした。プレースホルダータイトルで本を作成します。",
+  "bookCreatedWithTitle": "AI生成タイトルで本を作成しました：\"{title}\"",
+  "settings": "設定",
+  "reading": "読書中",
+  "completed": "完了",
+  "draft": "下書き",
+  "errorLoadingBooks": "本の読み込みエラー：{error}",
+  "retry": "再試行",
+  "untitledBook": "無題の本",
+  "settingsTitle": "設定",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "執筆の好み",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "コンテンツ生成",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "について",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "執筆スタイル",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "創造的 - 想像力豊かで表現力豊か",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "バランス - 中程度の創造性",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "正確 - 明確で簡潔",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "コンテンツ言語",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "UI言語",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "システムデフォルト",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "トーン",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "カジュアル - フレンドリーでリラックス",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "ニュートラル - バランスの取れたトーン",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "フォーマル - プロフェッショナルで真摯",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "語彙レベル",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "シンプル - 理解しやすい",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "中程度 - バランスの取れた語彙",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "上級 - 豊かな語彙",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "好きな著者",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "例：J.K. ローリング",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "好きな著者の名前を入力すると、AIがその執筆スタイルを模倣します（オプション）。",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "デフォルト章数",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count}章",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "短編",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "標準的な本",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "より長い本",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "フル長編小説",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "拡張長編小説",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "叙事詩の長さ",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "バージョン",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "ライセンス",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "MITライセンス",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "クリア",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "保存",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
+}

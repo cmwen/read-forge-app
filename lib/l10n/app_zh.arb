@@ -1,0 +1,183 @@
+{
+  "@@locale": "zh",
+  "appTitle": "ReadForge",
+  "libraryTitle": "ReadForge",
+  "newBook": "新建图书",
+  "noBooksYet": "暂无图书",
+  "tapToCreateFirstBook": "点击 + 按钮创建您的第一本书",
+  "createNewBook": "创建新图书",
+  "createBookInstructions": "至少填写一个字段。如果您不提供标题，AI 可以根据您的描述或目的为您生成一个。",
+  "bookTitleOptional": "图书标题（可选）",
+  "bookTitleHint": "输入标题或留空以使用 AI 生成",
+  "descriptionOptional": "描述（可选）",
+  "descriptionHint": "描述这本书的内容",
+  "purposeOptional": "目的/学习目标（可选）",
+  "purposeHint": "您想从这本书中学到什么？",
+  "cancel": "取消",
+  "create": "创建",
+  "fillAtLeastOneField": "请至少填写一个字段",
+  "generateTitleWithAI": "使用 AI 生成标题？",
+  "noTitleProvidedPrompt": "未提供标题。您想使用 AI 根据您的{contentType}生成标题吗？",
+  "skip": "跳过",
+  "generateTitle": "生成标题",
+  "generateBookTitle": "生成图书标题",
+  "sharePromptWithAI": "将此提示分享给您的 AI 助手（ChatGPT、Claude 等）以生成标题。",
+  "copy": "复制",
+  "pasteTitle": "粘贴标题",
+  "promptCopiedToClipboard": "提示已复制到剪贴板",
+  "noTitleInClipboard": "剪贴板中未找到标题。使用占位符标题创建图书。",
+  "bookCreatedWithTitle": "已创建带有 AI 生成标题的图书：\"{title}\"",
+  "settings": "设置",
+  "reading": "阅读中",
+  "completed": "已完成",
+  "draft": "草稿",
+  "errorLoadingBooks": "加载图书时出错：{error}",
+  "retry": "重试",
+  "untitledBook": "无标题图书",
+  "settingsTitle": "设置",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "写作偏好",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "内容生成",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "关于",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "写作风格",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "创意 - 富有想象力和表现力",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "平衡 - 中等创意",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "精确 - 清晰简洁",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "内容语言",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "界面语言",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "系统默认",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "语气",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "休闲 - 友好轻松",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "中立 - 平衡语气",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "正式 - 专业严肃",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "词汇级别",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "简单 - 易于理解",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "中等 - 平衡词汇",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "高级 - 丰富词汇",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "喜爱的作者",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "例如：J.K. 罗琳",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "输入您喜爱的作者名称，AI 将模仿他们的写作风格（可选）。",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "默认章节数",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count} 个章节",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "短书",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "标准书籍",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "较长书籍",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "完整长篇小说",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "拓展长篇小说",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "史诗级长度",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "版本",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "许可证",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "MIT 许可证",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "清除",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "保存",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
+}
