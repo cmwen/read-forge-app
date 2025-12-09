@@ -28,14 +28,14 @@ void main() {
         final response = TitleResponse.fromJson(json);
 
         expect(response.title, 'The Art of Learning');
-        expect(response.description, 'A guide to mastering learning techniques');
+        expect(
+          response.description,
+          'A guide to mastering learning techniques',
+        );
       });
 
       test('should handle missing description field', () {
-        final json = {
-          'type': 'title',
-          'title': 'The Art of Learning',
-        };
+        final json = {'type': 'title', 'title': 'The Art of Learning'};
 
         final response = TitleResponse.fromJson(json);
 
@@ -210,10 +210,7 @@ void main() {
 
     group('LLMResponse.fromJson', () {
       test('should correctly identify title response', () {
-        final json = {
-          'type': 'title',
-          'title': 'Test Title',
-        };
+        final json = {'type': 'title', 'title': 'Test Title'};
 
         final response = LLMResponse.fromJson(json);
 

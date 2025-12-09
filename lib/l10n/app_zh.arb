@@ -34,99 +34,99 @@
   "errorLoadingBooks": "加载图书时出错：{error}",
   "retry": "重试",
   "untitledBook": "无标题图书",
-  "settingsTitle": "Settings",
+  "settingsTitle": "设置",
   "@settingsTitle": {
     "description": "Settings screen title"
   },
-  "writingPreferencesSection": "Writing Preferences",
+  "writingPreferencesSection": "写作偏好",
   "@writingPreferencesSection": {
     "description": "Section header for writing preferences"
   },
-  "contentGenerationSection": "Content Generation",
+  "contentGenerationSection": "内容生成",
   "@contentGenerationSection": {
     "description": "Section header for content generation settings"
   },
-  "aboutSection": "About",
+  "aboutSection": "关于",
   "@aboutSection": {
     "description": "Section header for about information"
   },
-  "writingStyleLabel": "Writing Style",
+  "writingStyleLabel": "写作风格",
   "@writingStyleLabel": {
     "description": "Label for writing style setting"
   },
-  "writingStyleCreative": "Creative - Imaginative and expressive",
+  "writingStyleCreative": "创意 - 富有想象力和表现力",
   "@writingStyleCreative": {
     "description": "Writing style option: creative"
   },
-  "writingStyleBalanced": "Balanced - Moderate creativity",
+  "writingStyleBalanced": "平衡 - 中等创意",
   "@writingStyleBalanced": {
     "description": "Writing style option: balanced"
   },
-  "writingStylePrecise": "Precise - Clear and concise",
+  "writingStylePrecise": "精确 - 清晰简洁",
   "@writingStylePrecise": {
     "description": "Writing style option: precise"
   },
-  "contentLanguageLabel": "Content Language",
+  "contentLanguageLabel": "内容语言",
   "@contentLanguageLabel": {
     "description": "Label for content language setting (for AI generation)"
   },
-  "uiLanguageLabel": "UI Language",
+  "uiLanguageLabel": "界面语言",
   "@uiLanguageLabel": {
     "description": "Label for UI language setting"
   },
-  "uiLanguageSystemDefault": "System Default",
+  "uiLanguageSystemDefault": "系统默认",
   "@uiLanguageSystemDefault": {
     "description": "Option for system default UI language"
   },
-  "toneLabel": "Tone",
+  "toneLabel": "语气",
   "@toneLabel": {
     "description": "Label for tone setting"
   },
-  "toneCasual": "Casual - Friendly and relaxed",
+  "toneCasual": "休闲 - 友好轻松",
   "@toneCasual": {
     "description": "Tone option: casual"
   },
-  "toneNeutral": "Neutral - Balanced tone",
+  "toneNeutral": "中立 - 平衡语气",
   "@toneNeutral": {
     "description": "Tone option: neutral"
   },
-  "toneFormal": "Formal - Professional and serious",
+  "toneFormal": "正式 - 专业严肃",
   "@toneFormal": {
     "description": "Tone option: formal"
   },
-  "vocabularyLevelLabel": "Vocabulary Level",
+  "vocabularyLevelLabel": "词汇级别",
   "@vocabularyLevelLabel": {
     "description": "Label for vocabulary level setting"
   },
-  "vocabularySimple": "Simple - Easy to understand",
+  "vocabularySimple": "简单 - 易于理解",
   "@vocabularySimple": {
     "description": "Vocabulary level option: simple"
   },
-  "vocabularyModerate": "Moderate - Balanced vocabulary",
+  "vocabularyModerate": "中等 - 平衡词汇",
   "@vocabularyModerate": {
     "description": "Vocabulary level option: moderate"
   },
-  "vocabularyAdvanced": "Advanced - Rich vocabulary",
+  "vocabularyAdvanced": "高级 - 丰富词汇",
   "@vocabularyAdvanced": {
     "description": "Vocabulary level option: advanced"
   },
-  "favoriteAuthorLabel": "Favorite Author",
+  "favoriteAuthorLabel": "喜爱的作者",
   "@favoriteAuthorLabel": {
     "description": "Label for favorite author setting"
   },
-  "favoriteAuthorHint": "e.g., J.K. Rowling",
+  "favoriteAuthorHint": "例如：J.K. 罗琳",
   "@favoriteAuthorHint": {
     "description": "Hint text for favorite author input"
   },
-  "favoriteAuthorDescription": "Enter the name of your favorite author for AI to emulate their writing style (optional).",
+  "favoriteAuthorDescription": "输入您喜爱的作者名称，AI 将模仿他们的写作风格（可选）。",
   "@favoriteAuthorDescription": {
     "description": "Description text for favorite author setting"
   },
-  "defaultChapterCountLabel": "Default Chapter Count",
+  "defaultChapterCountLabel": "默认章节数",
   "@defaultChapterCountLabel": {
     "description": "Label for default chapter count setting"
   },
-  "chapterCountOption": "{count} chapters",
+  "chapterCountOption": "{count} 个章节",
   "@chapterCountOption": {
     "description": "Chapter count option format",
     "placeholders": {
@@ -136,47 +136,47 @@
       }
     }
   },
-  "shortBook": "Short book",
+  "shortBook": "短书",
   "@shortBook": {
     "description": "Chapter count label: 5 chapters"
   },
-  "standardBook": "Standard book",
+  "standardBook": "标准书籍",
   "@standardBook": {
     "description": "Chapter count label: 10 chapters"
   },
-  "longerBook": "Longer book",
+  "longerBook": "较长书籍",
   "@longerBook": {
     "description": "Chapter count label: 15 chapters"
   },
-  "fullLengthNovel": "Full-length novel",
+  "fullLengthNovel": "完整长篇小说",
   "@fullLengthNovel": {
     "description": "Chapter count label: 20 chapters"
   },
-  "extendedNovel": "Extended novel",
+  "extendedNovel": "拓展长篇小说",
   "@extendedNovel": {
     "description": "Chapter count label: 25 chapters"
   },
-  "epicLength": "Epic length",
+  "epicLength": "史诗级长度",
   "@epicLength": {
     "description": "Chapter count label: 30 chapters"
   },
-  "versionLabel": "Version",
+  "versionLabel": "版本",
   "@versionLabel": {
     "description": "Label for version information"
   },
-  "licenseLabel": "License",
+  "licenseLabel": "许可证",
   "@licenseLabel": {
     "description": "Label for license information"
   },
-  "mitLicense": "MIT License",
+  "mitLicense": "MIT 许可证",
   "@mitLicense": {
     "description": "License type"
   },
-  "clearAuthor": "Clear",
+  "clearAuthor": "清除",
   "@clearAuthor": {
     "description": "Button to clear favorite author"
   },
-  "saveAuthor": "Save",
+  "saveAuthor": "保存",
   "@saveAuthor": {
     "description": "Button to save favorite author"
   }

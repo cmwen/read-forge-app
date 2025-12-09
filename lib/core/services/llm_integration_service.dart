@@ -253,8 +253,10 @@ class LLMIntegrationService {
 
     // 3. Title should have reasonable capitalization (not all lowercase explanations)
     // Count uppercase letters - a title should have at least one
-    final uppercaseCount =
-        title.split('').where((c) => c == c.toUpperCase() && c != c.toLowerCase()).length;
+    final uppercaseCount = title
+        .split('')
+        .where((c) => c == c.toUpperCase() && c != c.toLowerCase())
+        .length;
     if (uppercaseCount == 0 && !title.startsWith(RegExp(r'\d'))) {
       // No uppercase and doesn't start with number - likely a sentence, not a title
       return null;
@@ -262,7 +264,9 @@ class LLMIntegrationService {
 
     // 4. Title should not end with common sentence endings
     if (title.endsWith('?') ||
-        (title.endsWith('.') && !title.contains('Mr.') && !title.contains('Dr.'))) {
+        (title.endsWith('.') &&
+            !title.contains('Mr.') &&
+            !title.contains('Dr.'))) {
       // Question mark or period suggests a sentence, not a title
       return null;
     }
@@ -450,7 +454,8 @@ Alternatively, you can respond with just the Markdown-formatted text content.
     final exampleJson = {
       'type': 'title',
       'title': 'The Art of Learning Programming',
-      'description': 'A comprehensive guide to mastering programming fundamentals and best practices',
+      'description':
+          'A comprehensive guide to mastering programming fundamentals and best practices',
     };
 
     final context = StringBuffer();
@@ -482,7 +487,7 @@ ${context.toString()}
 ${preferencesSection.isNotEmpty ? '\n## Preferences\n$preferencesSection' : ''}
 ## Instructions
 1. Create a clear, engaging book title (2-8 words ideally)
-2. Generate a brief, engaging description (1-2 sentences)
+2. Generate a brief, engaging description (1-2 sentences) - ALWAYS include a description, it is required
 3. The title and description should reflect the content or purpose described above
 4. Make them memorable and appealing to readers
 ${language != null ? '5. Generate in $language' : ''}
@@ -496,7 +501,7 @@ IMPORTANT:
 - The response must be valid JSON
 - Include "type": "title" to identify this as a title generation response
 - The "title" field is required
-- The "description" field is optional but recommended
+- The "description" field is REQUIRED (always include it, not optional)
 - Do not include quotes or escape characters in the title or description values
 
 Alternatively, if you prefer plain text, respond with just the title on the first line and description on the second line:

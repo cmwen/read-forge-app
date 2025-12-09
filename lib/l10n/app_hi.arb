@@ -34,99 +34,99 @@
   "errorLoadingBooks": "पुस्तकें लोड करने में त्रुटि: {error}",
   "retry": "पुनः प्रयास करें",
   "untitledBook": "शीर्षक रहित पुस्तक",
-  "settingsTitle": "Settings",
+  "settingsTitle": "सेटिंग्स",
   "@settingsTitle": {
     "description": "Settings screen title"
   },
-  "writingPreferencesSection": "Writing Preferences",
+  "writingPreferencesSection": "लेखन प्राथमिकताएं",
   "@writingPreferencesSection": {
     "description": "Section header for writing preferences"
   },
-  "contentGenerationSection": "Content Generation",
+  "contentGenerationSection": "सामग्री निर्माण",
   "@contentGenerationSection": {
     "description": "Section header for content generation settings"
   },
-  "aboutSection": "About",
+  "aboutSection": "बारे में",
   "@aboutSection": {
     "description": "Section header for about information"
   },
-  "writingStyleLabel": "Writing Style",
+  "writingStyleLabel": "लेखन शैली",
   "@writingStyleLabel": {
     "description": "Label for writing style setting"
   },
-  "writingStyleCreative": "Creative - Imaginative and expressive",
+  "writingStyleCreative": "रचनात्मक - कल्पनाशील और अभिव्यक्तिपूर्ण",
   "@writingStyleCreative": {
     "description": "Writing style option: creative"
   },
-  "writingStyleBalanced": "Balanced - Moderate creativity",
+  "writingStyleBalanced": "संतुलित - मध्यम रचनात्मकता",
   "@writingStyleBalanced": {
     "description": "Writing style option: balanced"
   },
-  "writingStylePrecise": "Precise - Clear and concise",
+  "writingStylePrecise": "सटीक - स्पष्ट और संक्षिप्त",
   "@writingStylePrecise": {
     "description": "Writing style option: precise"
   },
-  "contentLanguageLabel": "Content Language",
+  "contentLanguageLabel": "सामग्री भाषा",
   "@contentLanguageLabel": {
     "description": "Label for content language setting (for AI generation)"
   },
-  "uiLanguageLabel": "UI Language",
+  "uiLanguageLabel": "यूआई भाषा",
   "@uiLanguageLabel": {
     "description": "Label for UI language setting"
   },
-  "uiLanguageSystemDefault": "System Default",
+  "uiLanguageSystemDefault": "सिस्टम डिफ़ॉल्ट",
   "@uiLanguageSystemDefault": {
     "description": "Option for system default UI language"
   },
-  "toneLabel": "Tone",
+  "toneLabel": "स्वर",
   "@toneLabel": {
     "description": "Label for tone setting"
   },
-  "toneCasual": "Casual - Friendly and relaxed",
+  "toneCasual": "आकस्मिक - मैत्रीपूर्ण और आरामदायक",
   "@toneCasual": {
     "description": "Tone option: casual"
   },
-  "toneNeutral": "Neutral - Balanced tone",
+  "toneNeutral": "तटस्थ - संतुलित स्वर",
   "@toneNeutral": {
     "description": "Tone option: neutral"
   },
-  "toneFormal": "Formal - Professional and serious",
+  "toneFormal": "औपचारिक - व्यावसायिक और गंभीर",
   "@toneFormal": {
     "description": "Tone option: formal"
   },
-  "vocabularyLevelLabel": "Vocabulary Level",
+  "vocabularyLevelLabel": "शब्दावली स्तर",
   "@vocabularyLevelLabel": {
     "description": "Label for vocabulary level setting"
   },
-  "vocabularySimple": "Simple - Easy to understand",
+  "vocabularySimple": "सरल - समझने में आसान",
   "@vocabularySimple": {
     "description": "Vocabulary level option: simple"
   },
-  "vocabularyModerate": "Moderate - Balanced vocabulary",
+  "vocabularyModerate": "मध्यम - संतुलित शब्दावली",
   "@vocabularyModerate": {
     "description": "Vocabulary level option: moderate"
   },
-  "vocabularyAdvanced": "Advanced - Rich vocabulary",
+  "vocabularyAdvanced": "उन्नत - समृद्ध शब्दावली",
   "@vocabularyAdvanced": {
     "description": "Vocabulary level option: advanced"
   },
-  "favoriteAuthorLabel": "Favorite Author",
+  "favoriteAuthorLabel": "पसंदीदा लेखक",
   "@favoriteAuthorLabel": {
     "description": "Label for favorite author setting"
   },
-  "favoriteAuthorHint": "e.g., J.K. Rowling",
+  "favoriteAuthorHint": "उदा.: जे.के. राउलिंग",
   "@favoriteAuthorHint": {
     "description": "Hint text for favorite author input"
   },
-  "favoriteAuthorDescription": "Enter the name of your favorite author for AI to emulate their writing style (optional).",
+  "favoriteAuthorDescription": "अपने पसंदीदा लेखक का नाम दर्ज करें ताकि कृत्रिम बुद्धिमत्ता उनकी लेखन शैली की नकल कर सके (वैकल्पिक)।",
   "@favoriteAuthorDescription": {
     "description": "Description text for favorite author setting"
   },
-  "defaultChapterCountLabel": "Default Chapter Count",
+  "defaultChapterCountLabel": "डिफ़ॉल्ट अध्याय संख्या",
   "@defaultChapterCountLabel": {
     "description": "Label for default chapter count setting"
   },
-  "chapterCountOption": "{count} chapters",
+  "chapterCountOption": "{count} अध्याय",
   "@chapterCountOption": {
     "description": "Chapter count option format",
     "placeholders": {
@@ -136,47 +136,47 @@
       }
     }
   },
-  "shortBook": "Short book",
+  "shortBook": "छोटी किताब",
   "@shortBook": {
     "description": "Chapter count label: 5 chapters"
   },
-  "standardBook": "Standard book",
+  "standardBook": "मानक किताब",
   "@standardBook": {
     "description": "Chapter count label: 10 chapters"
   },
-  "longerBook": "Longer book",
+  "longerBook": "लंबी किताब",
   "@longerBook": {
     "description": "Chapter count label: 15 chapters"
   },
-  "fullLengthNovel": "Full-length novel",
+  "fullLengthNovel": "पूर्ण लंबाई उपन्यास",
   "@fullLengthNovel": {
     "description": "Chapter count label: 20 chapters"
   },
-  "extendedNovel": "Extended novel",
+  "extendedNovel": "विस्तारित उपन्यास",
   "@extendedNovel": {
     "description": "Chapter count label: 25 chapters"
   },
-  "epicLength": "Epic length",
+  "epicLength": "महाकाव्य लंबाई",
   "@epicLength": {
     "description": "Chapter count label: 30 chapters"
   },
-  "versionLabel": "Version",
+  "versionLabel": "संस्करण",
   "@versionLabel": {
     "description": "Label for version information"
   },
-  "licenseLabel": "License",
+  "licenseLabel": "लाइसेंस",
   "@licenseLabel": {
     "description": "Label for license information"
   },
-  "mitLicense": "MIT License",
+  "mitLicense": "MIT लाइसेंस",
   "@mitLicense": {
     "description": "License type"
   },
-  "clearAuthor": "Clear",
+  "clearAuthor": "साफ करें",
   "@clearAuthor": {
     "description": "Button to clear favorite author"
   },
-  "saveAuthor": "Save",
+  "saveAuthor": "सहेजें",
   "@saveAuthor": {
     "description": "Button to save favorite author"
   }

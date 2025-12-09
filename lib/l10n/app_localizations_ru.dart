@@ -122,110 +122,111 @@ class AppLocalizationsRu extends AppLocalizations {
   String get untitledBook => 'Книга Без Названия';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => 'Параметры';
 
   @override
-  String get writingPreferencesSection => 'Writing Preferences';
+  String get writingPreferencesSection => 'Предпочтения письма';
 
   @override
-  String get contentGenerationSection => 'Content Generation';
+  String get contentGenerationSection => 'Генерация контента';
 
   @override
-  String get aboutSection => 'About';
+  String get aboutSection => 'О программе';
 
   @override
-  String get writingStyleLabel => 'Writing Style';
+  String get writingStyleLabel => 'Стиль письма';
 
   @override
-  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+  String get writingStyleCreative =>
+      'Творческий - Воображаемый и выразительный';
 
   @override
-  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+  String get writingStyleBalanced => 'Сбалансированный - Умеренная творчество';
 
   @override
-  String get writingStylePrecise => 'Precise - Clear and concise';
+  String get writingStylePrecise => 'Точный - Четкий и лаконичный';
 
   @override
-  String get contentLanguageLabel => 'Content Language';
+  String get contentLanguageLabel => 'Язык контента';
 
   @override
-  String get uiLanguageLabel => 'UI Language';
+  String get uiLanguageLabel => 'Язык интерфейса';
 
   @override
-  String get uiLanguageSystemDefault => 'System Default';
+  String get uiLanguageSystemDefault => 'По умолчанию системы';
 
   @override
-  String get toneLabel => 'Tone';
+  String get toneLabel => 'Тон';
 
   @override
-  String get toneCasual => 'Casual - Friendly and relaxed';
+  String get toneCasual => 'Непринужденный - Дружелюбный и расслабленный';
 
   @override
-  String get toneNeutral => 'Neutral - Balanced tone';
+  String get toneNeutral => 'Нейтральный - Сбалансированный тон';
 
   @override
-  String get toneFormal => 'Formal - Professional and serious';
+  String get toneFormal => 'Официальный - Профессиональный и серьезный';
 
   @override
-  String get vocabularyLevelLabel => 'Vocabulary Level';
+  String get vocabularyLevelLabel => 'Уровень словарного запаса';
 
   @override
-  String get vocabularySimple => 'Simple - Easy to understand';
+  String get vocabularySimple => 'Простой - Легко понять';
 
   @override
-  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+  String get vocabularyModerate => 'Умеренный - Сбалансированный словарь';
 
   @override
-  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+  String get vocabularyAdvanced => 'Продвинутый - Богатый словарь';
 
   @override
-  String get favoriteAuthorLabel => 'Favorite Author';
+  String get favoriteAuthorLabel => 'Любимый автор';
 
   @override
-  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+  String get favoriteAuthorHint => 'напр., Дж. К. Роулинг';
 
   @override
   String get favoriteAuthorDescription =>
-      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+      'Введите имя вашего любимого автора, чтобы ИИ подражал их стилю письма (опционально).';
 
   @override
-  String get defaultChapterCountLabel => 'Default Chapter Count';
+  String get defaultChapterCountLabel => 'Количество глав по умолчанию';
 
   @override
   String chapterCountOption(int count) {
-    return '$count chapters';
+    return '$count глав';
   }
 
   @override
-  String get shortBook => 'Short book';
+  String get shortBook => 'Короткая книга';
 
   @override
-  String get standardBook => 'Standard book';
+  String get standardBook => 'Стандартная книга';
 
   @override
-  String get longerBook => 'Longer book';
+  String get longerBook => 'Более длинная книга';
 
   @override
-  String get fullLengthNovel => 'Full-length novel';
+  String get fullLengthNovel => 'Полнометражный роман';
 
   @override
-  String get extendedNovel => 'Extended novel';
+  String get extendedNovel => 'Расширенный роман';
 
   @override
-  String get epicLength => 'Epic length';
+  String get epicLength => 'Эпическая длина';
 
   @override
-  String get versionLabel => 'Version';
+  String get versionLabel => 'Версия';
 
   @override
-  String get licenseLabel => 'License';
+  String get licenseLabel => 'Лицензия';
 
   @override
-  String get mitLicense => 'MIT License';
+  String get mitLicense => 'Лицензия MIT';
 
   @override
-  String get clearAuthor => 'Clear';
+  String get clearAuthor => 'Очистить';
 
   @override
-  String get saveAuthor => 'Save';
+  String get saveAuthor => 'Сохранить';
 }

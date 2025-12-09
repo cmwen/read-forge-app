@@ -122,110 +122,110 @@ class AppLocalizationsHi extends AppLocalizations {
   String get untitledBook => 'शीर्षक रहित पुस्तक';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => 'सेटिंग्स';
 
   @override
-  String get writingPreferencesSection => 'Writing Preferences';
+  String get writingPreferencesSection => 'लेखन प्राथमिकताएं';
 
   @override
-  String get contentGenerationSection => 'Content Generation';
+  String get contentGenerationSection => 'सामग्री निर्माण';
 
   @override
-  String get aboutSection => 'About';
+  String get aboutSection => 'बारे में';
 
   @override
-  String get writingStyleLabel => 'Writing Style';
+  String get writingStyleLabel => 'लेखन शैली';
 
   @override
-  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+  String get writingStyleCreative => 'रचनात्मक - कल्पनाशील और अभिव्यक्तिपूर्ण';
 
   @override
-  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+  String get writingStyleBalanced => 'संतुलित - मध्यम रचनात्मकता';
 
   @override
-  String get writingStylePrecise => 'Precise - Clear and concise';
+  String get writingStylePrecise => 'सटीक - स्पष्ट और संक्षिप्त';
 
   @override
-  String get contentLanguageLabel => 'Content Language';
+  String get contentLanguageLabel => 'सामग्री भाषा';
 
   @override
-  String get uiLanguageLabel => 'UI Language';
+  String get uiLanguageLabel => 'यूआई भाषा';
 
   @override
-  String get uiLanguageSystemDefault => 'System Default';
+  String get uiLanguageSystemDefault => 'सिस्टम डिफ़ॉल्ट';
 
   @override
-  String get toneLabel => 'Tone';
+  String get toneLabel => 'स्वर';
 
   @override
-  String get toneCasual => 'Casual - Friendly and relaxed';
+  String get toneCasual => 'आकस्मिक - मैत्रीपूर्ण और आरामदायक';
 
   @override
-  String get toneNeutral => 'Neutral - Balanced tone';
+  String get toneNeutral => 'तटस्थ - संतुलित स्वर';
 
   @override
-  String get toneFormal => 'Formal - Professional and serious';
+  String get toneFormal => 'औपचारिक - व्यावसायिक और गंभीर';
 
   @override
-  String get vocabularyLevelLabel => 'Vocabulary Level';
+  String get vocabularyLevelLabel => 'शब्दावली स्तर';
 
   @override
-  String get vocabularySimple => 'Simple - Easy to understand';
+  String get vocabularySimple => 'सरल - समझने में आसान';
 
   @override
-  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+  String get vocabularyModerate => 'मध्यम - संतुलित शब्दावली';
 
   @override
-  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+  String get vocabularyAdvanced => 'उन्नत - समृद्ध शब्दावली';
 
   @override
-  String get favoriteAuthorLabel => 'Favorite Author';
+  String get favoriteAuthorLabel => 'पसंदीदा लेखक';
 
   @override
-  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+  String get favoriteAuthorHint => 'उदा.: जे.के. राउलिंग';
 
   @override
   String get favoriteAuthorDescription =>
-      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+      'अपने पसंदीदा लेखक का नाम दर्ज करें ताकि कृत्रिम बुद्धिमत्ता उनकी लेखन शैली की नकल कर सके (वैकल्पिक)।';
 
   @override
-  String get defaultChapterCountLabel => 'Default Chapter Count';
+  String get defaultChapterCountLabel => 'डिफ़ॉल्ट अध्याय संख्या';
 
   @override
   String chapterCountOption(int count) {
-    return '$count chapters';
+    return '$count अध्याय';
   }
 
   @override
-  String get shortBook => 'Short book';
+  String get shortBook => 'छोटी किताब';
 
   @override
-  String get standardBook => 'Standard book';
+  String get standardBook => 'मानक किताब';
 
   @override
-  String get longerBook => 'Longer book';
+  String get longerBook => 'लंबी किताब';
 
   @override
-  String get fullLengthNovel => 'Full-length novel';
+  String get fullLengthNovel => 'पूर्ण लंबाई उपन्यास';
 
   @override
-  String get extendedNovel => 'Extended novel';
+  String get extendedNovel => 'विस्तारित उपन्यास';
 
   @override
-  String get epicLength => 'Epic length';
+  String get epicLength => 'महाकाव्य लंबाई';
 
   @override
-  String get versionLabel => 'Version';
+  String get versionLabel => 'संस्करण';
 
   @override
-  String get licenseLabel => 'License';
+  String get licenseLabel => 'लाइसेंस';
 
   @override
-  String get mitLicense => 'MIT License';
+  String get mitLicense => 'MIT लाइसेंस';
 
   @override
-  String get clearAuthor => 'Clear';
+  String get clearAuthor => 'साफ करें';
 
   @override
-  String get saveAuthor => 'Save';
+  String get saveAuthor => 'सहेजें';
 }

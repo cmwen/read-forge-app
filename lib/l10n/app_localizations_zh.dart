@@ -118,112 +118,111 @@ class AppLocalizationsZh extends AppLocalizations {
   String get untitledBook => '无标题图书';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => '设置';
 
   @override
-  String get writingPreferencesSection => 'Writing Preferences';
+  String get writingPreferencesSection => '写作偏好';
 
   @override
-  String get contentGenerationSection => 'Content Generation';
+  String get contentGenerationSection => '内容生成';
 
   @override
-  String get aboutSection => 'About';
+  String get aboutSection => '关于';
 
   @override
-  String get writingStyleLabel => 'Writing Style';
+  String get writingStyleLabel => '写作风格';
 
   @override
-  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+  String get writingStyleCreative => '创意 - 富有想象力和表现力';
 
   @override
-  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+  String get writingStyleBalanced => '平衡 - 中等创意';
 
   @override
-  String get writingStylePrecise => 'Precise - Clear and concise';
+  String get writingStylePrecise => '精确 - 清晰简洁';
 
   @override
-  String get contentLanguageLabel => 'Content Language';
+  String get contentLanguageLabel => '内容语言';
 
   @override
-  String get uiLanguageLabel => 'UI Language';
+  String get uiLanguageLabel => '界面语言';
 
   @override
-  String get uiLanguageSystemDefault => 'System Default';
+  String get uiLanguageSystemDefault => '系统默认';
 
   @override
-  String get toneLabel => 'Tone';
+  String get toneLabel => '语气';
 
   @override
-  String get toneCasual => 'Casual - Friendly and relaxed';
+  String get toneCasual => '休闲 - 友好轻松';
 
   @override
-  String get toneNeutral => 'Neutral - Balanced tone';
+  String get toneNeutral => '中立 - 平衡语气';
 
   @override
-  String get toneFormal => 'Formal - Professional and serious';
+  String get toneFormal => '正式 - 专业严肃';
 
   @override
-  String get vocabularyLevelLabel => 'Vocabulary Level';
+  String get vocabularyLevelLabel => '词汇级别';
 
   @override
-  String get vocabularySimple => 'Simple - Easy to understand';
+  String get vocabularySimple => '简单 - 易于理解';
 
   @override
-  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+  String get vocabularyModerate => '中等 - 平衡词汇';
 
   @override
-  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+  String get vocabularyAdvanced => '高级 - 丰富词汇';
 
   @override
-  String get favoriteAuthorLabel => 'Favorite Author';
+  String get favoriteAuthorLabel => '喜爱的作者';
 
   @override
-  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+  String get favoriteAuthorHint => '例如：J.K. 罗琳';
 
   @override
-  String get favoriteAuthorDescription =>
-      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+  String get favoriteAuthorDescription => '输入您喜爱的作者名称，AI 将模仿他们的写作风格（可选）。';
 
   @override
-  String get defaultChapterCountLabel => 'Default Chapter Count';
+  String get defaultChapterCountLabel => '默认章节数';
 
   @override
   String chapterCountOption(int count) {
-    return '$count chapters';
+    return '$count 个章节';
   }
 
   @override
-  String get shortBook => 'Short book';
+  String get shortBook => '短书';
 
   @override
-  String get standardBook => 'Standard book';
+  String get standardBook => '标准书籍';
 
   @override
-  String get longerBook => 'Longer book';
+  String get longerBook => '较长书籍';
 
   @override
-  String get fullLengthNovel => 'Full-length novel';
+  String get fullLengthNovel => '完整长篇小说';
 
   @override
-  String get extendedNovel => 'Extended novel';
+  String get extendedNovel => '拓展长篇小说';
 
   @override
-  String get epicLength => 'Epic length';
+  String get epicLength => '史诗级长度';
 
   @override
-  String get versionLabel => 'Version';
+  String get versionLabel => '版本';
 
   @override
-  String get licenseLabel => 'License';
+  String get licenseLabel => '许可证';
 
   @override
-  String get mitLicense => 'MIT License';
+  String get mitLicense => 'MIT 许可证';
 
   @override
-  String get clearAuthor => 'Clear';
+  String get clearAuthor => '清除';
 
   @override
-  String get saveAuthor => 'Save';
+  String get saveAuthor => '保存';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -340,110 +339,109 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
   String get untitledBook => '無標題圖書';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => '設定';
 
   @override
-  String get writingPreferencesSection => 'Writing Preferences';
+  String get writingPreferencesSection => '寫作偏好';
 
   @override
-  String get contentGenerationSection => 'Content Generation';
+  String get contentGenerationSection => '內容生成';
 
   @override
-  String get aboutSection => 'About';
+  String get aboutSection => '關於';
 
   @override
-  String get writingStyleLabel => 'Writing Style';
+  String get writingStyleLabel => '寫作風格';
 
   @override
-  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+  String get writingStyleCreative => '創意 - 富有想像力和表現力';
 
   @override
-  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+  String get writingStyleBalanced => '平衡 - 中等創意';
 
   @override
-  String get writingStylePrecise => 'Precise - Clear and concise';
+  String get writingStylePrecise => '精確 - 清晰簡潔';
 
   @override
-  String get contentLanguageLabel => 'Content Language';
+  String get contentLanguageLabel => '內容語言';
 
   @override
-  String get uiLanguageLabel => 'UI Language';
+  String get uiLanguageLabel => '介面語言';
 
   @override
-  String get uiLanguageSystemDefault => 'System Default';
+  String get uiLanguageSystemDefault => '系統預設';
 
   @override
-  String get toneLabel => 'Tone';
+  String get toneLabel => '語氣';
 
   @override
-  String get toneCasual => 'Casual - Friendly and relaxed';
+  String get toneCasual => '休閒 - 友善輕鬆';
 
   @override
-  String get toneNeutral => 'Neutral - Balanced tone';
+  String get toneNeutral => '中立 - 平衡語氣';
 
   @override
-  String get toneFormal => 'Formal - Professional and serious';
+  String get toneFormal => '正式 - 專業嚴肅';
 
   @override
-  String get vocabularyLevelLabel => 'Vocabulary Level';
+  String get vocabularyLevelLabel => '詞彙級別';
 
   @override
-  String get vocabularySimple => 'Simple - Easy to understand';
+  String get vocabularySimple => '簡單 - 易於理解';
 
   @override
-  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+  String get vocabularyModerate => '中等 - 平衡詞彙';
 
   @override
-  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+  String get vocabularyAdvanced => '高級 - 豐富詞彙';
 
   @override
-  String get favoriteAuthorLabel => 'Favorite Author';
+  String get favoriteAuthorLabel => '喜愛的作者';
 
   @override
-  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+  String get favoriteAuthorHint => '例如：J.K. 羅琳';
 
   @override
-  String get favoriteAuthorDescription =>
-      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+  String get favoriteAuthorDescription => '輸入您喜愛的作者名稱，AI 將模仿他們的寫作風格（可選）。';
 
   @override
-  String get defaultChapterCountLabel => 'Default Chapter Count';
+  String get defaultChapterCountLabel => '預設章節數';
 
   @override
   String chapterCountOption(int count) {
-    return '$count chapters';
+    return '$count 個章節';
   }
 
   @override
-  String get shortBook => 'Short book';
+  String get shortBook => '短書';
 
   @override
-  String get standardBook => 'Standard book';
+  String get standardBook => '標準書籍';
 
   @override
-  String get longerBook => 'Longer book';
+  String get longerBook => '較長書籍';
 
   @override
-  String get fullLengthNovel => 'Full-length novel';
+  String get fullLengthNovel => '完整長篇小說';
 
   @override
-  String get extendedNovel => 'Extended novel';
+  String get extendedNovel => '拓展長篇小說';
 
   @override
-  String get epicLength => 'Epic length';
+  String get epicLength => '史詩級長度';
 
   @override
-  String get versionLabel => 'Version';
+  String get versionLabel => '版本';
 
   @override
-  String get licenseLabel => 'License';
+  String get licenseLabel => '授權條款';
 
   @override
-  String get mitLicense => 'MIT License';
+  String get mitLicense => 'MIT 授權條款';
 
   @override
-  String get clearAuthor => 'Clear';
+  String get clearAuthor => '清除';
 
   @override
-  String get saveAuthor => 'Save';
+  String get saveAuthor => '保存';
 }

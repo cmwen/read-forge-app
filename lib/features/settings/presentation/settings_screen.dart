@@ -32,20 +32,27 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.style),
             title: Text(l10n.writingStyleLabel),
-            subtitle: Text(_getWritingStyleLabel(context, settings.writingStyle)),
-            onTap: () => _showWritingStylePicker(context, notifier, settings, l10n),
+            subtitle: Text(
+              _getWritingStyleLabel(context, settings.writingStyle),
+            ),
+            onTap: () =>
+                _showWritingStylePicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(l10n.contentLanguageLabel),
             subtitle: Text(settings.language),
-            onTap: () => _showContentLanguagePicker(context, notifier, settings, l10n),
+            onTap: () =>
+                _showContentLanguagePicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.public),
             title: Text(l10n.uiLanguageLabel),
-            subtitle: Text(_getUILanguageLabel(context, settings.uiLanguageCode)),
-            onTap: () => _showUILanguagePicker(context, notifier, settings, l10n),
+            subtitle: Text(
+              _getUILanguageLabel(context, settings.uiLanguageCode),
+            ),
+            onTap: () =>
+                _showUILanguagePicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.mood),
@@ -56,15 +63,16 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.menu_book),
             title: Text(l10n.vocabularyLevelLabel),
-            subtitle: Text(_getVocabularyLabel(context, settings.vocabularyLevel)),
-            onTap: () => _showVocabularyPicker(context, notifier, settings, l10n),
+            subtitle: Text(
+              _getVocabularyLabel(context, settings.vocabularyLevel),
+            ),
+            onTap: () =>
+                _showVocabularyPicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.person),
             title: Text(l10n.favoriteAuthorLabel),
-            subtitle: Text(
-              settings.favoriteAuthor ?? l10n.favoriteAuthorHint,
-            ),
+            subtitle: Text(settings.favoriteAuthor ?? l10n.favoriteAuthorHint),
             onTap: () => _showAuthorDialog(context, notifier, settings, l10n),
           ),
 
@@ -84,7 +92,8 @@ class SettingsScreen extends ConsumerWidget {
             leading: const Icon(Icons.format_list_numbered),
             title: Text(l10n.defaultChapterCountLabel),
             subtitle: Text(l10n.chapterCountOption(settings.suggestedChapters)),
-            onTap: () => _showChapterCountPicker(context, notifier, settings, l10n),
+            onTap: () =>
+                _showChapterCountPicker(context, notifier, settings, l10n),
           ),
 
           const Divider(),
@@ -139,7 +148,7 @@ class SettingsScreen extends ConsumerWidget {
     if (code == 'system') {
       return l10n.uiLanguageSystemDefault;
     }
-    
+
     final languageNames = {
       'en': 'English',
       'es': 'Español',

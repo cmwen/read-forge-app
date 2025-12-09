@@ -145,11 +145,8 @@ class TitleResponse extends LLMResponse {
   final String title;
   final String? description;
 
-  TitleResponse({
-    required this.title,
-    this.description,
-    super.timestamp,
-  }) : super(type: 'title');
+  TitleResponse({required this.title, this.description, super.timestamp})
+    : super(type: 'title');
 
   factory TitleResponse.fromJson(Map<String, dynamic> json) {
     return TitleResponse(
