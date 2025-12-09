@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+const base = import.meta.env.BASE_URL || '/';
 ---
 <BaseLayout title="ReadForge">
   <section>
@@ -52,7 +53,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 cd read-forge-app
 flutter pub get
 flutter run</pre>
-      <p style="margin-top:8px"><a href="/install" style="color:var(--accent);text-decoration:none">View full installation guide →</a></p>
+      <p style="margin-top:8px"><a href={`${base}install`} style="color:var(--accent);text-decoration:none">View full installation guide →</a></p>
     </div>
 
     <div class="card">

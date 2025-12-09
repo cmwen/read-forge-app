@@ -23,5 +23,6 @@ const REPO_NAME = 'read-forge-app';
 
 export default defineConfig({
   site: `https://${GITHUB_USERNAME}.github.io`,
-  base: `/${REPO_NAME}`,
+  // IMPORTANT: include a trailing slash so import.meta.env.BASE_URL ends with '/'
+  base: `/${REPO_NAME}/`,
 });

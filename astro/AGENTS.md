@@ -83,9 +83,63 @@ const REPO_NAME = 'min-android-app-template';
 
 export default defineConfig({
   site: `https://${GITHUB_USERNAME}.github.io`,
-  base: `/${REPO_NAME}`,
+  // Use a trailing slash so BASE_URL is '/<repo>/' which concatenates cleanly in templates
+  base: `/${REPO_NAME}/`,
 });
+
+## Template guidance for LLMs and contributors
+
+When generating or editing templates, always use import.meta.env.BASE_URL to build site-local links and assets. This ensures built pages work when the site is published to a project-scoped GitHub Pages URL (https://<user>.github.io/<repo>/).
+
+Example usage in frontmatter and markup:
+
+```astro
+// in a component or page frontmatter
+const base = import.meta.env.BASE_URL || '/';
+// use the base when referencing assets or internal routes
+<link rel="stylesheet" href={`${base}src/styles.css`} />
+<a href={`${base}about`}>About</a>
 ```
+
+Deployment checklist
+
+- Ensure astro/astro.config.mjs has the correct site and base values for the target Pages deployment. For project sites the base should include a trailing slash, e.g. `base: '/<repo>/'` so import.meta.env.BASE_URL is `/<repo>/`.
+- Confirm the GitHub Actions workflow publishes the contents of `astro/dist/` (or that Pages is configured to serve that folder).
+- If using a custom domain, add or update `CNAME` in the published output and set the Pages custom domain in the repo settings.
+
+Preview & validation (quick manual test)
+
+1. Build the site: `npm run build`
+2. Serve the built output locally (example): `npx serve dist` or install a static server of your choice.
+3. Open the site at `http://localhost:5000/<repo>/` and navigate to internal pages to confirm links/assets respect the subpath.
+
+CI check example (optional)
+
+Add a lightweight check in CI that verifies generated files reference the repo base path. Example npm script entry in package.json:
+
+```json
+"scripts": {
+  "check-base": "grep -R \"href=\\\"/REPO_NAME/\|src=\\\"/REPO_NAME/\" dist || (echo 'Missing base path in build' && exit 1)"
+}
+```
+
+LLM/template rules and helper pattern
+
+- Never generate hardcoded absolute paths that start with `/` for internal links or local assets; they will break on project-scoped Pages sites.
+- Prefer adding a small shared helper in layouts or a top-level component to expose the base value to pages and components:
+
+```astro
+---
+// src/layouts/BaseLayout.astro (frontmatter)
+const base = import.meta.env.BASE_URL || '/';
+---
+<link rel="stylesheet" href={`${base}src/styles.css`} />
+```
+
+- When prompting LLMs, include this instruction: "Use import.meta.env.BASE_URL as the site base and concatenate paths with it (ensure astro.config.mjs.base ends with a trailing slash)."
+
+Last updated: 2025-12-09T20:24:11.673Z
+
 
 If you change these values, ensure CI and README are consistent and update links where necessary.
 
