@@ -278,6 +278,7 @@ class LLMIntegrationService {
   String generateTOCPromptWithFormat(
     String bookTitle, {
     String? description,
+    String? purpose,
     String? genre,
     int suggestedChapters = 10,
     String? writingStyle,
@@ -333,7 +334,7 @@ Please create a detailed Table of Contents for a book.
 
 ## Book Information
 - Title: $bookTitle
-${description != null ? '- Description: $description\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}$preferencesSection
+${description != null ? '- Description: $description\n' : ''}${purpose != null ? '- Purpose/Goal: $purpose\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}$preferencesSection
 ## Instructions
 1. Generate $suggestedChapters chapters with clear, descriptive titles
 2. Each chapter should have a brief 1-2 sentence summary

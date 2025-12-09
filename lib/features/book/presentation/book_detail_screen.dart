@@ -316,6 +316,7 @@ class BookDetailScreen extends ConsumerWidget {
     final prompt = llmService.generateTOCPromptWithFormat(
       book.title,
       description: book.description,
+      purpose: book.purpose,
       suggestedChapters: settings.suggestedChapters,
       writingStyle: settings.writingStyle,
       language: settings.language,
