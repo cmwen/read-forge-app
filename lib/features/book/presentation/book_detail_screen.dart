@@ -138,7 +138,9 @@ class BookDetailScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    l10n.percentComplete(progress.toStringAsFixed(1)),
+                                    l10n.percentComplete(
+                                      progress.toStringAsFixed(1),
+                                    ),
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
@@ -193,7 +195,8 @@ class BookDetailScreen extends ConsumerWidget {
                       ),
                     ),
                     FilledButton.icon(
-                      onPressed: () => _generateTOCPrompt(context, ref, book, l10n),
+                      onPressed: () =>
+                          _generateTOCPrompt(context, ref, book, l10n),
                       icon: const Icon(Icons.auto_awesome, size: 20),
                       label: Text(l10n.generateTOC),
                     ),
@@ -407,15 +410,20 @@ class BookDetailScreen extends ConsumerWidget {
         }
       }
     } else if (action == 'copy' && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.promptCopied)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.promptCopied)));
       // Show paste dialog
       _showPasteDialog(context, ref, book, l10n);
     }
   }
 
-  void _showPasteDialog(BuildContext context, WidgetRef ref, dynamic book, AppLocalizations l10n) {
+  void _showPasteDialog(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+    AppLocalizations l10n,
+  ) {
     final controller = TextEditingController();
 
     showDialog(
@@ -489,21 +497,21 @@ class BookDetailScreen extends ConsumerWidget {
         final uuid = const Uuid();
 
         // Update book title if provided and different from "Untitled"
-        if (response.bookTitle.isNotEmpty && 
+        if (response.bookTitle.isNotEmpty &&
             response.bookTitle != 'Untitled' &&
             (book.title == l10n.untitledBook || book.title.isEmpty)) {
-          await (database.update(database.books)
-                ..where((tbl) => tbl.id.equals(book.id)))
-              .write(
+          await (database.update(
+            database.books,
+          )..where((tbl) => tbl.id.equals(book.id))).write(
             BooksCompanion(
               title: drift.Value(response.bookTitle),
               updatedAt: drift.Value(DateTime.now()),
             ),
           );
-          
+
           // Invalidate book provider to refresh
           ref.invalidate(bookDetailProvider(book.id));
-          
+
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -536,9 +544,7 @@ class BookDetailScreen extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                l10n.chaptersImported(response.chapters.length),
-              ),
+              content: Text(l10n.chaptersImported(response.chapters.length)),
               backgroundColor: Colors.green,
             ),
           );
@@ -588,7 +594,7 @@ class BookDetailScreen extends ConsumerWidget {
     final bookAsync = ref.read(bookDetailProvider(bookId));
     final book = bookAsync.value;
     if (book == null) return;
-    
+
     final l10n = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
@@ -710,9 +716,9 @@ class BookDetailScreen extends ConsumerWidget {
 
               if (context.mounted) {
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.bookUpdated)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.bookUpdated)));
               }
             },
             child: Text(l10n.save),
@@ -728,9 +734,7 @@ class BookDetailScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.deleteBook),
-        content: Text(
-          l10n.confirmDeleteBook(book.title),
-        ),
+        content: Text(l10n.confirmDeleteBook(book.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -842,9 +846,9 @@ class BookDetailScreen extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: jsonString));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.copiedToClipboard)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(l10n.copiedToClipboard)));
               },
               icon: const Icon(Icons.copy),
               label: Text(l10n.copy),

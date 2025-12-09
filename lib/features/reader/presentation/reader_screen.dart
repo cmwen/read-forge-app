@@ -145,7 +145,11 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     );
   }
 
-  Widget _buildEmptyContent(BuildContext context, dynamic chapter, AppLocalizations l10n) {
+  Widget _buildEmptyContent(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -502,7 +506,10 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                 const SizedBox(height: 16),
 
                 // Theme
-                Text(l10n.theme, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  l10n.theme,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 SegmentedButton<String>(
                   segments: [
@@ -555,7 +562,11 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     );
   }
 
-  void _generateChapterContent(BuildContext context, dynamic chapter, AppLocalizations l10n) async {
+  void _generateChapterContent(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) async {
     final llmService = LLMIntegrationService();
 
     // Get book info for context
@@ -686,14 +697,18 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
         }
       }
     } else if (action == 'copy' && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.promptCopied)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.promptCopied)));
       _showPasteChapterDialog(context, chapter, l10n);
     }
   }
 
-  void _showPasteChapterDialog(BuildContext context, dynamic chapter, AppLocalizations l10n) {
+  void _showPasteChapterDialog(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) {
     final controller = TextEditingController();
 
     showDialog(

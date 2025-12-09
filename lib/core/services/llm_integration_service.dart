@@ -253,8 +253,10 @@ class LLMIntegrationService {
 
     // 3. Title should have reasonable capitalization (not all lowercase explanations)
     // Count uppercase letters - a title should have at least one
-    final uppercaseCount =
-        title.split('').where((c) => c == c.toUpperCase() && c != c.toLowerCase()).length;
+    final uppercaseCount = title
+        .split('')
+        .where((c) => c == c.toUpperCase() && c != c.toLowerCase())
+        .length;
     if (uppercaseCount == 0 && !title.startsWith(RegExp(r'\d'))) {
       // No uppercase and doesn't start with number - likely a sentence, not a title
       return null;
@@ -262,7 +264,9 @@ class LLMIntegrationService {
 
     // 4. Title should not end with common sentence endings
     if (title.endsWith('?') ||
-        (title.endsWith('.') && !title.contains('Mr.') && !title.contains('Dr.'))) {
+        (title.endsWith('.') &&
+            !title.contains('Mr.') &&
+            !title.contains('Dr.'))) {
       // Question mark or period suggests a sentence, not a title
       return null;
     }
@@ -450,7 +454,8 @@ Alternatively, you can respond with just the Markdown-formatted text content.
     final exampleJson = {
       'type': 'title',
       'title': 'The Art of Learning Programming',
-      'description': 'A comprehensive guide to mastering programming fundamentals and best practices',
+      'description':
+          'A comprehensive guide to mastering programming fundamentals and best practices',
     };
 
     final context = StringBuffer();
