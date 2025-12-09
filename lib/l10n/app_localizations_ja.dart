@@ -118,4 +118,112 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get untitledBook => '無題の本';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get writingPreferencesSection => 'Writing Preferences';
+
+  @override
+  String get contentGenerationSection => 'Content Generation';
+
+  @override
+  String get aboutSection => 'About';
+
+  @override
+  String get writingStyleLabel => 'Writing Style';
+
+  @override
+  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+
+  @override
+  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+
+  @override
+  String get writingStylePrecise => 'Precise - Clear and concise';
+
+  @override
+  String get contentLanguageLabel => 'Content Language';
+
+  @override
+  String get uiLanguageLabel => 'UI Language';
+
+  @override
+  String get uiLanguageSystemDefault => 'System Default';
+
+  @override
+  String get toneLabel => 'Tone';
+
+  @override
+  String get toneCasual => 'Casual - Friendly and relaxed';
+
+  @override
+  String get toneNeutral => 'Neutral - Balanced tone';
+
+  @override
+  String get toneFormal => 'Formal - Professional and serious';
+
+  @override
+  String get vocabularyLevelLabel => 'Vocabulary Level';
+
+  @override
+  String get vocabularySimple => 'Simple - Easy to understand';
+
+  @override
+  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+
+  @override
+  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+
+  @override
+  String get favoriteAuthorLabel => 'Favorite Author';
+
+  @override
+  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+
+  @override
+  String get favoriteAuthorDescription =>
+      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+
+  @override
+  String get defaultChapterCountLabel => 'Default Chapter Count';
+
+  @override
+  String chapterCountOption(int count) {
+    return '$count chapters';
+  }
+
+  @override
+  String get shortBook => 'Short book';
+
+  @override
+  String get standardBook => 'Standard book';
+
+  @override
+  String get longerBook => 'Longer book';
+
+  @override
+  String get fullLengthNovel => 'Full-length novel';
+
+  @override
+  String get extendedNovel => 'Extended novel';
+
+  @override
+  String get epicLength => 'Epic length';
+
+  @override
+  String get versionLabel => 'Version';
+
+  @override
+  String get licenseLabel => 'License';
+
+  @override
+  String get mitLicense => 'MIT License';
+
+  @override
+  String get clearAuthor => 'Clear';
+
+  @override
+  String get saveAuthor => 'Save';
 }

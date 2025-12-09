@@ -36,6 +36,11 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     await _service.save(state);
   }
 
+  Future<void> setUILanguage(String languageCode) async {
+    state = state.copyWith(uiLanguageCode: languageCode);
+    await _service.save(state);
+  }
+
   Future<void> setTone(String tone) async {
     state = state.copyWith(tone: tone);
     await _service.save(state);

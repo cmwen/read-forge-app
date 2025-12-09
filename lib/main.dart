@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:read_forge/features/library/presentation/library_screen.dart';
+import 'package:read_forge/features/settings/presentation/locale_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 
 void main() {
@@ -9,11 +10,13 @@ void main() {
 }
 
 /// The root widget of the application.
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       localizationsDelegates: const [
@@ -36,6 +39,7 @@ class MyApp extends StatelessWidget {
         Locale('hi'), // Hindi
         Locale('ru'), // Russian
       ],
+      locale: locale,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         useMaterial3: true,

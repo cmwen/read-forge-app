@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/core/domain/models/book_model.dart';
+import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/features/library/presentation/library_provider.dart';
 import 'package:read_forge/features/book/presentation/book_detail_screen.dart';
 import 'package:read_forge/features/settings/presentation/settings_screen.dart';
@@ -383,9 +384,9 @@ class LibraryScreen extends ConsumerWidget {
   ) async {
     // Get text from clipboard
     final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-    final generatedTitle = clipboardData?.text?.trim();
+    final responseText = clipboardData?.text?.trim();
 
-    if (generatedTitle == null || generatedTitle.isEmpty) {
+    if (responseText == null || responseText.isEmpty) {
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
@@ -412,12 +413,53 @@ class LibraryScreen extends ConsumerWidget {
       return;
     }
 
-    // Create book with generated title
+    // Try to parse the response as a structured LLM response
+    final llmService = LLMIntegrationService();
+    final parseResult = llmService.parseResponseWithValidation(responseText);
+
+    if (!parseResult.isValid) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(parseResult.errorMessage ?? 'Invalid response'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+      return;
+    }
+
+    // Extract title and optional description from response
+    String? generatedTitle;
+    String? generatedDescription = description; // Keep original description
+
+    if (parseResult.response is TitleResponse) {
+      final titleResponse = parseResult.response as TitleResponse;
+      generatedTitle = titleResponse.title;
+      // Use generated description if provided and no original description exists
+      if (description == null || description.isEmpty) {
+        generatedDescription = titleResponse.description;
+      }
+    } else {
+      // For backward compatibility: treat plain text as title
+      generatedTitle = responseText;
+    }
+
+    if (generatedTitle.isEmpty) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.noTitleInClipboard)));
+      }
+      return;
+    }
+
+    // Create book with generated title and optional generated description
     final book = await ref
         .read(libraryProvider.notifier)
         .createBook(
           title: generatedTitle,
-          description: description,
+          description: generatedDescription,
           purpose: purpose,
           isTitleGenerated: true,
         );

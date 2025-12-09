@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 import 'package:read_forge/features/settings/domain/app_settings.dart';
+import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// Settings screen for app-wide preferences
@@ -12,16 +13,17 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(appSettingsProvider);
     final notifier = ref.read(appSettingsProvider.notifier);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: ListView(
         children: [
           // Writing Preferences Section
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Writing Preferences',
+              l10n.writingPreferencesSection,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -29,35 +31,41 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.style),
-            title: const Text('Writing Style'),
-            subtitle: Text(_getWritingStyleLabel(settings.writingStyle)),
-            onTap: () => _showWritingStylePicker(context, notifier, settings),
+            title: Text(l10n.writingStyleLabel),
+            subtitle: Text(_getWritingStyleLabel(context, settings.writingStyle)),
+            onTap: () => _showWritingStylePicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.language),
-            title: const Text('Language'),
+            title: Text(l10n.contentLanguageLabel),
             subtitle: Text(settings.language),
-            onTap: () => _showLanguagePicker(context, notifier, settings),
+            onTap: () => _showContentLanguagePicker(context, notifier, settings, l10n),
+          ),
+          ListTile(
+            leading: const Icon(Icons.public),
+            title: Text(l10n.uiLanguageLabel),
+            subtitle: Text(_getUILanguageLabel(context, settings.uiLanguageCode)),
+            onTap: () => _showUILanguagePicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.mood),
-            title: const Text('Tone'),
-            subtitle: Text(_getToneLabel(settings.tone)),
-            onTap: () => _showTonePicker(context, notifier, settings),
+            title: Text(l10n.toneLabel),
+            subtitle: Text(_getToneLabel(context, settings.tone)),
+            onTap: () => _showTonePicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.menu_book),
-            title: const Text('Vocabulary Level'),
-            subtitle: Text(_getVocabularyLabel(settings.vocabularyLevel)),
-            onTap: () => _showVocabularyPicker(context, notifier, settings),
+            title: Text(l10n.vocabularyLevelLabel),
+            subtitle: Text(_getVocabularyLabel(context, settings.vocabularyLevel)),
+            onTap: () => _showVocabularyPicker(context, notifier, settings, l10n),
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Favorite Author'),
+            title: Text(l10n.favoriteAuthorLabel),
             subtitle: Text(
-              settings.favoriteAuthor ?? 'Not set (for style inspiration)',
+              settings.favoriteAuthor ?? l10n.favoriteAuthorHint,
             ),
-            onTap: () => _showAuthorDialog(context, notifier, settings),
+            onTap: () => _showAuthorDialog(context, notifier, settings, l10n),
           ),
 
           const Divider(),
@@ -66,7 +74,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'Content Generation',
+              l10n.contentGenerationSection,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -74,9 +82,9 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.format_list_numbered),
-            title: const Text('Default Chapter Count'),
-            subtitle: Text('${settings.suggestedChapters} chapters'),
-            onTap: () => _showChapterCountPicker(context, notifier, settings),
+            title: Text(l10n.defaultChapterCountLabel),
+            subtitle: Text(l10n.chapterCountOption(settings.suggestedChapters)),
+            onTap: () => _showChapterCountPicker(context, notifier, settings, l10n),
           ),
 
           const Divider(),
@@ -85,7 +93,7 @@ class SettingsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'About',
+              l10n.aboutSection,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -98,54 +106,80 @@ class SettingsScreen extends ConsumerWidget {
               final buildNumber = snapshot.data?.buildNumber ?? '1';
               return ListTile(
                 leading: const Icon(Icons.info_outline),
-                title: const Text('Version'),
+                title: Text(l10n.versionLabel),
                 subtitle: Text('$version+$buildNumber'),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.description),
-            title: const Text('License'),
-            subtitle: const Text('MIT License'),
+            title: Text(l10n.licenseLabel),
+            subtitle: Text(l10n.mitLicense),
           ),
         ],
       ),
     );
   }
 
-  String _getWritingStyleLabel(String style) {
+  String _getWritingStyleLabel(BuildContext context, String style) {
+    final l10n = AppLocalizations.of(context)!;
     switch (style) {
       case 'creative':
-        return 'Creative - Imaginative and expressive';
+        return l10n.writingStyleCreative;
       case 'precise':
-        return 'Precise - Clear and concise';
+        return l10n.writingStylePrecise;
       case 'balanced':
       default:
-        return 'Balanced - Moderate creativity';
+        return l10n.writingStyleBalanced;
     }
   }
 
-  String _getToneLabel(String tone) {
+  String _getUILanguageLabel(BuildContext context, String code) {
+    final l10n = AppLocalizations.of(context)!;
+    if (code == 'system') {
+      return l10n.uiLanguageSystemDefault;
+    }
+    
+    final languageNames = {
+      'en': 'English',
+      'es': 'Español',
+      'zh': '中文 (简体)',
+      'zh_TW': '繁體中文',
+      'fr': 'Français',
+      'de': 'Deutsch',
+      'pt': 'Português',
+      'ja': '日本語',
+      'ko': '한국어',
+      'ar': 'العربية',
+      'hi': 'हिन्दी',
+      'ru': 'Русский',
+    };
+    return languageNames[code] ?? code;
+  }
+
+  String _getToneLabel(BuildContext context, String tone) {
+    final l10n = AppLocalizations.of(context)!;
     switch (tone) {
       case 'casual':
-        return 'Casual - Friendly and relaxed';
+        return l10n.toneCasual;
       case 'formal':
-        return 'Formal - Professional and serious';
+        return l10n.toneFormal;
       case 'neutral':
       default:
-        return 'Neutral - Balanced tone';
+        return l10n.toneNeutral;
     }
   }
 
-  String _getVocabularyLabel(String level) {
+  String _getVocabularyLabel(BuildContext context, String level) {
+    final l10n = AppLocalizations.of(context)!;
     switch (level) {
       case 'simple':
-        return 'Simple - Easy to understand';
+        return l10n.vocabularySimple;
       case 'advanced':
-        return 'Advanced - Rich vocabulary';
+        return l10n.vocabularyAdvanced;
       case 'moderate':
       default:
-        return 'Moderate - Balanced vocabulary';
+        return l10n.vocabularyModerate;
     }
   }
 
@@ -153,16 +187,17 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context,
     AppSettingsNotifier notifier,
     AppSettings settings,
+    AppLocalizations l10n,
   ) {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Writing Style'),
+        title: Text(l10n.writingStyleLabel),
         children: [
           _buildOptionTile(
             context,
-            'Creative',
-            'Imaginative and expressive',
+            l10n.writingStyleCreative.split(' - ')[0],
+            l10n.writingStyleCreative.split(' - ')[1],
             'creative',
             settings.writingStyle,
             (value) {
@@ -172,8 +207,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildOptionTile(
             context,
-            'Balanced',
-            'Moderate creativity',
+            l10n.writingStyleBalanced.split(' - ')[0],
+            l10n.writingStyleBalanced.split(' - ')[1],
             'balanced',
             settings.writingStyle,
             (value) {
@@ -183,8 +218,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildOptionTile(
             context,
-            'Precise',
-            'Clear and concise',
+            l10n.writingStylePrecise.split(' - ')[0],
+            l10n.writingStylePrecise.split(' - ')[1],
             'precise',
             settings.writingStyle,
             (value) {
@@ -197,10 +232,11 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showLanguagePicker(
+  void _showContentLanguagePicker(
     BuildContext context,
     AppSettingsNotifier notifier,
     AppSettings settings,
+    AppLocalizations l10n,
   ) {
     final languages = [
       'English',
@@ -217,7 +253,7 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Language'),
+        title: Text(l10n.contentLanguageLabel),
         children: languages
             .map(
               (language) => _buildOptionTile(
@@ -237,20 +273,66 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
+  void _showUILanguagePicker(
+    BuildContext context,
+    AppSettingsNotifier notifier,
+    AppSettings settings,
+    AppLocalizations l10n,
+  ) {
+    final languageOptions = [
+      (code: 'system', label: l10n.uiLanguageSystemDefault),
+      (code: 'en', label: 'English'),
+      (code: 'es', label: 'Español'),
+      (code: 'zh', label: '中文 (简体)'),
+      (code: 'zh_TW', label: '繁體中文'),
+      (code: 'fr', label: 'Français'),
+      (code: 'de', label: 'Deutsch'),
+      (code: 'pt', label: 'Português'),
+      (code: 'ja', label: '日本語'),
+      (code: 'ko', label: '한국어'),
+      (code: 'ar', label: 'العربية'),
+      (code: 'hi', label: 'हिन्दी'),
+      (code: 'ru', label: 'Русский'),
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.uiLanguageLabel),
+        children: languageOptions
+            .map(
+              (option) => _buildOptionTile(
+                context,
+                option.label,
+                null,
+                option.code,
+                settings.uiLanguageCode,
+                (value) {
+                  notifier.setUILanguage(value);
+                  Navigator.pop(context);
+                },
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
   void _showTonePicker(
     BuildContext context,
     AppSettingsNotifier notifier,
     AppSettings settings,
+    AppLocalizations l10n,
   ) {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Tone'),
+        title: Text(l10n.toneLabel),
         children: [
           _buildOptionTile(
             context,
-            'Casual',
-            'Friendly and relaxed',
+            l10n.toneCasual.split(' - ')[0],
+            l10n.toneCasual.split(' - ')[1],
             'casual',
             settings.tone,
             (value) {
@@ -260,8 +342,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildOptionTile(
             context,
-            'Neutral',
-            'Balanced tone',
+            l10n.toneNeutral.split(' - ')[0],
+            l10n.toneNeutral.split(' - ')[1],
             'neutral',
             settings.tone,
             (value) {
@@ -271,8 +353,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildOptionTile(
             context,
-            'Formal',
-            'Professional and serious',
+            l10n.toneFormal.split(' - ')[0],
+            l10n.toneFormal.split(' - ')[1],
             'formal',
             settings.tone,
             (value) {
@@ -289,16 +371,17 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context,
     AppSettingsNotifier notifier,
     AppSettings settings,
+    AppLocalizations l10n,
   ) {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Vocabulary Level'),
+        title: Text(l10n.vocabularyLevelLabel),
         children: [
           _buildOptionTile(
             context,
-            'Simple',
-            'Easy to understand',
+            l10n.vocabularySimple.split(' - ')[0],
+            l10n.vocabularySimple.split(' - ')[1],
             'simple',
             settings.vocabularyLevel,
             (value) {
@@ -308,8 +391,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildOptionTile(
             context,
-            'Moderate',
-            'Balanced vocabulary',
+            l10n.vocabularyModerate.split(' - ')[0],
+            l10n.vocabularyModerate.split(' - ')[1],
             'moderate',
             settings.vocabularyLevel,
             (value) {
@@ -319,8 +402,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _buildOptionTile(
             context,
-            'Advanced',
-            'Rich vocabulary',
+            l10n.vocabularyAdvanced.split(' - ')[0],
+            l10n.vocabularyAdvanced.split(' - ')[1],
             'advanced',
             settings.vocabularyLevel,
             (value) {
@@ -355,26 +438,27 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context,
     AppSettingsNotifier notifier,
     AppSettings settings,
+    AppLocalizations l10n,
   ) {
     // Define chapter count options
     final chapterOptions = [
-      (count: 5, label: 'Short book'),
-      (count: 10, label: 'Standard book'),
-      (count: 15, label: 'Longer book'),
-      (count: 20, label: 'Full-length novel'),
-      (count: 25, label: 'Extended novel'),
-      (count: 30, label: 'Epic length'),
+      (count: 5, label: l10n.shortBook),
+      (count: 10, label: l10n.standardBook),
+      (count: 15, label: l10n.longerBook),
+      (count: 20, label: l10n.fullLengthNovel),
+      (count: 25, label: l10n.extendedNovel),
+      (count: 30, label: l10n.epicLength),
     ];
 
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Default Chapter Count'),
+        title: Text(l10n.defaultChapterCountLabel),
         children: chapterOptions
             .map(
               (option) => _buildOptionTile(
                 context,
-                '${option.count} chapters',
+                l10n.chapterCountOption(option.count),
                 option.label,
                 '${option.count}',
                 '${settings.suggestedChapters}',
@@ -393,6 +477,7 @@ class SettingsScreen extends ConsumerWidget {
     BuildContext context,
     AppSettingsNotifier notifier,
     AppSettings settings,
+    AppLocalizations l10n,
   ) {
     final controller = TextEditingController(
       text: settings.favoriteAuthor ?? '',
@@ -401,20 +486,18 @@ class SettingsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Favorite Author'),
+        title: Text(l10n.favoriteAuthorLabel),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Enter the name of your favorite author for AI to emulate their writing style (optional).',
-            ),
+            Text(l10n.favoriteAuthorDescription),
             const SizedBox(height: 16),
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                labelText: 'Author Name',
-                hintText: 'e.g., J.K. Rowling',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.favoriteAuthorLabel,
+                hintText: l10n.favoriteAuthorHint,
+                border: const OutlineInputBorder(),
               ),
               textCapitalization: TextCapitalization.words,
             ),
@@ -423,7 +506,7 @@ class SettingsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           if (settings.favoriteAuthor != null)
             TextButton(
@@ -431,7 +514,7 @@ class SettingsScreen extends ConsumerWidget {
                 notifier.setFavoriteAuthor(null);
                 Navigator.of(context).pop();
               },
-              child: const Text('Clear'),
+              child: Text(l10n.clearAuthor),
             ),
           FilledButton(
             onPressed: () {
@@ -439,7 +522,7 @@ class SettingsScreen extends ConsumerWidget {
               notifier.setFavoriteAuthor(author.isEmpty ? null : author);
               Navigator.of(context).pop();
             },
-            child: const Text('Save'),
+            child: Text(l10n.saveAuthor),
           ),
         ],
       ),

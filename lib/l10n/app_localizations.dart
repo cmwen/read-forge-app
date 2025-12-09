@@ -320,6 +320,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Untitled Book'**
   String get untitledBook;
+
+  /// Settings screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Section header for writing preferences
+  ///
+  /// In en, this message translates to:
+  /// **'Writing Preferences'**
+  String get writingPreferencesSection;
+
+  /// Section header for content generation settings
+  ///
+  /// In en, this message translates to:
+  /// **'Content Generation'**
+  String get contentGenerationSection;
+
+  /// Section header for about information
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutSection;
+
+  /// Label for writing style setting
+  ///
+  /// In en, this message translates to:
+  /// **'Writing Style'**
+  String get writingStyleLabel;
+
+  /// Writing style option: creative
+  ///
+  /// In en, this message translates to:
+  /// **'Creative - Imaginative and expressive'**
+  String get writingStyleCreative;
+
+  /// Writing style option: balanced
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced - Moderate creativity'**
+  String get writingStyleBalanced;
+
+  /// Writing style option: precise
+  ///
+  /// In en, this message translates to:
+  /// **'Precise - Clear and concise'**
+  String get writingStylePrecise;
+
+  /// Label for content language setting (for AI generation)
+  ///
+  /// In en, this message translates to:
+  /// **'Content Language'**
+  String get contentLanguageLabel;
+
+  /// Label for UI language setting
+  ///
+  /// In en, this message translates to:
+  /// **'UI Language'**
+  String get uiLanguageLabel;
+
+  /// Option for system default UI language
+  ///
+  /// In en, this message translates to:
+  /// **'System Default'**
+  String get uiLanguageSystemDefault;
+
+  /// Label for tone setting
+  ///
+  /// In en, this message translates to:
+  /// **'Tone'**
+  String get toneLabel;
+
+  /// Tone option: casual
+  ///
+  /// In en, this message translates to:
+  /// **'Casual - Friendly and relaxed'**
+  String get toneCasual;
+
+  /// Tone option: neutral
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral - Balanced tone'**
+  String get toneNeutral;
+
+  /// Tone option: formal
+  ///
+  /// In en, this message translates to:
+  /// **'Formal - Professional and serious'**
+  String get toneFormal;
+
+  /// Label for vocabulary level setting
+  ///
+  /// In en, this message translates to:
+  /// **'Vocabulary Level'**
+  String get vocabularyLevelLabel;
+
+  /// Vocabulary level option: simple
+  ///
+  /// In en, this message translates to:
+  /// **'Simple - Easy to understand'**
+  String get vocabularySimple;
+
+  /// Vocabulary level option: moderate
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate - Balanced vocabulary'**
+  String get vocabularyModerate;
+
+  /// Vocabulary level option: advanced
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced - Rich vocabulary'**
+  String get vocabularyAdvanced;
+
+  /// Label for favorite author setting
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Author'**
+  String get favoriteAuthorLabel;
+
+  /// Hint text for favorite author input
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., J.K. Rowling'**
+  String get favoriteAuthorHint;
+
+  /// Description text for favorite author setting
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the name of your favorite author for AI to emulate their writing style (optional).'**
+  String get favoriteAuthorDescription;
+
+  /// Label for default chapter count setting
+  ///
+  /// In en, this message translates to:
+  /// **'Default Chapter Count'**
+  String get defaultChapterCountLabel;
+
+  /// Chapter count option format
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chapters'**
+  String chapterCountOption(int count);
+
+  /// Chapter count label: 5 chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Short book'**
+  String get shortBook;
+
+  /// Chapter count label: 10 chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Standard book'**
+  String get standardBook;
+
+  /// Chapter count label: 15 chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Longer book'**
+  String get longerBook;
+
+  /// Chapter count label: 20 chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Full-length novel'**
+  String get fullLengthNovel;
+
+  /// Chapter count label: 25 chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Extended novel'**
+  String get extendedNovel;
+
+  /// Chapter count label: 30 chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Epic length'**
+  String get epicLength;
+
+  /// Label for version information
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get versionLabel;
+
+  /// Label for license information
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get licenseLabel;
+
+  /// License type
+  ///
+  /// In en, this message translates to:
+  /// **'MIT License'**
+  String get mitLicense;
+
+  /// Button to clear favorite author
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearAuthor;
+
+  /// Button to save favorite author
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveAuthor;
 }
 
 class _AppLocalizationsDelegate

@@ -3,6 +3,47 @@ import 'package:read_forge/core/domain/models/llm_response.dart';
 
 void main() {
   group('LLMResponse', () {
+    group('TitleResponse', () {
+      test('should serialize to JSON correctly', () {
+        final response = TitleResponse(
+          title: 'The Art of Learning',
+          description: 'A guide to mastering learning techniques',
+        );
+
+        final json = response.toJson();
+
+        expect(json['type'], 'title');
+        expect(json['title'], 'The Art of Learning');
+        expect(json['description'], 'A guide to mastering learning techniques');
+      });
+
+      test('should deserialize from JSON correctly', () {
+        final json = {
+          'type': 'title',
+          'title': 'The Art of Learning',
+          'description': 'A guide to mastering learning techniques',
+          'timestamp': '2025-12-06T00:00:00.000Z',
+        };
+
+        final response = TitleResponse.fromJson(json);
+
+        expect(response.title, 'The Art of Learning');
+        expect(response.description, 'A guide to mastering learning techniques');
+      });
+
+      test('should handle missing description field', () {
+        final json = {
+          'type': 'title',
+          'title': 'The Art of Learning',
+        };
+
+        final response = TitleResponse.fromJson(json);
+
+        expect(response.title, 'The Art of Learning');
+        expect(response.description, null);
+      });
+    });
+
     group('TOCResponse', () {
       test('should serialize to JSON correctly', () {
         final response = TOCResponse(
@@ -168,6 +209,17 @@ void main() {
     });
 
     group('LLMResponse.fromJson', () {
+      test('should correctly identify title response', () {
+        final json = {
+          'type': 'title',
+          'title': 'Test Title',
+        };
+
+        final response = LLMResponse.fromJson(json);
+
+        expect(response, isA<TitleResponse>());
+      });
+
       test('should correctly identify TOC response', () {
         final json = {'type': 'toc', 'bookTitle': 'Test Book', 'chapters': []};
 

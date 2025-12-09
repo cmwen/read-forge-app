@@ -33,5 +33,151 @@
   "draft": "Rascunho",
   "errorLoadingBooks": "Erro ao carregar livros: {error}",
   "retry": "Tentar Novamente",
-  "untitledBook": "Livro Sem Título"
+  "untitledBook": "Livro Sem Título",
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Settings screen title"
+  },
+  "writingPreferencesSection": "Writing Preferences",
+  "@writingPreferencesSection": {
+    "description": "Section header for writing preferences"
+  },
+  "contentGenerationSection": "Content Generation",
+  "@contentGenerationSection": {
+    "description": "Section header for content generation settings"
+  },
+  "aboutSection": "About",
+  "@aboutSection": {
+    "description": "Section header for about information"
+  },
+  "writingStyleLabel": "Writing Style",
+  "@writingStyleLabel": {
+    "description": "Label for writing style setting"
+  },
+  "writingStyleCreative": "Creative - Imaginative and expressive",
+  "@writingStyleCreative": {
+    "description": "Writing style option: creative"
+  },
+  "writingStyleBalanced": "Balanced - Moderate creativity",
+  "@writingStyleBalanced": {
+    "description": "Writing style option: balanced"
+  },
+  "writingStylePrecise": "Precise - Clear and concise",
+  "@writingStylePrecise": {
+    "description": "Writing style option: precise"
+  },
+  "contentLanguageLabel": "Content Language",
+  "@contentLanguageLabel": {
+    "description": "Label for content language setting (for AI generation)"
+  },
+  "uiLanguageLabel": "UI Language",
+  "@uiLanguageLabel": {
+    "description": "Label for UI language setting"
+  },
+  "uiLanguageSystemDefault": "System Default",
+  "@uiLanguageSystemDefault": {
+    "description": "Option for system default UI language"
+  },
+  "toneLabel": "Tone",
+  "@toneLabel": {
+    "description": "Label for tone setting"
+  },
+  "toneCasual": "Casual - Friendly and relaxed",
+  "@toneCasual": {
+    "description": "Tone option: casual"
+  },
+  "toneNeutral": "Neutral - Balanced tone",
+  "@toneNeutral": {
+    "description": "Tone option: neutral"
+  },
+  "toneFormal": "Formal - Professional and serious",
+  "@toneFormal": {
+    "description": "Tone option: formal"
+  },
+  "vocabularyLevelLabel": "Vocabulary Level",
+  "@vocabularyLevelLabel": {
+    "description": "Label for vocabulary level setting"
+  },
+  "vocabularySimple": "Simple - Easy to understand",
+  "@vocabularySimple": {
+    "description": "Vocabulary level option: simple"
+  },
+  "vocabularyModerate": "Moderate - Balanced vocabulary",
+  "@vocabularyModerate": {
+    "description": "Vocabulary level option: moderate"
+  },
+  "vocabularyAdvanced": "Advanced - Rich vocabulary",
+  "@vocabularyAdvanced": {
+    "description": "Vocabulary level option: advanced"
+  },
+  "favoriteAuthorLabel": "Favorite Author",
+  "@favoriteAuthorLabel": {
+    "description": "Label for favorite author setting"
+  },
+  "favoriteAuthorHint": "e.g., J.K. Rowling",
+  "@favoriteAuthorHint": {
+    "description": "Hint text for favorite author input"
+  },
+  "favoriteAuthorDescription": "Enter the name of your favorite author for AI to emulate their writing style (optional).",
+  "@favoriteAuthorDescription": {
+    "description": "Description text for favorite author setting"
+  },
+  "defaultChapterCountLabel": "Default Chapter Count",
+  "@defaultChapterCountLabel": {
+    "description": "Label for default chapter count setting"
+  },
+  "chapterCountOption": "{count} chapters",
+  "@chapterCountOption": {
+    "description": "Chapter count option format",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "shortBook": "Short book",
+  "@shortBook": {
+    "description": "Chapter count label: 5 chapters"
+  },
+  "standardBook": "Standard book",
+  "@standardBook": {
+    "description": "Chapter count label: 10 chapters"
+  },
+  "longerBook": "Longer book",
+  "@longerBook": {
+    "description": "Chapter count label: 15 chapters"
+  },
+  "fullLengthNovel": "Full-length novel",
+  "@fullLengthNovel": {
+    "description": "Chapter count label: 20 chapters"
+  },
+  "extendedNovel": "Extended novel",
+  "@extendedNovel": {
+    "description": "Chapter count label: 25 chapters"
+  },
+  "epicLength": "Epic length",
+  "@epicLength": {
+    "description": "Chapter count label: 30 chapters"
+  },
+  "versionLabel": "Version",
+  "@versionLabel": {
+    "description": "Label for version information"
+  },
+  "licenseLabel": "License",
+  "@licenseLabel": {
+    "description": "Label for license information"
+  },
+  "mitLicense": "MIT License",
+  "@mitLicense": {
+    "description": "License type"
+  },
+  "clearAuthor": "Clear",
+  "@clearAuthor": {
+    "description": "Button to clear favorite author"
+  },
+  "saveAuthor": "Save",
+  "@saveAuthor": {
+    "description": "Button to save favorite author"
+  }
 }
