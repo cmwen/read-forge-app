@@ -2,17 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
 
-/// Provider for reading progress state
-final readingProgressProvider =
-    StateNotifierProvider.family<
-      ReadingProgressNotifier,
-      ReadingProgressState,
-      ReadingProgressParams
-    >(
-      (ref, params) =>
-          ReadingProgressNotifier(ref.watch(bookRepositoryProvider), params),
-    );
-
 /// Parameters for reading progress
 class ReadingProgressParams {
   final int bookId;
@@ -62,16 +51,29 @@ class ReadingProgressState {
 }
 
 /// Notifier for managing reading progress
-class ReadingProgressNotifier extends StateNotifier<ReadingProgressState>
+class ReadingProgressNotifier extends ChangeNotifier
     with WidgetsBindingObserver {
   final dynamic _repository;
   final ReadingProgressParams _params;
   bool _initialized = false;
-
-  ReadingProgressNotifier(this._repository, this._params)
-    : super(ReadingProgressState(scrollController: ScrollController())) {
+  
+  late ReadingProgressState _state;
+  
+  ReadingProgressNotifier(this._repository, this._params) {
+    _state = ReadingProgressState(scrollController: ScrollController());
     _init();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  ReadingProgressState get state => _state;
+  
+  ScrollController get scrollController => _state.scrollController;
+  
+  int get currentPosition => _state.currentPosition;
+  
+  set state(ReadingProgressState newState) {
+    _state = newState;
+    notifyListeners();
   }
 
   Future<void> _init() async {
@@ -161,7 +163,7 @@ class ReadingProgressNotifier extends StateNotifier<ReadingProgressState>
       saveProgress();
     }
   }
-
+  
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -170,3 +172,11 @@ class ReadingProgressNotifier extends StateNotifier<ReadingProgressState>
     super.dispose();
   }
 }
+
+/// Provider for reading progress state
+final readingProgressProvider = Provider.family.autoDispose<
+    ReadingProgressNotifier,
+    ReadingProgressParams>(
+  (ref, params) =>
+      ReadingProgressNotifier(ref.watch(bookRepositoryProvider), params),
+);

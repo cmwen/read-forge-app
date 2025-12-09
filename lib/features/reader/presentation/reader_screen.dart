@@ -48,7 +48,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           bookId: widget.bookId,
           chapterId: widget.chapterId,
         ),
-      ).notifier,
+      ),
     );
     progressNotifier.saveProgress();
     super.dispose();
@@ -372,7 +372,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                         bookId: widget.bookId,
                         chapterId: widget.chapterId,
                       ),
-                    ).notifier,
+                    ),
                   );
                   progressNotifier.saveProgress();
 
@@ -400,7 +400,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                         bookId: widget.bookId,
                         chapterId: widget.chapterId,
                       ),
-                    ).notifier,
+                    ),
                   );
                   progressNotifier.saveProgress();
 
