@@ -14,52 +14,51 @@ final appSettingsServiceProvider = Provider<AppSettingsService>((ref) {
   return AppSettingsService(prefs);
 });
 
-/// StateNotifier for managing app settings
-class AppSettingsNotifier extends StateNotifier<AppSettings> {
-  final AppSettingsService _service;
-
-  AppSettingsNotifier(this._service) : super(const AppSettings()) {
-    _loadSettings();
-  }
-
-  void _loadSettings() {
-    state = _service.load();
+/// Notifier for managing app settings
+class AppSettingsNotifier extends Notifier<AppSettings> {
+  @override
+  AppSettings build() {
+    final service = ref.watch(appSettingsServiceProvider);
+    return service.load();
   }
 
   Future<void> setWritingStyle(String style) async {
+    final service = ref.read(appSettingsServiceProvider);
     state = state.copyWith(writingStyle: style);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setLanguage(String language) async {
+    final service = ref.read(appSettingsServiceProvider);
     state = state.copyWith(language: language);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setTone(String tone) async {
+    final service = ref.read(appSettingsServiceProvider);
     state = state.copyWith(tone: tone);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setVocabularyLevel(String level) async {
+    final service = ref.read(appSettingsServiceProvider);
     state = state.copyWith(vocabularyLevel: level);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setFavoriteAuthor(String? author) async {
+    final service = ref.read(appSettingsServiceProvider);
     state = state.copyWith(favoriteAuthor: author);
-    await _service.save(state);
+    await service.save(state);
   }
 
   Future<void> setSuggestedChapters(int count) async {
+    final service = ref.read(appSettingsServiceProvider);
     state = state.copyWith(suggestedChapters: count);
-    await _service.save(state);
+    await service.save(state);
   }
 }
 
 /// Provider for AppSettingsNotifier
 final appSettingsProvider =
-    StateNotifierProvider<AppSettingsNotifier, AppSettings>((ref) {
-      final service = ref.watch(appSettingsServiceProvider);
-      return AppSettingsNotifier(service);
-    });
+    NotifierProvider<AppSettingsNotifier, AppSettings>(AppSettingsNotifier.new);
