@@ -32,5 +32,6 @@
   "completed": "完了",
   "draft": "下書き",
   "errorLoadingBooks": "本の読み込みエラー：{error}",
-  "retry": "再試行"
+  "retry": "再試行",
+  "untitledBook": "無題の本"
 }

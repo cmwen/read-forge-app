@@ -30,7 +30,7 @@ class BookRepository {
 
   /// Create a new book
   Future<BookModel> createBook({
-    String? title,
+    required String title,
     String? subtitle,
     String? author,
     String? description,
@@ -38,8 +38,7 @@ class BookRepository {
     String? genre,
     bool isTitleGenerated = false,
   }) async {
-    // Use a placeholder title if none provided and it will be generated later
-    final bookTitle = title ?? 'Untitled Book';
+    final bookTitle = title;
 
     final id = await _db
         .into(_db.books)

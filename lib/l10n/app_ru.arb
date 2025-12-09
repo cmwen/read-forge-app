@@ -32,5 +32,6 @@
   "completed": "Завершено",
   "draft": "Черновик",
   "errorLoadingBooks": "Ошибка загрузки книг: {error}",
-  "retry": "Повторить"
+  "retry": "Повторить",
+  "untitledBook": "Книга Без Названия"
 }

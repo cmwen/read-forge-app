@@ -117,4 +117,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get retry => 'पुनः प्रयास करें';
+
+  @override
+  String get untitledBook => 'शीर्षक रहित पुस्तक';
 }

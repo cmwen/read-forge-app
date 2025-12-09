@@ -116,4 +116,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get retry => 'إعادة المحاولة';
+
+  @override
+  String get untitledBook => 'كتاب بدون عنوان';
 }

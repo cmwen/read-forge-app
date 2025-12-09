@@ -181,5 +181,10 @@
   "retry": "Retry",
   "@retry": {
     "description": "Retry button text"
+  },
+  
+  "untitledBook": "Untitled Book",
+  "@untitledBook": {
+    "description": "Placeholder title for books without a title"
   }
 }

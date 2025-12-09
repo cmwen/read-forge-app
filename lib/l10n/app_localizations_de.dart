@@ -118,4 +118,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get retry => 'Wiederholen';
+
+  @override
+  String get untitledBook => 'Buch Ohne Titel';
 }

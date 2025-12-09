@@ -32,5 +32,6 @@
   "completed": "Terminé",
   "draft": "Brouillon",
   "errorLoadingBooks": "Erreur lors du chargement des livres : {error}",
-  "retry": "Réessayer"
+  "retry": "Réessayer",
+  "untitledBook": "Livre Sans Titre"
 }

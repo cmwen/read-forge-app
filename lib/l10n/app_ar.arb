@@ -32,5 +32,6 @@
   "completed": "مكتمل",
   "draft": "مسودة",
   "errorLoadingBooks": "خطأ في تحميل الكتب: {error}",
-  "retry": "إعادة المحاولة"
+  "retry": "إعادة المحاولة",
+  "untitledBook": "كتاب بدون عنوان"
 }

@@ -118,4 +118,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get retry => 'Tentar Novamente';
+
+  @override
+  String get untitledBook => 'Livro Sem Título';
 }

@@ -117,4 +117,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get retry => 'Повторить';
+
+  @override
+  String get untitledBook => 'Книга Без Названия';
 }

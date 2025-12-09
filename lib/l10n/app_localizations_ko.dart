@@ -114,4 +114,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get retry => '다시 시도';
+
+  @override
+  String get untitledBook => '제목 없는 책';
 }

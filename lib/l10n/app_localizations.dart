@@ -314,6 +314,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// Placeholder title for books without a title
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled Book'**
+  String get untitledBook;
 }
 
 class _AppLocalizationsDelegate

@@ -32,5 +32,6 @@
   "completed": "已完成",
   "draft": "草稿",
   "errorLoadingBooks": "加载图书时出错：{error}",
-  "retry": "重试"
+  "retry": "重试",
+  "untitledBook": "无标题图书"
 }

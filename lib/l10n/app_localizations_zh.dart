@@ -113,6 +113,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get retry => '重试';
+
+  @override
+  String get untitledBook => '无标题图书';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -224,4 +227,7 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get retry => '重試';
+
+  @override
+  String get untitledBook => '無標題圖書';
 }

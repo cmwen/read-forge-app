@@ -32,5 +32,6 @@
   "completed": "완료",
   "draft": "초안",
   "errorLoadingBooks": "책을 불러오는 중 오류 발생: {error}",
-  "retry": "다시 시도"
+  "retry": "다시 시도",
+  "untitledBook": "제목 없는 책"
 }

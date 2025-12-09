@@ -24,7 +24,7 @@ class LibraryNotifier extends StateNotifier<AsyncValue<List<BookModel>>> {
 
   /// Create a new book
   Future<BookModel?> createBook({
-    String? title,
+    required String title,
     String? description,
     String? purpose,
     bool isTitleGenerated = false,

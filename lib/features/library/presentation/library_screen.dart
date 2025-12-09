@@ -256,7 +256,7 @@ class LibraryScreen extends ConsumerWidget {
     final book = await ref
         .read(libraryProvider.notifier)
         .createBook(
-          title: title,
+          title: title ?? l10n.untitledBook,
           description: description,
           purpose: purpose,
           isTitleGenerated: false,
@@ -358,7 +358,7 @@ class LibraryScreen extends ConsumerWidget {
       final book = await ref
           .read(libraryProvider.notifier)
           .createBook(
-            title: 'Untitled Book',
+            title: l10n.untitledBook,
             description: description,
             purpose: purpose,
             isTitleGenerated: false,
@@ -396,7 +396,7 @@ class LibraryScreen extends ConsumerWidget {
       final book = await ref
           .read(libraryProvider.notifier)
           .createBook(
-            title: 'Untitled Book',
+            title: l10n.untitledBook,
             description: description,
             purpose: purpose,
             isTitleGenerated: false,

@@ -32,5 +32,6 @@
   "completed": "Abgeschlossen",
   "draft": "Entwurf",
   "errorLoadingBooks": "Fehler beim Laden der Bücher: {error}",
-  "retry": "Wiederholen"
+  "retry": "Wiederholen",
+  "untitledBook": "Buch Ohne Titel"
 }
