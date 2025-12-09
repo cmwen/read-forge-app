@@ -119,110 +119,110 @@ class AppLocalizationsKo extends AppLocalizations {
   String get untitledBook => '제목 없는 책';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => '설정';
 
   @override
-  String get writingPreferencesSection => 'Writing Preferences';
+  String get writingPreferencesSection => '글쓰기 선호도';
 
   @override
-  String get contentGenerationSection => 'Content Generation';
+  String get contentGenerationSection => '콘텐츠 생성';
 
   @override
-  String get aboutSection => 'About';
+  String get aboutSection => '정보';
 
   @override
-  String get writingStyleLabel => 'Writing Style';
+  String get writingStyleLabel => '글쓰기 스타일';
 
   @override
-  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+  String get writingStyleCreative => '창의적 - 상상력 있고 표현력 있는';
 
   @override
-  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+  String get writingStyleBalanced => '균형 - 중간 정도의 창의성';
 
   @override
-  String get writingStylePrecise => 'Precise - Clear and concise';
+  String get writingStylePrecise => '정확 - 명확하고 간결';
 
   @override
-  String get contentLanguageLabel => 'Content Language';
+  String get contentLanguageLabel => '콘텐츠 언어';
 
   @override
-  String get uiLanguageLabel => 'UI Language';
+  String get uiLanguageLabel => 'UI 언어';
 
   @override
-  String get uiLanguageSystemDefault => 'System Default';
+  String get uiLanguageSystemDefault => '시스템 기본값';
 
   @override
-  String get toneLabel => 'Tone';
+  String get toneLabel => '톤';
 
   @override
-  String get toneCasual => 'Casual - Friendly and relaxed';
+  String get toneCasual => '캐주얼 - 친근하고 편한';
 
   @override
-  String get toneNeutral => 'Neutral - Balanced tone';
+  String get toneNeutral => '중립 - 균형 잡힌 톤';
 
   @override
-  String get toneFormal => 'Formal - Professional and serious';
+  String get toneFormal => '공식 - 전문적이고 진지';
 
   @override
-  String get vocabularyLevelLabel => 'Vocabulary Level';
+  String get vocabularyLevelLabel => '어휘 수준';
 
   @override
-  String get vocabularySimple => 'Simple - Easy to understand';
+  String get vocabularySimple => '간단 - 이해하기 쉬운';
 
   @override
-  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+  String get vocabularyModerate => '중간 - 균형 잡힌 어휘';
 
   @override
-  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+  String get vocabularyAdvanced => '고급 - 풍부한 어휘';
 
   @override
-  String get favoriteAuthorLabel => 'Favorite Author';
+  String get favoriteAuthorLabel => '선호하는 작가';
 
   @override
-  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+  String get favoriteAuthorHint => '예: J.K. 롤링';
 
   @override
   String get favoriteAuthorDescription =>
-      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+      'AI가 자신의 글쓰기 스타일을 모방하도록 선호하는 작가의 이름을 입력하세요 (선택 사항).';
 
   @override
-  String get defaultChapterCountLabel => 'Default Chapter Count';
+  String get defaultChapterCountLabel => '기본 장 수';
 
   @override
   String chapterCountOption(int count) {
-    return '$count chapters';
+    return '$count장';
   }
 
   @override
-  String get shortBook => 'Short book';
+  String get shortBook => '짧은 책';
 
   @override
-  String get standardBook => 'Standard book';
+  String get standardBook => '표준 책';
 
   @override
-  String get longerBook => 'Longer book';
+  String get longerBook => '더 긴 책';
 
   @override
-  String get fullLengthNovel => 'Full-length novel';
+  String get fullLengthNovel => '완전한 장편 소설';
 
   @override
-  String get extendedNovel => 'Extended novel';
+  String get extendedNovel => '확장 장편 소설';
 
   @override
-  String get epicLength => 'Epic length';
+  String get epicLength => '서사시적 길이';
 
   @override
-  String get versionLabel => 'Version';
+  String get versionLabel => '버전';
 
   @override
-  String get licenseLabel => 'License';
+  String get licenseLabel => '라이선스';
 
   @override
-  String get mitLicense => 'MIT License';
+  String get mitLicense => 'MIT 라이선스';
 
   @override
-  String get clearAuthor => 'Clear';
+  String get clearAuthor => '지우기';
 
   @override
-  String get saveAuthor => 'Save';
+  String get saveAuthor => '저장';
 }

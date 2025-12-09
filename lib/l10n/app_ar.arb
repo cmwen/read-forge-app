@@ -34,99 +34,99 @@
   "errorLoadingBooks": "خطأ في تحميل الكتب: {error}",
   "retry": "إعادة المحاولة",
   "untitledBook": "كتاب بدون عنوان",
-  "settingsTitle": "Settings",
+  "settingsTitle": "الإعدادات",
   "@settingsTitle": {
     "description": "Settings screen title"
   },
-  "writingPreferencesSection": "Writing Preferences",
+  "writingPreferencesSection": "تفضيلات الكتابة",
   "@writingPreferencesSection": {
     "description": "Section header for writing preferences"
   },
-  "contentGenerationSection": "Content Generation",
+  "contentGenerationSection": "توليد المحتوى",
   "@contentGenerationSection": {
     "description": "Section header for content generation settings"
   },
-  "aboutSection": "About",
+  "aboutSection": "حول",
   "@aboutSection": {
     "description": "Section header for about information"
   },
-  "writingStyleLabel": "Writing Style",
+  "writingStyleLabel": "نمط الكتابة",
   "@writingStyleLabel": {
     "description": "Label for writing style setting"
   },
-  "writingStyleCreative": "Creative - Imaginative and expressive",
+  "writingStyleCreative": "إبداعي - خيالي وتعبيري",
   "@writingStyleCreative": {
     "description": "Writing style option: creative"
   },
-  "writingStyleBalanced": "Balanced - Moderate creativity",
+  "writingStyleBalanced": "متوازن - إبداع معتدل",
   "@writingStyleBalanced": {
     "description": "Writing style option: balanced"
   },
-  "writingStylePrecise": "Precise - Clear and concise",
+  "writingStylePrecise": "دقيق - واضح وموجز",
   "@writingStylePrecise": {
     "description": "Writing style option: precise"
   },
-  "contentLanguageLabel": "Content Language",
+  "contentLanguageLabel": "لغة المحتوى",
   "@contentLanguageLabel": {
     "description": "Label for content language setting (for AI generation)"
   },
-  "uiLanguageLabel": "UI Language",
+  "uiLanguageLabel": "لغة الواجهة",
   "@uiLanguageLabel": {
     "description": "Label for UI language setting"
   },
-  "uiLanguageSystemDefault": "System Default",
+  "uiLanguageSystemDefault": "افتراضي النظام",
   "@uiLanguageSystemDefault": {
     "description": "Option for system default UI language"
   },
-  "toneLabel": "Tone",
+  "toneLabel": "النبرة",
   "@toneLabel": {
     "description": "Label for tone setting"
   },
-  "toneCasual": "Casual - Friendly and relaxed",
+  "toneCasual": "عرضي - ودود وممتع",
   "@toneCasual": {
     "description": "Tone option: casual"
   },
-  "toneNeutral": "Neutral - Balanced tone",
+  "toneNeutral": "محايد - نبرة متوازنة",
   "@toneNeutral": {
     "description": "Tone option: neutral"
   },
-  "toneFormal": "Formal - Professional and serious",
+  "toneFormal": "رسمي - احترافي وجاد",
   "@toneFormal": {
     "description": "Tone option: formal"
   },
-  "vocabularyLevelLabel": "Vocabulary Level",
+  "vocabularyLevelLabel": "مستوى المفردات",
   "@vocabularyLevelLabel": {
     "description": "Label for vocabulary level setting"
   },
-  "vocabularySimple": "Simple - Easy to understand",
+  "vocabularySimple": "بسيط - سهل الفهم",
   "@vocabularySimple": {
     "description": "Vocabulary level option: simple"
   },
-  "vocabularyModerate": "Moderate - Balanced vocabulary",
+  "vocabularyModerate": "معتدل - مفردات متوازنة",
   "@vocabularyModerate": {
     "description": "Vocabulary level option: moderate"
   },
-  "vocabularyAdvanced": "Advanced - Rich vocabulary",
+  "vocabularyAdvanced": "متقدم - مفردات غنية",
   "@vocabularyAdvanced": {
     "description": "Vocabulary level option: advanced"
   },
-  "favoriteAuthorLabel": "Favorite Author",
+  "favoriteAuthorLabel": "المؤلف المفضل",
   "@favoriteAuthorLabel": {
     "description": "Label for favorite author setting"
   },
-  "favoriteAuthorHint": "e.g., J.K. Rowling",
+  "favoriteAuthorHint": "على سبيل المثال: J.K. Rowling",
   "@favoriteAuthorHint": {
     "description": "Hint text for favorite author input"
   },
-  "favoriteAuthorDescription": "Enter the name of your favorite author for AI to emulate their writing style (optional).",
+  "favoriteAuthorDescription": "أدخل اسم مؤلفك المفضل حتى تحاكي الذكاء الاصطناعي أسلوب كتابته (اختياري).",
   "@favoriteAuthorDescription": {
     "description": "Description text for favorite author setting"
   },
-  "defaultChapterCountLabel": "Default Chapter Count",
+  "defaultChapterCountLabel": "عدد الفصول الافتراضي",
   "@defaultChapterCountLabel": {
     "description": "Label for default chapter count setting"
   },
-  "chapterCountOption": "{count} chapters",
+  "chapterCountOption": "{count} فصول",
   "@chapterCountOption": {
     "description": "Chapter count option format",
     "placeholders": {
@@ -136,47 +136,47 @@
       }
     }
   },
-  "shortBook": "Short book",
+  "shortBook": "كتاب قصير",
   "@shortBook": {
     "description": "Chapter count label: 5 chapters"
   },
-  "standardBook": "Standard book",
+  "standardBook": "كتاب قياسي",
   "@standardBook": {
     "description": "Chapter count label: 10 chapters"
   },
-  "longerBook": "Longer book",
+  "longerBook": "كتاب أطول",
   "@longerBook": {
     "description": "Chapter count label: 15 chapters"
   },
-  "fullLengthNovel": "Full-length novel",
+  "fullLengthNovel": "رواية طويلة",
   "@fullLengthNovel": {
     "description": "Chapter count label: 20 chapters"
   },
-  "extendedNovel": "Extended novel",
+  "extendedNovel": "رواية موسعة",
   "@extendedNovel": {
     "description": "Chapter count label: 25 chapters"
   },
-  "epicLength": "Epic length",
+  "epicLength": "طول ملحمي",
   "@epicLength": {
     "description": "Chapter count label: 30 chapters"
   },
-  "versionLabel": "Version",
+  "versionLabel": "الإصدار",
   "@versionLabel": {
     "description": "Label for version information"
   },
-  "licenseLabel": "License",
+  "licenseLabel": "الترخيص",
   "@licenseLabel": {
     "description": "Label for license information"
   },
-  "mitLicense": "MIT License",
+  "mitLicense": "ترخيص MIT",
   "@mitLicense": {
     "description": "License type"
   },
-  "clearAuthor": "Clear",
+  "clearAuthor": "مسح",
   "@clearAuthor": {
     "description": "Button to clear favorite author"
   },
-  "saveAuthor": "Save",
+  "saveAuthor": "حفظ",
   "@saveAuthor": {
     "description": "Button to save favorite author"
   }

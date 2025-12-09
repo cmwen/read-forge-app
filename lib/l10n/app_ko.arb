@@ -34,99 +34,99 @@
   "errorLoadingBooks": "책을 불러오는 중 오류 발생: {error}",
   "retry": "다시 시도",
   "untitledBook": "제목 없는 책",
-  "settingsTitle": "Settings",
+  "settingsTitle": "설정",
   "@settingsTitle": {
     "description": "Settings screen title"
   },
-  "writingPreferencesSection": "Writing Preferences",
+  "writingPreferencesSection": "글쓰기 선호도",
   "@writingPreferencesSection": {
     "description": "Section header for writing preferences"
   },
-  "contentGenerationSection": "Content Generation",
+  "contentGenerationSection": "콘텐츠 생성",
   "@contentGenerationSection": {
     "description": "Section header for content generation settings"
   },
-  "aboutSection": "About",
+  "aboutSection": "정보",
   "@aboutSection": {
     "description": "Section header for about information"
   },
-  "writingStyleLabel": "Writing Style",
+  "writingStyleLabel": "글쓰기 스타일",
   "@writingStyleLabel": {
     "description": "Label for writing style setting"
   },
-  "writingStyleCreative": "Creative - Imaginative and expressive",
+  "writingStyleCreative": "창의적 - 상상력 있고 표현력 있는",
   "@writingStyleCreative": {
     "description": "Writing style option: creative"
   },
-  "writingStyleBalanced": "Balanced - Moderate creativity",
+  "writingStyleBalanced": "균형 - 중간 정도의 창의성",
   "@writingStyleBalanced": {
     "description": "Writing style option: balanced"
   },
-  "writingStylePrecise": "Precise - Clear and concise",
+  "writingStylePrecise": "정확 - 명확하고 간결",
   "@writingStylePrecise": {
     "description": "Writing style option: precise"
   },
-  "contentLanguageLabel": "Content Language",
+  "contentLanguageLabel": "콘텐츠 언어",
   "@contentLanguageLabel": {
     "description": "Label for content language setting (for AI generation)"
   },
-  "uiLanguageLabel": "UI Language",
+  "uiLanguageLabel": "UI 언어",
   "@uiLanguageLabel": {
     "description": "Label for UI language setting"
   },
-  "uiLanguageSystemDefault": "System Default",
+  "uiLanguageSystemDefault": "시스템 기본값",
   "@uiLanguageSystemDefault": {
     "description": "Option for system default UI language"
   },
-  "toneLabel": "Tone",
+  "toneLabel": "톤",
   "@toneLabel": {
     "description": "Label for tone setting"
   },
-  "toneCasual": "Casual - Friendly and relaxed",
+  "toneCasual": "캐주얼 - 친근하고 편한",
   "@toneCasual": {
     "description": "Tone option: casual"
   },
-  "toneNeutral": "Neutral - Balanced tone",
+  "toneNeutral": "중립 - 균형 잡힌 톤",
   "@toneNeutral": {
     "description": "Tone option: neutral"
   },
-  "toneFormal": "Formal - Professional and serious",
+  "toneFormal": "공식 - 전문적이고 진지",
   "@toneFormal": {
     "description": "Tone option: formal"
   },
-  "vocabularyLevelLabel": "Vocabulary Level",
+  "vocabularyLevelLabel": "어휘 수준",
   "@vocabularyLevelLabel": {
     "description": "Label for vocabulary level setting"
   },
-  "vocabularySimple": "Simple - Easy to understand",
+  "vocabularySimple": "간단 - 이해하기 쉬운",
   "@vocabularySimple": {
     "description": "Vocabulary level option: simple"
   },
-  "vocabularyModerate": "Moderate - Balanced vocabulary",
+  "vocabularyModerate": "중간 - 균형 잡힌 어휘",
   "@vocabularyModerate": {
     "description": "Vocabulary level option: moderate"
   },
-  "vocabularyAdvanced": "Advanced - Rich vocabulary",
+  "vocabularyAdvanced": "고급 - 풍부한 어휘",
   "@vocabularyAdvanced": {
     "description": "Vocabulary level option: advanced"
   },
-  "favoriteAuthorLabel": "Favorite Author",
+  "favoriteAuthorLabel": "선호하는 작가",
   "@favoriteAuthorLabel": {
     "description": "Label for favorite author setting"
   },
-  "favoriteAuthorHint": "e.g., J.K. Rowling",
+  "favoriteAuthorHint": "예: J.K. 롤링",
   "@favoriteAuthorHint": {
     "description": "Hint text for favorite author input"
   },
-  "favoriteAuthorDescription": "Enter the name of your favorite author for AI to emulate their writing style (optional).",
+  "favoriteAuthorDescription": "AI가 자신의 글쓰기 스타일을 모방하도록 선호하는 작가의 이름을 입력하세요 (선택 사항).",
   "@favoriteAuthorDescription": {
     "description": "Description text for favorite author setting"
   },
-  "defaultChapterCountLabel": "Default Chapter Count",
+  "defaultChapterCountLabel": "기본 장 수",
   "@defaultChapterCountLabel": {
     "description": "Label for default chapter count setting"
   },
-  "chapterCountOption": "{count} chapters",
+  "chapterCountOption": "{count}장",
   "@chapterCountOption": {
     "description": "Chapter count option format",
     "placeholders": {
@@ -136,47 +136,47 @@
       }
     }
   },
-  "shortBook": "Short book",
+  "shortBook": "짧은 책",
   "@shortBook": {
     "description": "Chapter count label: 5 chapters"
   },
-  "standardBook": "Standard book",
+  "standardBook": "표준 책",
   "@standardBook": {
     "description": "Chapter count label: 10 chapters"
   },
-  "longerBook": "Longer book",
+  "longerBook": "더 긴 책",
   "@longerBook": {
     "description": "Chapter count label: 15 chapters"
   },
-  "fullLengthNovel": "Full-length novel",
+  "fullLengthNovel": "완전한 장편 소설",
   "@fullLengthNovel": {
     "description": "Chapter count label: 20 chapters"
   },
-  "extendedNovel": "Extended novel",
+  "extendedNovel": "확장 장편 소설",
   "@extendedNovel": {
     "description": "Chapter count label: 25 chapters"
   },
-  "epicLength": "Epic length",
+  "epicLength": "서사시적 길이",
   "@epicLength": {
     "description": "Chapter count label: 30 chapters"
   },
-  "versionLabel": "Version",
+  "versionLabel": "버전",
   "@versionLabel": {
     "description": "Label for version information"
   },
-  "licenseLabel": "License",
+  "licenseLabel": "라이선스",
   "@licenseLabel": {
     "description": "Label for license information"
   },
-  "mitLicense": "MIT License",
+  "mitLicense": "MIT 라이선스",
   "@mitLicense": {
     "description": "License type"
   },
-  "clearAuthor": "Clear",
+  "clearAuthor": "지우기",
   "@clearAuthor": {
     "description": "Button to clear favorite author"
   },
-  "saveAuthor": "Save",
+  "saveAuthor": "저장",
   "@saveAuthor": {
     "description": "Button to save favorite author"
   }

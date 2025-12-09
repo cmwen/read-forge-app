@@ -121,110 +121,110 @@ class AppLocalizationsAr extends AppLocalizations {
   String get untitledBook => 'كتاب بدون عنوان';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => 'الإعدادات';
 
   @override
-  String get writingPreferencesSection => 'Writing Preferences';
+  String get writingPreferencesSection => 'تفضيلات الكتابة';
 
   @override
-  String get contentGenerationSection => 'Content Generation';
+  String get contentGenerationSection => 'توليد المحتوى';
 
   @override
-  String get aboutSection => 'About';
+  String get aboutSection => 'حول';
 
   @override
-  String get writingStyleLabel => 'Writing Style';
+  String get writingStyleLabel => 'نمط الكتابة';
 
   @override
-  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+  String get writingStyleCreative => 'إبداعي - خيالي وتعبيري';
 
   @override
-  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+  String get writingStyleBalanced => 'متوازن - إبداع معتدل';
 
   @override
-  String get writingStylePrecise => 'Precise - Clear and concise';
+  String get writingStylePrecise => 'دقيق - واضح وموجز';
 
   @override
-  String get contentLanguageLabel => 'Content Language';
+  String get contentLanguageLabel => 'لغة المحتوى';
 
   @override
-  String get uiLanguageLabel => 'UI Language';
+  String get uiLanguageLabel => 'لغة الواجهة';
 
   @override
-  String get uiLanguageSystemDefault => 'System Default';
+  String get uiLanguageSystemDefault => 'افتراضي النظام';
 
   @override
-  String get toneLabel => 'Tone';
+  String get toneLabel => 'النبرة';
 
   @override
-  String get toneCasual => 'Casual - Friendly and relaxed';
+  String get toneCasual => 'عرضي - ودود وممتع';
 
   @override
-  String get toneNeutral => 'Neutral - Balanced tone';
+  String get toneNeutral => 'محايد - نبرة متوازنة';
 
   @override
-  String get toneFormal => 'Formal - Professional and serious';
+  String get toneFormal => 'رسمي - احترافي وجاد';
 
   @override
-  String get vocabularyLevelLabel => 'Vocabulary Level';
+  String get vocabularyLevelLabel => 'مستوى المفردات';
 
   @override
-  String get vocabularySimple => 'Simple - Easy to understand';
+  String get vocabularySimple => 'بسيط - سهل الفهم';
 
   @override
-  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+  String get vocabularyModerate => 'معتدل - مفردات متوازنة';
 
   @override
-  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+  String get vocabularyAdvanced => 'متقدم - مفردات غنية';
 
   @override
-  String get favoriteAuthorLabel => 'Favorite Author';
+  String get favoriteAuthorLabel => 'المؤلف المفضل';
 
   @override
-  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+  String get favoriteAuthorHint => 'على سبيل المثال: J.K. Rowling';
 
   @override
   String get favoriteAuthorDescription =>
-      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+      'أدخل اسم مؤلفك المفضل حتى تحاكي الذكاء الاصطناعي أسلوب كتابته (اختياري).';
 
   @override
-  String get defaultChapterCountLabel => 'Default Chapter Count';
+  String get defaultChapterCountLabel => 'عدد الفصول الافتراضي';
 
   @override
   String chapterCountOption(int count) {
-    return '$count chapters';
+    return '$count فصول';
   }
 
   @override
-  String get shortBook => 'Short book';
+  String get shortBook => 'كتاب قصير';
 
   @override
-  String get standardBook => 'Standard book';
+  String get standardBook => 'كتاب قياسي';
 
   @override
-  String get longerBook => 'Longer book';
+  String get longerBook => 'كتاب أطول';
 
   @override
-  String get fullLengthNovel => 'Full-length novel';
+  String get fullLengthNovel => 'رواية طويلة';
 
   @override
-  String get extendedNovel => 'Extended novel';
+  String get extendedNovel => 'رواية موسعة';
 
   @override
-  String get epicLength => 'Epic length';
+  String get epicLength => 'طول ملحمي';
 
   @override
-  String get versionLabel => 'Version';
+  String get versionLabel => 'الإصدار';
 
   @override
-  String get licenseLabel => 'License';
+  String get licenseLabel => 'الترخيص';
 
   @override
-  String get mitLicense => 'MIT License';
+  String get mitLicense => 'ترخيص MIT';
 
   @override
-  String get clearAuthor => 'Clear';
+  String get clearAuthor => 'مسح';
 
   @override
-  String get saveAuthor => 'Save';
+  String get saveAuthor => 'حفظ';
 }

@@ -123,110 +123,111 @@ class AppLocalizationsDe extends AppLocalizations {
   String get untitledBook => 'Buch Ohne Titel';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get settingsTitle => 'Einstellungen';
 
   @override
-  String get writingPreferencesSection => 'Writing Preferences';
+  String get writingPreferencesSection => 'Schreibpräferenzen';
 
   @override
-  String get contentGenerationSection => 'Content Generation';
+  String get contentGenerationSection => 'Inhaltsgenerierung';
 
   @override
-  String get aboutSection => 'About';
+  String get aboutSection => 'Über';
 
   @override
-  String get writingStyleLabel => 'Writing Style';
+  String get writingStyleLabel => 'Schreibstil';
 
   @override
-  String get writingStyleCreative => 'Creative - Imaginative and expressive';
+  String get writingStyleCreative =>
+      'Kreativ - Fantasievoll und ausdrucksstark';
 
   @override
-  String get writingStyleBalanced => 'Balanced - Moderate creativity';
+  String get writingStyleBalanced => 'Ausgewogen - Moderate Kreativität';
 
   @override
-  String get writingStylePrecise => 'Precise - Clear and concise';
+  String get writingStylePrecise => 'Präzise - Klar und prägnant';
 
   @override
-  String get contentLanguageLabel => 'Content Language';
+  String get contentLanguageLabel => 'Inhaltssprache';
 
   @override
-  String get uiLanguageLabel => 'UI Language';
+  String get uiLanguageLabel => 'Schnittstellensprache';
 
   @override
-  String get uiLanguageSystemDefault => 'System Default';
+  String get uiLanguageSystemDefault => 'Systemstandard';
 
   @override
-  String get toneLabel => 'Tone';
+  String get toneLabel => 'Ton';
 
   @override
-  String get toneCasual => 'Casual - Friendly and relaxed';
+  String get toneCasual => 'Lässig - Freundlich und entspannt';
 
   @override
-  String get toneNeutral => 'Neutral - Balanced tone';
+  String get toneNeutral => 'Neutral - Ausgewogener Ton';
 
   @override
-  String get toneFormal => 'Formal - Professional and serious';
+  String get toneFormal => 'Formal - Professionell und ernst';
 
   @override
-  String get vocabularyLevelLabel => 'Vocabulary Level';
+  String get vocabularyLevelLabel => 'Wortschatzstufe';
 
   @override
-  String get vocabularySimple => 'Simple - Easy to understand';
+  String get vocabularySimple => 'Einfach - Leicht verständlich';
 
   @override
-  String get vocabularyModerate => 'Moderate - Balanced vocabulary';
+  String get vocabularyModerate => 'Moderat - Ausgewogener Wortschatz';
 
   @override
-  String get vocabularyAdvanced => 'Advanced - Rich vocabulary';
+  String get vocabularyAdvanced => 'Fortgeschritten - Reicher Wortschatz';
 
   @override
-  String get favoriteAuthorLabel => 'Favorite Author';
+  String get favoriteAuthorLabel => 'Lieblingsautor';
 
   @override
-  String get favoriteAuthorHint => 'e.g., J.K. Rowling';
+  String get favoriteAuthorHint => 'z. B. J.K. Rowling';
 
   @override
   String get favoriteAuthorDescription =>
-      'Enter the name of your favorite author for AI to emulate their writing style (optional).';
+      'Geben Sie den Namen Ihres Lieblingsautors ein, damit die KI seinen Schreibstil nachahmt (optional).';
 
   @override
-  String get defaultChapterCountLabel => 'Default Chapter Count';
+  String get defaultChapterCountLabel => 'Standardkapitelanzahl';
 
   @override
   String chapterCountOption(int count) {
-    return '$count chapters';
+    return '$count Kapitel';
   }
 
   @override
-  String get shortBook => 'Short book';
+  String get shortBook => 'Kurzes Buch';
 
   @override
-  String get standardBook => 'Standard book';
+  String get standardBook => 'Standardbuch';
 
   @override
-  String get longerBook => 'Longer book';
+  String get longerBook => 'Längeres Buch';
 
   @override
-  String get fullLengthNovel => 'Full-length novel';
+  String get fullLengthNovel => 'Vollständiger Roman';
 
   @override
-  String get extendedNovel => 'Extended novel';
+  String get extendedNovel => 'Erweiterter Roman';
 
   @override
-  String get epicLength => 'Epic length';
+  String get epicLength => 'Epische Länge';
 
   @override
   String get versionLabel => 'Version';
 
   @override
-  String get licenseLabel => 'License';
+  String get licenseLabel => 'Lizenz';
 
   @override
-  String get mitLicense => 'MIT License';
+  String get mitLicense => 'MIT-Lizenz';
 
   @override
-  String get clearAuthor => 'Clear';
+  String get clearAuthor => 'Löschen';
 
   @override
-  String get saveAuthor => 'Save';
+  String get saveAuthor => 'Speichern';
 }

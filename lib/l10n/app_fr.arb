@@ -34,99 +34,99 @@
   "errorLoadingBooks": "Erreur lors du chargement des livres : {error}",
   "retry": "Réessayer",
   "untitledBook": "Livre Sans Titre",
-  "settingsTitle": "Settings",
+  "settingsTitle": "Paramètres",
   "@settingsTitle": {
     "description": "Settings screen title"
   },
-  "writingPreferencesSection": "Writing Preferences",
+  "writingPreferencesSection": "Préférences d'Écriture",
   "@writingPreferencesSection": {
     "description": "Section header for writing preferences"
   },
-  "contentGenerationSection": "Content Generation",
+  "contentGenerationSection": "Génération de Contenu",
   "@contentGenerationSection": {
     "description": "Section header for content generation settings"
   },
-  "aboutSection": "About",
+  "aboutSection": "À propos",
   "@aboutSection": {
     "description": "Section header for about information"
   },
-  "writingStyleLabel": "Writing Style",
+  "writingStyleLabel": "Style d'Écriture",
   "@writingStyleLabel": {
     "description": "Label for writing style setting"
   },
-  "writingStyleCreative": "Creative - Imaginative and expressive",
+  "writingStyleCreative": "Créatif - Imaginatif et expressif",
   "@writingStyleCreative": {
     "description": "Writing style option: creative"
   },
-  "writingStyleBalanced": "Balanced - Moderate creativity",
+  "writingStyleBalanced": "Équilibré - Créativité modérée",
   "@writingStyleBalanced": {
     "description": "Writing style option: balanced"
   },
-  "writingStylePrecise": "Precise - Clear and concise",
+  "writingStylePrecise": "Précis - Clair et concis",
   "@writingStylePrecise": {
     "description": "Writing style option: precise"
   },
-  "contentLanguageLabel": "Content Language",
+  "contentLanguageLabel": "Langue du Contenu",
   "@contentLanguageLabel": {
     "description": "Label for content language setting (for AI generation)"
   },
-  "uiLanguageLabel": "UI Language",
+  "uiLanguageLabel": "Langue de l'Interface",
   "@uiLanguageLabel": {
     "description": "Label for UI language setting"
   },
-  "uiLanguageSystemDefault": "System Default",
+  "uiLanguageSystemDefault": "Par Défaut du Système",
   "@uiLanguageSystemDefault": {
     "description": "Option for system default UI language"
   },
-  "toneLabel": "Tone",
+  "toneLabel": "Ton",
   "@toneLabel": {
     "description": "Label for tone setting"
   },
-  "toneCasual": "Casual - Friendly and relaxed",
+  "toneCasual": "Décontracté - Amical et relaxé",
   "@toneCasual": {
     "description": "Tone option: casual"
   },
-  "toneNeutral": "Neutral - Balanced tone",
+  "toneNeutral": "Neutre - Ton équilibré",
   "@toneNeutral": {
     "description": "Tone option: neutral"
   },
-  "toneFormal": "Formal - Professional and serious",
+  "toneFormal": "Formel - Professionnel et sérieux",
   "@toneFormal": {
     "description": "Tone option: formal"
   },
-  "vocabularyLevelLabel": "Vocabulary Level",
+  "vocabularyLevelLabel": "Niveau de Vocabulaire",
   "@vocabularyLevelLabel": {
     "description": "Label for vocabulary level setting"
   },
-  "vocabularySimple": "Simple - Easy to understand",
+  "vocabularySimple": "Simple - Facile à comprendre",
   "@vocabularySimple": {
     "description": "Vocabulary level option: simple"
   },
-  "vocabularyModerate": "Moderate - Balanced vocabulary",
+  "vocabularyModerate": "Modéré - Vocabulaire équilibré",
   "@vocabularyModerate": {
     "description": "Vocabulary level option: moderate"
   },
-  "vocabularyAdvanced": "Advanced - Rich vocabulary",
+  "vocabularyAdvanced": "Avancé - Vocabulaire riche",
   "@vocabularyAdvanced": {
     "description": "Vocabulary level option: advanced"
   },
-  "favoriteAuthorLabel": "Favorite Author",
+  "favoriteAuthorLabel": "Auteur Préféré",
   "@favoriteAuthorLabel": {
     "description": "Label for favorite author setting"
   },
-  "favoriteAuthorHint": "e.g., J.K. Rowling",
+  "favoriteAuthorHint": "ex., J.K. Rowling",
   "@favoriteAuthorHint": {
     "description": "Hint text for favorite author input"
   },
-  "favoriteAuthorDescription": "Enter the name of your favorite author for AI to emulate their writing style (optional).",
+  "favoriteAuthorDescription": "Entrez le nom de votre auteur préféré pour que l'IA émule son style d'écriture (facultatif).",
   "@favoriteAuthorDescription": {
     "description": "Description text for favorite author setting"
   },
-  "defaultChapterCountLabel": "Default Chapter Count",
+  "defaultChapterCountLabel": "Nombre Predéfini de Chapitres",
   "@defaultChapterCountLabel": {
     "description": "Label for default chapter count setting"
   },
-  "chapterCountOption": "{count} chapters",
+  "chapterCountOption": "{count} chapitres",
   "@chapterCountOption": {
     "description": "Chapter count option format",
     "placeholders": {
@@ -136,27 +136,27 @@
       }
     }
   },
-  "shortBook": "Short book",
+  "shortBook": "Livre court",
   "@shortBook": {
     "description": "Chapter count label: 5 chapters"
   },
-  "standardBook": "Standard book",
+  "standardBook": "Livre standard",
   "@standardBook": {
     "description": "Chapter count label: 10 chapters"
   },
-  "longerBook": "Longer book",
+  "longerBook": "Livre plus long",
   "@longerBook": {
     "description": "Chapter count label: 15 chapters"
   },
-  "fullLengthNovel": "Full-length novel",
+  "fullLengthNovel": "Roman complet",
   "@fullLengthNovel": {
     "description": "Chapter count label: 20 chapters"
   },
-  "extendedNovel": "Extended novel",
+  "extendedNovel": "Roman étendu",
   "@extendedNovel": {
     "description": "Chapter count label: 25 chapters"
   },
-  "epicLength": "Epic length",
+  "epicLength": "Longueur épique",
   "@epicLength": {
     "description": "Chapter count label: 30 chapters"
   },
@@ -164,19 +164,19 @@
   "@versionLabel": {
     "description": "Label for version information"
   },
-  "licenseLabel": "License",
+  "licenseLabel": "Licence",
   "@licenseLabel": {
     "description": "Label for license information"
   },
-  "mitLicense": "MIT License",
+  "mitLicense": "Licence MIT",
   "@mitLicense": {
     "description": "License type"
   },
-  "clearAuthor": "Clear",
+  "clearAuthor": "Effacer",
   "@clearAuthor": {
     "description": "Button to clear favorite author"
   },
-  "saveAuthor": "Save",
+  "saveAuthor": "Enregistrer",
   "@saveAuthor": {
     "description": "Button to save favorite author"
   }
