@@ -2,7 +2,8 @@
 class AppSettings {
   final String writingStyle; // 'creative', 'balanced', 'precise'
   final String language; // Language for AI-generated content
-  final String uiLanguageCode; // UI language code (e.g., 'en', 'es', or 'system' for system default)
+  final String
+  uiLanguageCode; // UI language code (e.g., 'en', 'es', or 'system' for system default)
   final String tone; // 'casual', 'formal', 'neutral'
   final String vocabularyLevel; // 'simple', 'moderate', 'advanced'
   final String? favoriteAuthor;
