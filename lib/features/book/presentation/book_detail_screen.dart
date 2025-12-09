@@ -505,6 +505,9 @@ class BookDetailScreen extends ConsumerWidget {
           )..where((tbl) => tbl.id.equals(book.id))).write(
             BooksCompanion(
               title: drift.Value(response.bookTitle),
+              description: response.description != null
+                  ? drift.Value(response.description)
+                  : drift.Value(book.description),
               updatedAt: drift.Value(DateTime.now()),
             ),
           );
@@ -521,6 +524,20 @@ class BookDetailScreen extends ConsumerWidget {
               ),
             );
           }
+        } else if (response.description != null &&
+            (book.description == null || book.description!.isEmpty)) {
+          // Update only description if no title update was needed
+          await (database.update(
+            database.books,
+          )..where((tbl) => tbl.id.equals(book.id))).write(
+            BooksCompanion(
+              description: drift.Value(response.description),
+              updatedAt: drift.Value(DateTime.now()),
+            ),
+          );
+
+          // Invalidate book provider to refresh
+          ref.invalidate(bookDetailProvider(book.id));
         }
 
         for (final tocChapter in response.chapters) {

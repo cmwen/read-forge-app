@@ -42,17 +42,20 @@ abstract class LLMResponse {
 /// Response containing a Table of Contents
 class TOCResponse extends LLMResponse {
   final String bookTitle;
+  final String? description;
   final List<TOCChapter> chapters;
 
   TOCResponse({
     required this.bookTitle,
     required this.chapters,
+    this.description,
     super.timestamp,
   }) : super(type: 'toc');
 
   factory TOCResponse.fromJson(Map<String, dynamic> json) {
     return TOCResponse(
       bookTitle: json['bookTitle'] as String? ?? '',
+      description: json['description'] as String?,
       chapters:
           (json['chapters'] as List?)
               ?.map((e) => TOCChapter.fromJson(e as Map<String, dynamic>))
@@ -69,6 +72,7 @@ class TOCResponse extends LLMResponse {
     return {
       'type': type,
       'bookTitle': bookTitle,
+      if (description != null) 'description': description,
       'chapters': chapters.map((c) => c.toJson()).toList(),
       'timestamp': timestamp.toIso8601String(),
     };
