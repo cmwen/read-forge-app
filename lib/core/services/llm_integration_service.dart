@@ -290,6 +290,7 @@ class LLMIntegrationService {
     final exampleJson = {
       'type': 'toc',
       'bookTitle': bookTitle,
+      if (description == null) 'description': 'A compelling description of the book that captures its essence and appeal to readers',
       'chapters': [
         {
           'number': 1,
@@ -334,11 +335,12 @@ Please create a detailed Table of Contents for a book.
 
 ## Book Information
 - Title: $bookTitle
-${description != null ? '- Description: $description\n' : ''}${purpose != null ? '- Purpose/Goal: $purpose\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}$preferencesSection
+${description != null ? '- Description: $description\n' : '- Description: [IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION]\n'}${purpose != null ? '- Purpose/Goal: $purpose\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}$preferencesSection
 ## Instructions
 1. Generate $suggestedChapters chapters with clear, descriptive titles
 2. Each chapter should have a brief 1-2 sentence summary
-3. Ensure chapters flow naturally and build upon each other${preferencesSection.isNotEmpty ? '\n4. Follow the writing preferences specified above' : ''}
+3. Ensure chapters flow naturally and build upon each other
+${description == null ? '4. If no description is provided, generate a compelling and engaging book description (2-3 sentences) that captures the essence of the book and appeals to readers. This description should reflect the purpose and content of the chapters.\n' : ''}${description == null ? '5. ' : '4. '}Follow the writing preferences specified above${preferencesSection.isEmpty ? '.' : '.'}
 
 ## Response Format
 Please respond with a JSON object in this exact format:
@@ -348,6 +350,7 @@ ${const JsonEncoder.withIndent('  ').convert(exampleJson)}
 IMPORTANT: 
 - The response must be valid JSON
 - Include "type": "toc" to identify this as a Table of Contents response
+${description == null ? '- Include a "description" field with the generated book description if not already provided\n' : ''}
 - Number chapters sequentially starting from 1
 - Each chapter must have a title and summary
 
@@ -364,6 +367,8 @@ Alternatively, you can respond in plain text format:
     int chapterNumber,
     String chapterTitle, {
     String? bookDescription,
+    String? bookPurpose,
+    List<String>? chapterTitles,
     List<String>? previousChapterSummaries,
     String? context,
     String? writingStyle,
@@ -411,7 +416,12 @@ Please write the content for a chapter in a book.
 ## Book Information
 - Title: $bookTitle
 - Chapter: $chapterNumber - $chapterTitle
-${bookDescription != null ? '- Book Description: $bookDescription\n' : ''}
+${bookDescription != null ? '- Book Description: $bookDescription\n' : ''}${bookPurpose != null ? '- Book Purpose/Goal: $bookPurpose\n' : ''}
+
+${chapterTitles != null && chapterTitles.isNotEmpty ? '''
+## Table of Contents
+${chapterTitles.asMap().entries.map((e) => '${e.key + 1}. ${e.value}${e.key == chapterNumber - 1 ? ' (Current Chapter)' : ''}').join('\n')}
+''' : ''}
 
 ${previousChapterSummaries != null && previousChapterSummaries.isNotEmpty ? '''
 ## Previous Chapters Summary
@@ -426,8 +436,8 @@ $context
 1. Write engaging content that fits the chapter title
 2. Maintain consistency with previous chapters
 3. Use vivid descriptions and compelling narrative
-4. Aim for approximately 1500-2000 words${preferencesSection.isNotEmpty ? '\n5. Follow the writing preferences specified above' : ''}
-5. **Use Markdown formatting** for better readability (headers, bold, italic, lists, etc.)
+4. Aim for approximately 1500-2000 words${bookPurpose != null ? '\n5. Ensure the content supports the book\'s purpose: $bookPurpose' : ''}${preferencesSection.isNotEmpty ? '\n${bookPurpose != null ? '6' : '5'}. Follow the writing preferences specified above' : ''}
+${bookPurpose == null ? '5. ' : '${preferencesSection.isNotEmpty ? '7' : '6'}. '}**Use Markdown formatting** for better readability (headers, bold, italic, lists, etc.)
 
 ## Response Format
 Please respond with a JSON object in this exact format:

@@ -30,13 +30,15 @@ void main() {
     );
 
     test(
-      'generateTOCPromptWithFormat should NOT include description when not provided',
+      'generateTOCPromptWithFormat should request description generation when not provided',
       () {
         final prompt = llmService.generateTOCPromptWithFormat(
           'My Book',
         );
 
-        expect(prompt, isNot(contains('- Description:')));
+        // Now it should show the description line with instruction to generate
+        expect(prompt, contains('- Description:'));
+        expect(prompt, contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'));
       },
     );
 
