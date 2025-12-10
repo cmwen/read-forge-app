@@ -290,7 +290,7 @@ class LLMIntegrationService {
     final exampleJson = {
       'type': 'toc',
       'bookTitle': bookTitle,
-      if (description == null) 'description': 'A compelling description of the book that captures its essence and appeal to readers',
+      if (description == null || description.isEmpty) 'description': 'A compelling description of the book that captures its essence and appeal to readers',
       'chapters': [
         {
           'number': 1,
@@ -335,12 +335,12 @@ Please create a detailed Table of Contents for a book.
 
 ## Book Information
 - Title: $bookTitle
-${description != null ? '- Description: $description\n' : '- Description: [IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION]\n'}${purpose != null ? '- Purpose/Goal: $purpose\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}$preferencesSection
+${description != null && description.isNotEmpty ? '- Description: $description\n' : '- Description: [IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION]\n'}${purpose != null ? '- Purpose/Goal: $purpose\n' : ''}${genre != null ? '- Genre: $genre\n' : ''}$preferencesSection
 ## Instructions
 1. Generate $suggestedChapters chapters with clear, descriptive titles
 2. Each chapter should have a brief 1-2 sentence summary
 3. Ensure chapters flow naturally and build upon each other
-${description == null ? '4. If no description is provided, generate a compelling and engaging book description (2-3 sentences) that captures the essence of the book and appeals to readers. This description should reflect the purpose and content of the chapters.\n' : ''}${description == null ? '5. ' : '4. '}Follow the writing preferences specified above${preferencesSection.isEmpty ? '.' : '.'}
+${(description == null || description.isEmpty) ? '4. If no description is provided, generate a compelling and engaging book description (2-3 sentences) that captures the essence of the book and appeals to readers. This description should reflect the purpose and content of the chapters.\n' : ''}${(description == null || description.isEmpty) ? '5. ' : '4. '}Follow the writing preferences specified above${preferencesSection.isEmpty ? '.' : '.'}
 
 ## Response Format
 Please respond with a JSON object in this exact format:
@@ -350,7 +350,7 @@ ${const JsonEncoder.withIndent('  ').convert(exampleJson)}
 IMPORTANT: 
 - The response must be valid JSON
 - Include "type": "toc" to identify this as a Table of Contents response
-${description == null ? '- Include a "description" field with the generated book description if not already provided\n' : ''}
+${(description == null || description.isEmpty) ? '- Include a "description" field with the generated book description if not already provided\n' : ''}
 - Number chapters sequentially starting from 1
 - Each chapter must have a title and summary
 
@@ -499,9 +499,10 @@ ${preferencesSection.isNotEmpty ? '\n## Preferences\n$preferencesSection' : ''}
 ## Instructions
 1. Create a clear, engaging book title (2-8 words ideally)
 2. Generate a brief, engaging description (1-2 sentences) - ALWAYS include a description, it is required
-3. The title and description should reflect the content or purpose described above
-4. Make them memorable and appealing to readers
-${language != null ? '5. Generate in $language' : ''}
+3. If no context is provided, generate creative and engaging title and description based on your judgment
+4. The title and description should reflect the content or purpose described above
+5. Make them memorable and appealing to readers
+${language != null ? '6. Generate in $language' : ''}
 
 ## Response Format
 Please respond with a JSON object in this exact format:

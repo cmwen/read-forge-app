@@ -46,15 +46,6 @@ class SettingsScreen extends ConsumerWidget {
                 _showContentLanguagePicker(context, notifier, settings, l10n),
           ),
           ListTile(
-            leading: const Icon(Icons.public),
-            title: Text(l10n.uiLanguageLabel),
-            subtitle: Text(
-              _getUILanguageLabel(context, settings.uiLanguageCode),
-            ),
-            onTap: () =>
-                _showUILanguagePicker(context, notifier, settings, l10n),
-          ),
-          ListTile(
             leading: const Icon(Icons.mood),
             title: Text(l10n.toneLabel),
             subtitle: Text(_getToneLabel(context, settings.tone)),
@@ -74,6 +65,28 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l10n.favoriteAuthorLabel),
             subtitle: Text(settings.favoriteAuthor ?? l10n.favoriteAuthorHint),
             onTap: () => _showAuthorDialog(context, notifier, settings, l10n),
+          ),
+
+          const Divider(),
+
+          // App Preferences Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              'App Preferences',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.public),
+            title: Text(l10n.uiLanguageLabel),
+            subtitle: Text(
+              _getUILanguageLabel(context, settings.uiLanguageCode),
+            ),
+            onTap: () =>
+                _showUILanguagePicker(context, notifier, settings, l10n),
           ),
 
           const Divider(),

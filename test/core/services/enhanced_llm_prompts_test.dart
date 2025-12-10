@@ -374,6 +374,63 @@ void main() {
           expect(reParsed.chapters.length, parsed.chapters.length);
         },
       );
+
+      test(
+        'Should treat empty string description same as null',
+        () {
+          final promptWithNull = llmService.generateTOCPromptWithFormat(
+            'My Book',
+          );
+          final promptWithEmpty = llmService.generateTOCPromptWithFormat(
+            'My Book',
+            description: '',
+          );
+
+          expect(promptWithNull, contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'));
+          expect(promptWithEmpty, contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'));
+        },
+      );
+
+      test(
+        'Should NOT generate description when description has content',
+        () {
+          final prompt = llmService.generateTOCPromptWithFormat(
+            'My Book',
+            description: 'A meaningful description',
+          );
+
+          expect(
+            prompt,
+            isNot(contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION')),
+          );
+          expect(
+            prompt,
+            isNot(contains('- Include a "description" field with the generated book description')),
+          );
+        },
+      );
+    });
+
+    group('Title Prompt - Empty Input Handling', () {
+      test(
+        'Should generate title even with no context provided',
+        () {
+          final prompt = llmService.generateBookTitlePrompt();
+
+          expect(prompt, contains('generate creative and engaging title'));
+          expect(prompt, contains('ALWAYS include a description'));
+        },
+      );
+
+      test(
+        'Should specify description is required in title generation',
+        () {
+          final prompt = llmService.generateBookTitlePrompt();
+
+          expect(prompt, contains('description (1-2 sentences)'));
+          expect(prompt, contains('"description" field is REQUIRED'));
+        },
+      );
     });
   });
 }

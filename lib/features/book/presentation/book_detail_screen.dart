@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/book/presentation/book_detail_provider.dart';
+import 'package:read_forge/features/library/presentation/library_provider.dart';
 import 'package:read_forge/features/reader/presentation/reader_screen.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
@@ -760,8 +761,8 @@ class BookDetailScreen extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () async {
-              final repository = ref.read(bookRepositoryProvider);
-              await repository.deleteBook(book.id);
+              final libraryNotifier = ref.read(libraryProvider.notifier);
+              await libraryNotifier.deleteBook(book.id);
 
               if (context.mounted) {
                 Navigator.of(context).pop(); // Close dialog
