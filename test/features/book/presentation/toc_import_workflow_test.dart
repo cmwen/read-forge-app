@@ -10,11 +10,9 @@ void main() {
       llmService = LLMIntegrationService();
     });
 
-    test(
-      'Real-world scenario: Import LLM-generated TOC with book metadata',
-      () {
-        // Simulating a real LLM response from ChatGPT
-        final llmResponseJson = '''{
+    test('Real-world scenario: Import LLM-generated TOC with book metadata', () {
+      // Simulating a real LLM response from ChatGPT
+      final llmResponseJson = '''{
           "type": "toc",
           "bookTitle": "The Art of Effective Communication",
           "description": "Master the skills of clear, persuasive, and empathetic communication in both personal and professional contexts. This comprehensive guide will transform the way you connect with others.",
@@ -47,46 +45,35 @@ void main() {
           ]
         }''';
 
-        // Parse the response
-        final validationResult =
-            llmService.parseResponseWithValidation(llmResponseJson);
+      // Parse the response
+      final validationResult = llmService.parseResponseWithValidation(
+        llmResponseJson,
+      );
 
-        // Verify parsing is successful
-        expect(validationResult.isValid, true);
-        expect(validationResult.response, isA<TOCResponse>());
+      // Verify parsing is successful
+      expect(validationResult.isValid, true);
+      expect(validationResult.response, isA<TOCResponse>());
 
-        final tocResponse = validationResult.response as TOCResponse;
+      final tocResponse = validationResult.response as TOCResponse;
 
-        // Verify book title is captured
-        expect(
-          tocResponse.bookTitle,
-          'The Art of Effective Communication',
-        );
+      // Verify book title is captured
+      expect(tocResponse.bookTitle, 'The Art of Effective Communication');
 
-        // Verify description is captured (this was the bug!)
-        expect(
-          tocResponse.description,
-          'Master the skills of clear, persuasive, and empathetic communication in both personal and professional contexts. This comprehensive guide will transform the way you connect with others.',
-        );
+      // Verify description is captured (this was the bug!)
+      expect(
+        tocResponse.description,
+        'Master the skills of clear, persuasive, and empathetic communication in both personal and professional contexts. This comprehensive guide will transform the way you connect with others.',
+      );
 
-        // Verify chapters are captured
-        expect(tocResponse.chapters.length, 5);
-        expect(
-          tocResponse.chapters[0].title,
-          'Foundations of Communication',
-        );
-        expect(
-          tocResponse.chapters[4].title,
-          'Persuasion and Influence Ethics',
-        );
-      },
-    );
+      // Verify chapters are captured
+      expect(tocResponse.chapters.length, 5);
+      expect(tocResponse.chapters[0].title, 'Foundations of Communication');
+      expect(tocResponse.chapters[4].title, 'Persuasion and Influence Ethics');
+    });
 
-    test(
-      'Backward compatibility: Old TOC without description still works',
-      () {
-        // Old format without description field (pre-fix)
-        final oldFormatJson = '''{
+    test('Backward compatibility: Old TOC without description still works', () {
+      // Old format without description field (pre-fix)
+      final oldFormatJson = '''{
           "type": "toc",
           "bookTitle": "Classic Book",
           "chapters": [
@@ -95,16 +82,16 @@ void main() {
           ]
         }''';
 
-        final validationResult =
-            llmService.parseResponseWithValidation(oldFormatJson);
+      final validationResult = llmService.parseResponseWithValidation(
+        oldFormatJson,
+      );
 
-        expect(validationResult.isValid, true);
-        final tocResponse = validationResult.response as TOCResponse;
-        expect(tocResponse.bookTitle, 'Classic Book');
-        expect(tocResponse.description, null); // No description in old format
-        expect(tocResponse.chapters.length, 2);
-      },
-    );
+      expect(validationResult.isValid, true);
+      final tocResponse = validationResult.response as TOCResponse;
+      expect(tocResponse.bookTitle, 'Classic Book');
+      expect(tocResponse.description, null); // No description in old format
+      expect(tocResponse.chapters.length, 2);
+    });
 
     test(
       'Handle mixed content: Some chapters with summaries, some without',
@@ -120,8 +107,9 @@ void main() {
           ]
         }''';
 
-        final validationResult =
-            llmService.parseResponseWithValidation(mixedJson);
+        final validationResult = llmService.parseResponseWithValidation(
+          mixedJson,
+        );
 
         expect(validationResult.isValid, true);
         final tocResponse = validationResult.response as TOCResponse;
@@ -131,10 +119,8 @@ void main() {
       },
     );
 
-    test(
-      'JSON with empty description string should be treated as null',
-      () {
-        final emptyDescriptionJson = '''{
+    test('JSON with empty description string should be treated as null', () {
+      final emptyDescriptionJson = '''{
           "type": "toc",
           "bookTitle": "Test Book",
           "description": "",
@@ -143,51 +129,44 @@ void main() {
           ]
         }''';
 
-        final tocResponse =
-            LLMResponse.fromJsonString(emptyDescriptionJson) as TOCResponse;
+      final tocResponse =
+          LLMResponse.fromJsonString(emptyDescriptionJson) as TOCResponse;
 
-        // Empty string in JSON becomes empty string, not null
-        // This is expected JSON behavior
-        expect(tocResponse.description, '');
-      },
-    );
+      // Empty string in JSON becomes empty string, not null
+      // This is expected JSON behavior
+      expect(tocResponse.description, '');
+    });
 
-    test(
-      'Serialize and deserialize roundtrip preserves all data',
-      () {
-        final original = TOCResponse(
-          bookTitle: 'Original Title',
-          description: 'Original description text',
-          chapters: [
-            TOCChapter(
-              number: 1,
-              title: 'First Chapter',
-              summary: 'First summary',
-            ),
-            TOCChapter(
-              number: 2,
-              title: 'Second Chapter',
-              summary: 'Second summary',
-            ),
-          ],
-        );
+    test('Serialize and deserialize roundtrip preserves all data', () {
+      final original = TOCResponse(
+        bookTitle: 'Original Title',
+        description: 'Original description text',
+        chapters: [
+          TOCChapter(
+            number: 1,
+            title: 'First Chapter',
+            summary: 'First summary',
+          ),
+          TOCChapter(
+            number: 2,
+            title: 'Second Chapter',
+            summary: 'Second summary',
+          ),
+        ],
+      );
 
-        // Serialize to JSON
-        final json = original.toJson();
+      // Serialize to JSON
+      final json = original.toJson();
 
-        // Deserialize back
-        final deserialized = TOCResponse.fromJson(json);
+      // Deserialize back
+      final deserialized = TOCResponse.fromJson(json);
 
-        // Verify all data is preserved
-        expect(deserialized.bookTitle, original.bookTitle);
-        expect(deserialized.description, original.description);
-        expect(deserialized.chapters.length, original.chapters.length);
-        expect(deserialized.chapters[0].title, original.chapters[0].title);
-        expect(
-          deserialized.chapters[0].summary,
-          original.chapters[0].summary,
-        );
-      },
-    );
+      // Verify all data is preserved
+      expect(deserialized.bookTitle, original.bookTitle);
+      expect(deserialized.description, original.description);
+      expect(deserialized.chapters.length, original.chapters.length);
+      expect(deserialized.chapters[0].title, original.chapters[0].title);
+      expect(deserialized.chapters[0].summary, original.chapters[0].summary);
+    });
   });
 }

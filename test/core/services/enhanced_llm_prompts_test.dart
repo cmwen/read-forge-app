@@ -11,17 +11,15 @@ void main() {
     });
 
     group('TOC Prompt - Description Generation', () {
-      test(
-        'Should request LLM to generate description when not provided',
-        () {
-          final prompt = llmService.generateTOCPromptWithFormat(
-            'My Book',
-          );
+      test('Should request LLM to generate description when not provided', () {
+        final prompt = llmService.generateTOCPromptWithFormat('My Book');
 
-          expect(prompt, contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'));
-          expect(prompt, contains('compelling and engaging book description'));
-        },
-      );
+        expect(
+          prompt,
+          contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'),
+        );
+        expect(prompt, contains('compelling and engaging book description'));
+      });
 
       test(
         'Should NOT request description generation when description is provided',
@@ -33,7 +31,9 @@ void main() {
 
           expect(
             prompt,
-            isNot(contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION')),
+            isNot(
+              contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'),
+            ),
           );
         },
       );
@@ -41,9 +41,7 @@ void main() {
       test(
         'Example JSON should include description field when no description provided',
         () {
-          final prompt = llmService.generateTOCPromptWithFormat(
-            'Test Book',
-          );
+          final prompt = llmService.generateTOCPromptWithFormat('Test Book');
 
           expect(prompt, contains('"description":'));
           expect(
@@ -55,17 +53,12 @@ void main() {
         },
       );
 
-      test(
-        'Example JSON should include description field in example',
-        () {
-          final prompt = llmService.generateTOCPromptWithFormat(
-            'Test Book',
-          );
+      test('Example JSON should include description field in example', () {
+        final prompt = llmService.generateTOCPromptWithFormat('Test Book');
 
-          // Should have description in the JSON example
-          expect(prompt, contains('"description"'));
-        },
-      );
+        // Should have description in the JSON example
+        expect(prompt, contains('"description"'));
+      });
 
       test(
         'Real-world scenario: Importing LLM-generated TOC with description',
@@ -93,242 +86,236 @@ void main() {
         },
       );
 
-      test(
-        'Should handle TOC response with generated description',
-        () {
-          final response = TOCResponse(
-            bookTitle: 'Advanced Programming',
-            description: 'A comprehensive guide to advanced programming concepts',
-            chapters: [
-              TOCChapter(
-                number: 1,
-                title: 'Design Patterns',
-                summary: 'Learn common design patterns',
-              ),
-            ],
-          );
+      test('Should handle TOC response with generated description', () {
+        final response = TOCResponse(
+          bookTitle: 'Advanced Programming',
+          description: 'A comprehensive guide to advanced programming concepts',
+          chapters: [
+            TOCChapter(
+              number: 1,
+              title: 'Design Patterns',
+              summary: 'Learn common design patterns',
+            ),
+          ],
+        );
 
-          final json = response.toJson();
+        final json = response.toJson();
 
-          expect(json['description'], isNotNull);
-          expect(
-            json['description'],
-            'A comprehensive guide to advanced programming concepts',
-          );
-        },
-      );
+        expect(json['description'], isNotNull);
+        expect(
+          json['description'],
+          'A comprehensive guide to advanced programming concepts',
+        );
+      });
     });
 
     group('Chapter Prompt - Enhanced Context', () {
-      test(
-        'Should include purpose in chapter prompt when provided',
-        () {
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'My Book',
-            1,
-            'Chapter One',
-            bookPurpose: 'To help readers become better developers',
-          );
+      test('Should include purpose in chapter prompt when provided', () {
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'My Book',
+          1,
+          'Chapter One',
+          bookPurpose: 'To help readers become better developers',
+        );
 
-          expect(prompt, contains('- Book Purpose/Goal: To help readers become better developers'));
-          expect(
-            prompt,
-            contains('Ensure the content supports the book\'s purpose'),
-          );
-        },
-      );
+        expect(
+          prompt,
+          contains(
+            '- Book Purpose/Goal: To help readers become better developers',
+          ),
+        );
+        expect(
+          prompt,
+          contains('Ensure the content supports the book\'s purpose'),
+        );
+      });
 
-      test(
-        'Should NOT include purpose when not provided',
-        () {
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'My Book',
-            1,
-            'Chapter One',
-          );
+      test('Should NOT include purpose when not provided', () {
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'My Book',
+          1,
+          'Chapter One',
+        );
 
-          expect(prompt, isNot(contains('- Book Purpose/Goal:')));
-        },
-      );
+        expect(prompt, isNot(contains('- Book Purpose/Goal:')));
+      });
 
-      test(
-        'Should include full TOC with chapter numbers when provided',
-        () {
-          final chapterTitles = [
-            'Chapter 1: Introduction',
-            'Chapter 2: Basics',
-            'Chapter 3: Advanced Topics',
-            'Chapter 4: Conclusion',
-          ];
+      test('Should include full TOC with chapter numbers when provided', () {
+        final chapterTitles = [
+          'Chapter 1: Introduction',
+          'Chapter 2: Basics',
+          'Chapter 3: Advanced Topics',
+          'Chapter 4: Conclusion',
+        ];
 
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'My Book',
-            2,
-            'Basics',
-            chapterTitles: chapterTitles,
-          );
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'My Book',
+          2,
+          'Basics',
+          chapterTitles: chapterTitles,
+        );
 
-          expect(prompt, contains('## Table of Contents'));
-          expect(prompt, contains('1. Chapter 1: Introduction'));
-          expect(prompt, contains('2. Chapter 2: Basics (Current Chapter)'));
-          expect(prompt, contains('3. Chapter 3: Advanced Topics'));
-          expect(prompt, contains('4. Chapter 4: Conclusion'));
-        },
-      );
+        expect(prompt, contains('## Table of Contents'));
+        expect(prompt, contains('1. Chapter 1: Introduction'));
+        expect(prompt, contains('2. Chapter 2: Basics (Current Chapter)'));
+        expect(prompt, contains('3. Chapter 3: Advanced Topics'));
+        expect(prompt, contains('4. Chapter 4: Conclusion'));
+      });
 
-      test(
-        'Should indicate which chapter is current in TOC',
-        () {
-          final chapterTitles = ['Chapter 1', 'Chapter 2', 'Chapter 3'];
+      test('Should indicate which chapter is current in TOC', () {
+        final chapterTitles = ['Chapter 1', 'Chapter 2', 'Chapter 3'];
 
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'Test',
-            2,
-            'Chapter 2',
-            chapterTitles: chapterTitles,
-          );
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'Test',
+          2,
+          'Chapter 2',
+          chapterTitles: chapterTitles,
+        );
 
-          expect(prompt, contains('(Current Chapter)'));
-          // Verify it's only marking chapter 2 as current
-          final lines = prompt.split('\n');
-          int currentCount = 0;
-          for (final line in lines) {
-            if (line.contains('(Current Chapter)')) {
-              currentCount++;
-            }
+        expect(prompt, contains('(Current Chapter)'));
+        // Verify it's only marking chapter 2 as current
+        final lines = prompt.split('\n');
+        int currentCount = 0;
+        for (final line in lines) {
+          if (line.contains('(Current Chapter)')) {
+            currentCount++;
           }
-          expect(currentCount, 1);
-        },
-      );
+        }
+        expect(currentCount, 1);
+      });
 
-      test(
-        'Should include both purpose and TOC together',
-        () {
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'Learning Flutter',
-            1,
+      test('Should include both purpose and TOC together', () {
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'Learning Flutter',
+          1,
+          'Getting Started',
+          bookPurpose: 'Master Flutter development',
+          chapterTitles: [
             'Getting Started',
-            bookPurpose: 'Master Flutter development',
-            chapterTitles: [
-              'Getting Started',
-              'Widgets Deep Dive',
-              'State Management',
-            ],
-          );
+            'Widgets Deep Dive',
+            'State Management',
+          ],
+        );
 
-          expect(prompt, contains('- Book Purpose/Goal: Master Flutter development'));
-          expect(prompt, contains('## Table of Contents'));
-          expect(prompt, contains('1. Getting Started (Current Chapter)'));
-          expect(prompt, contains('2. Widgets Deep Dive'));
-          expect(prompt, contains('3. State Management'));
-        },
-      );
+        expect(
+          prompt,
+          contains('- Book Purpose/Goal: Master Flutter development'),
+        );
+        expect(prompt, contains('## Table of Contents'));
+        expect(prompt, contains('1. Getting Started (Current Chapter)'));
+        expect(prompt, contains('2. Widgets Deep Dive'));
+        expect(prompt, contains('3. State Management'));
+      });
 
-      test(
-        'Chapter prompt should maintain all context together',
-        () {
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'The Complete Guide',
-            2,
+      test('Chapter prompt should maintain all context together', () {
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'The Complete Guide',
+          2,
+          'Advanced Concepts',
+          bookDescription: 'A comprehensive guide for developers',
+          bookPurpose: 'To empower developers with advanced skills',
+          chapterTitles: [
+            'Fundamentals',
             'Advanced Concepts',
-            bookDescription: 'A comprehensive guide for developers',
-            bookPurpose: 'To empower developers with advanced skills',
-            chapterTitles: [
-              'Fundamentals',
-              'Advanced Concepts',
-              'Best Practices',
-            ],
-            previousChapterSummaries: [
-              'Covered the basics and core concepts',
-            ],
-          );
+            'Best Practices',
+          ],
+          previousChapterSummaries: ['Covered the basics and core concepts'],
+        );
 
-          expect(prompt, contains('- Book Description: A comprehensive guide for developers'));
-          expect(prompt, contains('- Book Purpose/Goal: To empower developers with advanced skills'));
-          expect(prompt, contains('## Table of Contents'));
-          expect(prompt, contains('## Previous Chapters Summary'));
-          expect(prompt, contains('1. Covered the basics and core concepts'));
-        },
-      );
+        expect(
+          prompt,
+          contains('- Book Description: A comprehensive guide for developers'),
+        );
+        expect(
+          prompt,
+          contains(
+            '- Book Purpose/Goal: To empower developers with advanced skills',
+          ),
+        );
+        expect(prompt, contains('## Table of Contents'));
+        expect(prompt, contains('## Previous Chapters Summary'));
+        expect(prompt, contains('1. Covered the basics and core concepts'));
+      });
 
-      test(
-        'Real-world scenario: Chapter generation with complete context',
-        () {
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'The Art of Negotiation',
-            3,
-            'Advanced Negotiation Tactics',
-            bookDescription:
-                'Master the skills of negotiation in business and personal contexts',
-            bookPurpose: 'To transform readers into confident, effective negotiators',
-            chapterTitles: [
-              '1. Foundations of Negotiation',
-              '2. Communication Skills',
-              '3. Advanced Negotiation Tactics',
-              '4. Building Long-term Relationships',
-              '5. Handling Difficult Situations',
-            ],
-            previousChapterSummaries: [
-              'Introduced fundamental negotiation principles and their importance',
-              'Covered verbal and non-verbal communication techniques',
-            ],
-            writingStyle: 'Practical with real examples',
-            tone: 'Professional and encouraging',
-          );
+      test('Real-world scenario: Chapter generation with complete context', () {
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'The Art of Negotiation',
+          3,
+          'Advanced Negotiation Tactics',
+          bookDescription:
+              'Master the skills of negotiation in business and personal contexts',
+          bookPurpose:
+              'To transform readers into confident, effective negotiators',
+          chapterTitles: [
+            '1. Foundations of Negotiation',
+            '2. Communication Skills',
+            '3. Advanced Negotiation Tactics',
+            '4. Building Long-term Relationships',
+            '5. Handling Difficult Situations',
+          ],
+          previousChapterSummaries: [
+            'Introduced fundamental negotiation principles and their importance',
+            'Covered verbal and non-verbal communication techniques',
+          ],
+          writingStyle: 'Practical with real examples',
+          tone: 'Professional and encouraging',
+        );
 
-          // Verify all sections are present
-          expect(prompt, contains('- Title: The Art of Negotiation'));
-          expect(
-            prompt,
-            contains(
-              '- Book Description: Master the skills of negotiation in business and personal contexts',
-            ),
-          );
-          expect(
-            prompt,
-            contains(
-              '- Book Purpose/Goal: To transform readers into confident, effective negotiators',
-            ),
-          );
-          expect(prompt, contains('3. Advanced Negotiation Tactics (Current Chapter)'));
-          expect(
-            prompt,
-            contains('1. Introduced fundamental negotiation principles'),
-          );
-          expect(prompt, contains('2. Covered verbal and non-verbal communication techniques'));
-          expect(prompt, contains('- Writing Style: Practical with real examples'));
-          expect(prompt, contains('- Tone: Professional and encouraging'));
-        },
-      );
+        // Verify all sections are present
+        expect(prompt, contains('- Title: The Art of Negotiation'));
+        expect(
+          prompt,
+          contains(
+            '- Book Description: Master the skills of negotiation in business and personal contexts',
+          ),
+        );
+        expect(
+          prompt,
+          contains(
+            '- Book Purpose/Goal: To transform readers into confident, effective negotiators',
+          ),
+        );
+        expect(
+          prompt,
+          contains('3. Advanced Negotiation Tactics (Current Chapter)'),
+        );
+        expect(
+          prompt,
+          contains('1. Introduced fundamental negotiation principles'),
+        );
+        expect(
+          prompt,
+          contains('2. Covered verbal and non-verbal communication techniques'),
+        );
+        expect(
+          prompt,
+          contains('- Writing Style: Practical with real examples'),
+        );
+        expect(prompt, contains('- Tone: Professional and encouraging'));
+      });
 
-      test(
-        'Should handle empty chapterTitles gracefully',
-        () {
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'Test',
-            1,
-            'Chapter 1',
-            chapterTitles: [],
-          );
+      test('Should handle empty chapterTitles gracefully', () {
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'Test',
+          1,
+          'Chapter 1',
+          chapterTitles: [],
+        );
 
-          expect(prompt, isNotEmpty);
-          expect(prompt, isNot(contains('## Table of Contents')));
-        },
-      );
+        expect(prompt, isNotEmpty);
+        expect(prompt, isNot(contains('## Table of Contents')));
+      });
 
-      test(
-        'Should not include TOC section if chapterTitles is null',
-        () {
-          final prompt = llmService.generateChapterPromptWithFormat(
-            'Test',
-            1,
-            'Chapter 1',
-            chapterTitles: null,
-          );
+      test('Should not include TOC section if chapterTitles is null', () {
+        final prompt = llmService.generateChapterPromptWithFormat(
+          'Test',
+          1,
+          'Chapter 1',
+          chapterTitles: null,
+        );
 
-          expect(prompt, isNot(contains('## Table of Contents')));
-        },
-      );
+        expect(prompt, isNot(contains('## Table of Contents')));
+      });
     });
 
     group('Roundtrip Serialization', () {
@@ -352,10 +339,8 @@ void main() {
         },
       );
 
-      test(
-        'Full roundtrip with LLM response should preserve description',
-        () {
-          final llmJson = '''{
+      test('Full roundtrip with LLM response should preserve description', () {
+        final llmJson = '''{
             "type": "toc",
             "bookTitle": "Complete Guide",
             "description": "A thorough and comprehensive guide for everyone",
@@ -365,72 +350,69 @@ void main() {
             ]
           }''';
 
-          final parsed = LLMResponse.fromJsonString(llmJson) as TOCResponse;
-          final serialized = parsed.toJson();
-          final reParsed = TOCResponse.fromJson(serialized);
+        final parsed = LLMResponse.fromJsonString(llmJson) as TOCResponse;
+        final serialized = parsed.toJson();
+        final reParsed = TOCResponse.fromJson(serialized);
 
-          expect(reParsed.description, parsed.description);
-          expect(reParsed.bookTitle, parsed.bookTitle);
-          expect(reParsed.chapters.length, parsed.chapters.length);
-        },
-      );
+        expect(reParsed.description, parsed.description);
+        expect(reParsed.bookTitle, parsed.bookTitle);
+        expect(reParsed.chapters.length, parsed.chapters.length);
+      });
 
-      test(
-        'Should treat empty string description same as null',
-        () {
-          final promptWithNull = llmService.generateTOCPromptWithFormat(
-            'My Book',
-          );
-          final promptWithEmpty = llmService.generateTOCPromptWithFormat(
-            'My Book',
-            description: '',
-          );
+      test('Should treat empty string description same as null', () {
+        final promptWithNull = llmService.generateTOCPromptWithFormat(
+          'My Book',
+        );
+        final promptWithEmpty = llmService.generateTOCPromptWithFormat(
+          'My Book',
+          description: '',
+        );
 
-          expect(promptWithNull, contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'));
-          expect(promptWithEmpty, contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'));
-        },
-      );
+        expect(
+          promptWithNull,
+          contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'),
+        );
+        expect(
+          promptWithEmpty,
+          contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'),
+        );
+      });
 
-      test(
-        'Should NOT generate description when description has content',
-        () {
-          final prompt = llmService.generateTOCPromptWithFormat(
-            'My Book',
-            description: 'A meaningful description',
-          );
+      test('Should NOT generate description when description has content', () {
+        final prompt = llmService.generateTOCPromptWithFormat(
+          'My Book',
+          description: 'A meaningful description',
+        );
 
-          expect(
-            prompt,
-            isNot(contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION')),
-          );
-          expect(
-            prompt,
-            isNot(contains('- Include a "description" field with the generated book description')),
-          );
-        },
-      );
+        expect(
+          prompt,
+          isNot(contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION')),
+        );
+        expect(
+          prompt,
+          isNot(
+            contains(
+              '- Include a "description" field with the generated book description',
+            ),
+          ),
+        );
+      });
     });
 
     group('Title Prompt - Empty Input Handling', () {
-      test(
-        'Should generate title even with no context provided',
-        () {
-          final prompt = llmService.generateBookTitlePrompt();
+      test('Should generate title even with no context provided', () {
+        final prompt = llmService.generateBookTitlePrompt();
 
-          expect(prompt, contains('generate creative and engaging title'));
-          expect(prompt, contains('ALWAYS include a description'));
-        },
-      );
+        expect(prompt, contains('generate creative and engaging title'));
+        expect(prompt, contains('ALWAYS include a description'));
+      });
 
-      test(
-        'Should specify description is required in title generation',
-        () {
-          final prompt = llmService.generateBookTitlePrompt();
+      test('Should specify description is required in title generation', () {
+        final prompt = llmService.generateBookTitlePrompt();
 
-          expect(prompt, contains('description (1-2 sentences)'));
-          expect(prompt, contains('"description" field is REQUIRED'));
-        },
-      );
+        expect(prompt, contains('description (1-2 sentences)'));
+        expect(prompt, contains('"description" field is REQUIRED'));
+      });
     });
   });
 }

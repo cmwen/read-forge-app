@@ -8,11 +8,7 @@ void main() {
       final responseWithDescription = TOCResponse(
         bookTitle: 'My Awesome Book',
         chapters: [
-          TOCChapter(
-            number: 1,
-            title: 'Chapter One',
-            summary: 'First chapter',
-          ),
+          TOCChapter(number: 1, title: 'Chapter One', summary: 'First chapter'),
         ],
         description: 'This is an awesome book about amazing things',
       );
@@ -29,11 +25,7 @@ void main() {
       final response = TOCResponse(
         bookTitle: 'Test Book',
         chapters: [
-          TOCChapter(
-            number: 1,
-            title: 'Chapter One',
-            summary: 'Summary',
-          ),
+          TOCChapter(number: 1, title: 'Chapter One', summary: 'Summary'),
         ],
         description: 'A compelling description',
       );
@@ -52,11 +44,7 @@ void main() {
         'bookTitle': 'Test Book',
         'description': 'A compelling description',
         'chapters': [
-          {
-            'number': 1,
-            'title': 'Chapter One',
-            'summary': 'Summary',
-          },
+          {'number': 1, 'title': 'Chapter One', 'summary': 'Summary'},
         ],
         'timestamp': '2025-12-09T22:12:46.163Z',
       };
@@ -73,11 +61,7 @@ void main() {
         'type': 'toc',
         'bookTitle': 'Test Book',
         'chapters': [
-          {
-            'number': 1,
-            'title': 'Chapter One',
-            'summary': 'Summary',
-          },
+          {'number': 1, 'title': 'Chapter One', 'summary': 'Summary'},
         ],
       };
 
@@ -91,9 +75,7 @@ void main() {
     test('TOCResponse should NOT include null description in JSON', () {
       final response = TOCResponse(
         bookTitle: 'Test Book',
-        chapters: [
-          TOCChapter(number: 1, title: 'Chapter One'),
-        ],
+        chapters: [TOCChapter(number: 1, title: 'Chapter One')],
       );
 
       final json = response.toJson();
@@ -173,8 +155,10 @@ void main() {
       final titleResponse = LLMResponse.fromJson(titleJson);
 
       expect(titleResponse, isA<TitleResponse>());
-      expect((titleResponse as TitleResponse).title,
-          'The Journey to Self-Discovery');
+      expect(
+        (titleResponse as TitleResponse).title,
+        'The Journey to Self-Discovery',
+      );
       expect(
         titleResponse.description,
         'An inspiring guide about personal growth and self-discovery',
@@ -187,15 +171,17 @@ void main() {
         'description':
             'An inspiring guide about personal growth and self-discovery',
         'chapters': [
-          {'number': 1, 'title': 'Chapter One', 'summary': 'Summary'}
+          {'number': 1, 'title': 'Chapter One', 'summary': 'Summary'},
         ],
       };
 
       final tocResponse = LLMResponse.fromJson(tocJson);
 
       expect(tocResponse, isA<TOCResponse>());
-      expect((tocResponse as TOCResponse).bookTitle,
-          'The Journey to Self-Discovery');
+      expect(
+        (tocResponse as TOCResponse).bookTitle,
+        'The Journey to Self-Discovery',
+      );
       expect(
         tocResponse.description,
         'An inspiring guide about personal growth and self-discovery',
@@ -210,7 +196,8 @@ void main() {
         "description": "Discover effective techniques to master any subject quickly"
       }''';
 
-      final titleResponse = LLMResponse.fromJsonString(titleJson) as TitleResponse;
+      final titleResponse =
+          LLMResponse.fromJsonString(titleJson) as TitleResponse;
 
       // Second response: TOC generation with enhanced book info
       final tocJson = '''{

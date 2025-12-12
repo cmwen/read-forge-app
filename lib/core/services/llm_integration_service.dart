@@ -290,7 +290,9 @@ class LLMIntegrationService {
     final exampleJson = {
       'type': 'toc',
       'bookTitle': bookTitle,
-      if (description == null || description.isEmpty) 'description': 'A compelling description of the book that captures its essence and appeal to readers',
+      if (description == null || description.isEmpty)
+        'description':
+            'A compelling description of the book that captures its essence and appeal to readers',
       'chapters': [
         {
           'number': 1,

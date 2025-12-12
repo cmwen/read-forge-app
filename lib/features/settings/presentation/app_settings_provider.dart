@@ -66,5 +66,6 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
 }
 
 /// Provider for AppSettingsNotifier
-final appSettingsProvider =
-    NotifierProvider<AppSettingsNotifier, AppSettings>(AppSettingsNotifier.new);
+final appSettingsProvider = NotifierProvider<AppSettingsNotifier, AppSettings>(
+  AppSettingsNotifier.new,
+);

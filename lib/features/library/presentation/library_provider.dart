@@ -57,7 +57,6 @@ class LibraryNotifier extends AsyncNotifier<List<BookModel>> {
 }
 
 /// Provider for the library
-final libraryProvider =
-    AsyncNotifierProvider<LibraryNotifier, List<BookModel>>(
-      LibraryNotifier.new,
-    );
+final libraryProvider = AsyncNotifierProvider<LibraryNotifier, List<BookModel>>(
+  LibraryNotifier.new,
+);
