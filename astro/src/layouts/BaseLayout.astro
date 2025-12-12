@@ -2,19 +2,51 @@
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 const { title } = Astro.props
-const base = import.meta.env.BASE_URL || '/';
+
+const normalize = (p) => {
+  if (!p) return '/';
+  return p.endsWith('/') ? p : `${p}/`;
+};
+
+const getPathname = () => {
+  try {
+    const req = Astro.request;
+    if (!req) return '/';
+    return new URL(req.url).pathname || '/';
+  } catch {
+    return '/';
+  }
+};
+
+const currentPath = normalize(getPathname());
+
+const deriveBasePath = (path) => {
+  const candidates = ['about/', 'install/', 'releases/'];
+  for (const suffix of candidates) {
+    if (path.endsWith(`/${suffix}`)) {
+      return normalize(path.slice(0, -suffix.length));
+    }
+  }
+  return normalize(path);
+};
+
+const basePath = deriveBasePath(currentPath);
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title ? `${title} — Startlight` : 'Startlight'}</title>
-    <link rel="stylesheet" href={`${base}styles.css`} />
+    <title>{title ? `${title} — ReadForge` : 'ReadForge'}</title>
+    <meta
+      name="description"
+      content="ReadForge is a local-first Android app for creating and reading AI-assisted books, with a full-featured reader and local storage."
+    />
+    <link rel="stylesheet" href={`${basePath}styles.css`} />
   </head>
   <body>
     <main class="container">
-      <Header title={title ?? 'Startlight'} />
+      <Header title={title ?? 'ReadForge'} basePath={basePath} currentPath={currentPath} />
       <slot />
       <Footer />
     </main>

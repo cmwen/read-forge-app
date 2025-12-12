@@ -1,18 +1,36 @@
 ---
-const { title } = Astro.props;
-const base = import.meta.env.BASE_URL || '/';
+const normalize = (p) => {
+  if (!p) return '/';
+  return p.endsWith('/') ? p : `${p}/`;
+};
+
+const { title, basePath, currentPath } = Astro.props;
+
+const base = normalize(basePath ?? '/');
+const current = normalize(currentPath ?? base);
+
+const href = {
+  home: normalize(base),
+  about: normalize(`${base}about`),
+  install: normalize(`${base}install`),
+  releases: normalize(`${base}releases`),
+};
+
+const activeClass = (h) => (current === h ? 'active' : '');
 ---
 <header class="site-title">
-  <div class="logo">FL</div>
+  <a class="brand" href={href.home} aria-label="ReadForge home">
+    <div class="logo" aria-hidden="true">RF</div>
+  </a>
   <div>
     <h1>{title}</h1>
-    <p class="lead">A minimal Flutter app template for cross-platform development</p>
+    <p class="lead">Local-first AI-assisted book creation and reading</p>
     <nav class="nav">
-      <a href={`${base}`} class="active">Home</a>
-      <a href={`${base}about`}>About</a>
-      <a href={`${base}install`}>Install</a>
-      <a href={`${base}releases`}>Releases</a>
-      <a href="https://github.com/cmwen/min-android-app-template" target="_blank" rel="noopener">Repository</a>
+      <a href={href.home} class={activeClass(href.home)}>Home</a>
+      <a href={href.about} class={activeClass(href.about)}>About</a>
+      <a href={href.install} class={activeClass(href.install)}>Install</a>
+      <a href={href.releases} class={activeClass(href.releases)}>Releases</a>
+      <a href="https://github.com/cmwen/read-forge-app" target="_blank" rel="noopener">GitHub</a>
     </nav>
   </div>
 </header>

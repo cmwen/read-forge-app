@@ -56,9 +56,9 @@ class ReadingProgressNotifier extends ChangeNotifier
   final dynamic _repository;
   final ReadingProgressParams _params;
   bool _initialized = false;
-  
+
   late ReadingProgressState _state;
-  
+
   ReadingProgressNotifier(this._repository, this._params) {
     _state = ReadingProgressState(scrollController: ScrollController());
     _init();
@@ -66,11 +66,11 @@ class ReadingProgressNotifier extends ChangeNotifier
   }
 
   ReadingProgressState get state => _state;
-  
+
   ScrollController get scrollController => _state.scrollController;
-  
+
   int get currentPosition => _state.currentPosition;
-  
+
   set state(ReadingProgressState newState) {
     _state = newState;
     notifyListeners();
@@ -163,7 +163,7 @@ class ReadingProgressNotifier extends ChangeNotifier
       saveProgress();
     }
   }
-  
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -174,9 +174,8 @@ class ReadingProgressNotifier extends ChangeNotifier
 }
 
 /// Provider for reading progress state
-final readingProgressProvider = Provider.family.autoDispose<
-    ReadingProgressNotifier,
-    ReadingProgressParams>(
-  (ref, params) =>
-      ReadingProgressNotifier(ref.watch(bookRepositoryProvider), params),
-);
+final readingProgressProvider = Provider.family
+    .autoDispose<ReadingProgressNotifier, ReadingProgressParams>(
+      (ref, params) =>
+          ReadingProgressNotifier(ref.watch(bookRepositoryProvider), params),
+    );

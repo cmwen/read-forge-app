@@ -10,9 +10,7 @@ void main() {
     });
 
     test('generateTOCPromptWithFormat should include book title', () {
-      final prompt = llmService.generateTOCPromptWithFormat(
-        'My Awesome Book',
-      );
+      final prompt = llmService.generateTOCPromptWithFormat('My Awesome Book');
 
       expect(prompt, contains('- Title: My Awesome Book'));
     });
@@ -25,20 +23,24 @@ void main() {
           description: 'This is a great book about learning',
         );
 
-        expect(prompt, contains('- Description: This is a great book about learning'));
+        expect(
+          prompt,
+          contains('- Description: This is a great book about learning'),
+        );
       },
     );
 
     test(
       'generateTOCPromptWithFormat should request description generation when not provided',
       () {
-        final prompt = llmService.generateTOCPromptWithFormat(
-          'My Book',
-        );
+        final prompt = llmService.generateTOCPromptWithFormat('My Book');
 
         // Now it should show the description line with instruction to generate
         expect(prompt, contains('- Description:'));
-        expect(prompt, contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'));
+        expect(
+          prompt,
+          contains('IF NOT PROVIDED, GENERATE A COMPELLING DESCRIPTION'),
+        );
       },
     );
 
@@ -60,9 +62,7 @@ void main() {
     test(
       'generateTOCPromptWithFormat should NOT include purpose when not provided',
       () {
-        final prompt = llmService.generateTOCPromptWithFormat(
-          'My Book',
-        );
+        final prompt = llmService.generateTOCPromptWithFormat('My Book');
 
         expect(prompt, isNot(contains('- Purpose/Goal:')));
       },
@@ -75,7 +75,8 @@ void main() {
           'The Complete Guide to Flutter',
           description:
               'A comprehensive guide covering all aspects of Flutter development',
-          purpose: 'To help developers master Flutter and build production apps',
+          purpose:
+              'To help developers master Flutter and build production apps',
         );
 
         expect(prompt, contains('- Title: The Complete Guide to Flutter'));
@@ -94,17 +95,14 @@ void main() {
       },
     );
 
-    test(
-      'generateTOCPromptWithFormat should include genre when provided',
-      () {
-        final prompt = llmService.generateTOCPromptWithFormat(
-          'My Book',
-          genre: 'Educational',
-        );
+    test('generateTOCPromptWithFormat should include genre when provided', () {
+      final prompt = llmService.generateTOCPromptWithFormat(
+        'My Book',
+        genre: 'Educational',
+      );
 
-        expect(prompt, contains('- Genre: Educational'));
-      },
-    );
+      expect(prompt, contains('- Genre: Educational'));
+    });
 
     test(
       'generateTOCPromptWithFormat should include all metadata together',
@@ -126,7 +124,9 @@ void main() {
         expect(prompt, contains('- Title: Advanced Python Programming'));
         expect(
           prompt,
-          contains('- Description: Learn advanced Python techniques and patterns'),
+          contains(
+            '- Description: Learn advanced Python techniques and patterns',
+          ),
         );
         expect(
           prompt,
@@ -141,7 +141,10 @@ void main() {
 
         // Check preferences
         expect(prompt, contains('- Language: English'));
-        expect(prompt, contains('- Writing Style: Technical with practical examples'));
+        expect(
+          prompt,
+          contains('- Writing Style: Technical with practical examples'),
+        );
         expect(prompt, contains('- Tone: Professional'));
         expect(prompt, contains('- Vocabulary Level: Advanced'));
         expect(prompt, contains('- Inspired by author: Guido van Rossum'));
@@ -168,9 +171,7 @@ void main() {
     test(
       'generateTOCPromptWithFormat should include JSON example in prompt',
       () {
-        final prompt = llmService.generateTOCPromptWithFormat(
-          'Test Book',
-        );
+        final prompt = llmService.generateTOCPromptWithFormat('Test Book');
 
         expect(prompt, contains('"type": "toc"'));
         expect(prompt, contains('"bookTitle"'));
@@ -181,11 +182,12 @@ void main() {
     test(
       'generateTOCPromptWithFormat should mention alternative plain text format',
       () {
-        final prompt = llmService.generateTOCPromptWithFormat(
-          'Test Book',
-        );
+        final prompt = llmService.generateTOCPromptWithFormat('Test Book');
 
-        expect(prompt, contains('Alternatively, you can respond in plain text format'));
+        expect(
+          prompt,
+          contains('Alternatively, you can respond in plain text format'),
+        );
         expect(prompt, contains('Chapter Title - Brief summary'));
       },
     );
@@ -205,20 +207,17 @@ void main() {
       },
     );
 
-    test(
-      'generateTOCPromptWithFormat should work with empty strings',
-      () {
-        final prompt = llmService.generateTOCPromptWithFormat(
-          '',
-          description: '',
-          purpose: '',
-        );
+    test('generateTOCPromptWithFormat should work with empty strings', () {
+      final prompt = llmService.generateTOCPromptWithFormat(
+        '',
+        description: '',
+        purpose: '',
+      );
 
-        // Should not crash and should generate valid prompt
-        expect(prompt, isNotEmpty);
-        expect(prompt, contains('## Book Information'));
-      },
-    );
+      // Should not crash and should generate valid prompt
+      expect(prompt, isNotEmpty);
+      expect(prompt, contains('## Book Information'));
+    });
 
     test(
       'generateTOCPromptWithFormat should handle long descriptions and purposes',
@@ -228,7 +227,7 @@ void main() {
             'and contains comprehensive information about what the book is about. '
             'It should be able to handle this long text without any issues '
             'and include it in the prompt properly.';
-        
+
         final longPurpose =
             'The purpose of this book is to provide comprehensive coverage '
             'of the topic and help readers understand every aspect of it in detail. '
@@ -293,44 +292,38 @@ void main() {
       },
     );
 
-    test(
-      'Real-world scenario: Complete book setup with all metadata',
-      () {
-        final prompt = llmService.generateTOCPromptWithFormat(
-          'The Art of Effective Communication',
-          description:
-              'Master the skills of clear, persuasive, and empathetic communication '
-              'in both personal and professional contexts.',
-          purpose:
-              'To transform how readers connect with others and build stronger relationships',
-          genre: 'Self-Help',
-          suggestedChapters: 12,
-          writingStyle: 'Practical and engaging',
-          language: 'English',
-          tone: 'Motivational',
-          vocabularyLevel: 'Intermediate',
-          favoriteAuthor: 'Dale Carnegie',
-        );
+    test('Real-world scenario: Complete book setup with all metadata', () {
+      final prompt = llmService.generateTOCPromptWithFormat(
+        'The Art of Effective Communication',
+        description:
+            'Master the skills of clear, persuasive, and empathetic communication '
+            'in both personal and professional contexts.',
+        purpose:
+            'To transform how readers connect with others and build stronger relationships',
+        genre: 'Self-Help',
+        suggestedChapters: 12,
+        writingStyle: 'Practical and engaging',
+        language: 'English',
+        tone: 'Motivational',
+        vocabularyLevel: 'Intermediate',
+        favoriteAuthor: 'Dale Carnegie',
+      );
 
-        // Verify all sections are present and in order
-        expect(prompt, contains('Please create a detailed Table of Contents'));
-        expect(
-          prompt,
-          contains('- Title: The Art of Effective Communication'),
-        );
-        expect(prompt, contains('- Description:'));
-        expect(prompt, contains('- Purpose/Goal:'));
-        expect(prompt, contains('- Genre: Self-Help'));
-        expect(prompt, contains('Generate 12 chapters'));
-        expect(prompt, contains('## Writing Preferences'));
-        expect(prompt, contains('- Language: English'));
-        expect(prompt, contains('- Writing Style: Practical and engaging'));
-        expect(prompt, contains('- Tone: Motivational'));
-        expect(prompt, contains('- Vocabulary Level: Intermediate'));
-        expect(prompt, contains('- Inspired by author: Dale Carnegie'));
-        expect(prompt, contains('## Response Format'));
-        expect(prompt, contains('"type": "toc"'));
-      },
-    );
+      // Verify all sections are present and in order
+      expect(prompt, contains('Please create a detailed Table of Contents'));
+      expect(prompt, contains('- Title: The Art of Effective Communication'));
+      expect(prompt, contains('- Description:'));
+      expect(prompt, contains('- Purpose/Goal:'));
+      expect(prompt, contains('- Genre: Self-Help'));
+      expect(prompt, contains('Generate 12 chapters'));
+      expect(prompt, contains('## Writing Preferences'));
+      expect(prompt, contains('- Language: English'));
+      expect(prompt, contains('- Writing Style: Practical and engaging'));
+      expect(prompt, contains('- Tone: Motivational'));
+      expect(prompt, contains('- Vocabulary Level: Intermediate'));
+      expect(prompt, contains('- Inspired by author: Dale Carnegie'));
+      expect(prompt, contains('## Response Format'));
+      expect(prompt, contains('"type": "toc"'));
+    });
   });
 }

@@ -27,7 +27,7 @@ Your site will be deployed to: `https://your-username.github.io/your-repo-name/`
 
 ## Features
 
-- Small Startlight-inspired theme (dark, readable, fast)
+- Small dark theme (readable, fast)
 - Minimal pages: Home, About, Install, Releases
 - Auto-deploy to GitHub Pages via `.github/workflows/deploy-website.yml`
 - Published when a GitHub Release is created (or via manual workflow dispatch)
@@ -46,12 +46,10 @@ flutter run
 # Build for release
 flutter build apk         # Android
 flutter build appbundle   # Play Store
-flutter build ios         # iOS
-flutter build web         # Web
 ```
 
 ## Releases
 
 Download prebuilt artifacts from GitHub Releases:
-https://github.com/cmwen/min-android-app-template/releases/latest
+https://github.com/cmwen/read-forge-app/releases/latest
 

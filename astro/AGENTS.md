@@ -1,6 +1,6 @@
 # Agents guide — astro/
 
-This file explains how AI agents and automated tools should work with the `astro/` Astro project for the `min-android-app-template` repository.
+This file explains how AI agents and automated tools should work with the `astro/` Astro project for the `read-forge-app` repository.
 
 Keep these instructions concise and actionable — follow them when making edits, testing locally, or changing CI/deployment behavior.
 
@@ -41,7 +41,7 @@ const REPO_NAME = 'your-repo-name';
   - Keep copy short and link back to repository files as appropriate.
 
 - Styling and assets
-  - Minor theme tweaks should go in `astro/src/styles.css`.
+  - Minor theme tweaks should go in `astro/public/styles.css`.
   - Add media assets to `astro/public/` if needed (create the folder). Don't commit very large files; prefer optimized images.
 
   - Project prompts & design helpers
@@ -79,7 +79,7 @@ const REPO_NAME = 'your-repo-name';
 ```js
 // astro/astro.config.mjs
 const GITHUB_USERNAME = 'cmwen';
-const REPO_NAME = 'min-android-app-template';
+const REPO_NAME = 'read-forge-app';
 
 export default defineConfig({
   site: `https://${GITHUB_USERNAME}.github.io`,
@@ -97,7 +97,7 @@ Example usage in frontmatter and markup:
 // in a component or page frontmatter
 const base = import.meta.env.BASE_URL || '/';
 // use the base when referencing assets or internal routes
-<link rel="stylesheet" href={`${base}src/styles.css`} />
+<link rel="stylesheet" href={`${base}styles.css`} />
 <a href={`${base}about`}>About</a>
 ```
 
