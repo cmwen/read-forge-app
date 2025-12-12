@@ -643,6 +643,31 @@
       }
     }
   },
+  "highlight": "Highlight",
+  "@highlight": {
+    "description": "Highlight button label"
+  },
+  "highlightText": "Highlight Text",
+  "@highlightText": {
+    "description": "Dialog title for highlighting text"
+  },
+  "selectColor": "Select color:",
+  "@selectColor": {
+    "description": "Label for color selection"
+  },
+  "highlightAdded": "Highlight added",
+  "@highlightAdded": {
+    "description": "Snackbar message after adding highlight"
+  },
+  "errorAddingHighlight": "Error adding highlight: {error}",
+  "@errorAddingHighlight": {
+    "description": "Error message when adding highlight fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "bookTitleUpdated": "Book title updated to: \"{title}\"",
   "@bookTitleUpdated": {
     "description": "Success message when book title is updated from TOC response",

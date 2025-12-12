@@ -40,6 +40,68 @@ class ReaderScreen extends ConsumerStatefulWidget {
 }
 
 class _ReaderScreenState extends ConsumerState<ReaderScreen> {
+  // Build custom context menu for text selection
+  Widget _buildCustomContextMenu(
+    BuildContext context,
+    SelectableRegionState selectableRegionState,
+    dynamic chapter,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final buttonItems = selectableRegionState.contextMenuButtonItems;
+    
+    // Find the copy button and extract its logic to get selected text
+    final copyButton = buttonItems.firstWhere(
+      (item) => item.type == ContextMenuButtonType.copy,
+      orElse: () => buttonItems.first,
+    );
+
+    // Add highlight button that uses the same copy logic to get text
+    final highlightButton = ContextMenuButtonItem(
+      onPressed: () async {
+        // Save current clipboard
+        ClipboardData? previousClipboard;
+        try {
+          previousClipboard = await Clipboard.getData(Clipboard.kTextPlain);
+        } catch (e) {
+          // Ignore errors
+        }
+
+        // Trigger copy to get the selected text
+        copyButton.onPressed?.call();
+        
+        // Small delay to ensure clipboard is updated
+        await Future.delayed(const Duration(milliseconds: 50));
+        
+        // Get the selected text from clipboard
+        final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+        final selectedText = clipboardData?.text;
+        
+        // Restore previous clipboard if it existed
+        if (previousClipboard?.text != null) {
+          await Clipboard.setData(ClipboardData(text: previousClipboard!.text!));
+        }
+        
+        // Close the context menu
+        ContextMenuController.removeAny();
+        
+        if (selectedText != null && selectedText.isNotEmpty && context.mounted) {
+          // Show highlight color picker
+          _showHighlightColorPicker(context, selectedText, chapter);
+        }
+      },
+      label: l10n.highlight,
+      type: ContextMenuButtonType.custom,
+    );
+
+    // Insert highlight button at the beginning
+    final customButtonItems = [highlightButton, ...buttonItems];
+
+    return AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: selectableRegionState.contextMenuAnchors,
+      buttonItems: customButtonItems,
+    );
+  }
+
   @override
   void dispose() {
     // Save reading progress when leaving the screen
@@ -232,72 +294,81 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           Divider(color: textColor.withValues(alpha: 0.2)),
           const SizedBox(height: 24),
 
-          // Chapter content - Markdown support
-          MarkdownBody(
-            data: chapter.content ?? _getSampleText(),
-            styleSheet: MarkdownStyleSheet(
-              p: TextStyle(
-                height: 1.8,
-                fontSize: preferences.fontSize,
-                color: textColor,
-                fontFamily: fontFamily,
+          // Chapter content - Markdown support with custom selection toolbar
+          SelectionArea(
+            contextMenuBuilder: (context, selectableRegionState) {
+              return _buildCustomContextMenu(
+                context,
+                selectableRegionState,
+                chapter,
+              );
+            },
+            child: MarkdownBody(
+              data: chapter.content ?? _getSampleText(),
+              styleSheet: MarkdownStyleSheet(
+                p: TextStyle(
+                  height: 1.8,
+                  fontSize: preferences.fontSize,
+                  color: textColor,
+                  fontFamily: fontFamily,
+                ),
+                h1: TextStyle(
+                  fontSize: preferences.fontSize * 1.8,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                  fontFamily: fontFamily,
+                ),
+                h2: TextStyle(
+                  fontSize: preferences.fontSize * 1.5,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                  fontFamily: fontFamily,
+                ),
+                h3: TextStyle(
+                  fontSize: preferences.fontSize * 1.2,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                  fontFamily: fontFamily,
+                ),
+                h4: TextStyle(
+                  fontSize: preferences.fontSize * 1.1,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                  fontFamily: fontFamily,
+                ),
+                h5: TextStyle(
+                  fontSize: preferences.fontSize,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                  fontFamily: fontFamily,
+                ),
+                h6: TextStyle(
+                  fontSize: preferences.fontSize,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                  fontFamily: fontFamily,
+                ),
+                strong: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                em: TextStyle(fontStyle: FontStyle.italic, color: textColor),
+                blockquote: TextStyle(
+                  fontSize: preferences.fontSize,
+                  color: textColor.withValues(alpha: 0.8),
+                  fontStyle: FontStyle.italic,
+                  fontFamily: fontFamily,
+                ),
+                code: TextStyle(
+                  fontSize: preferences.fontSize * 0.9,
+                  fontFamily: _getMonospaceFont(),
+                  backgroundColor: textColor.withValues(alpha: 0.1),
+                  color: textColor,
+                ),
+                listBullet: TextStyle(
+                  fontSize: preferences.fontSize,
+                  color: textColor,
+                ),
               ),
-              h1: TextStyle(
-                fontSize: preferences.fontSize * 1.8,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-                fontFamily: fontFamily,
-              ),
-              h2: TextStyle(
-                fontSize: preferences.fontSize * 1.5,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-                fontFamily: fontFamily,
-              ),
-              h3: TextStyle(
-                fontSize: preferences.fontSize * 1.2,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-                fontFamily: fontFamily,
-              ),
-              h4: TextStyle(
-                fontSize: preferences.fontSize * 1.1,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-                fontFamily: fontFamily,
-              ),
-              h5: TextStyle(
-                fontSize: preferences.fontSize,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-                fontFamily: fontFamily,
-              ),
-              h6: TextStyle(
-                fontSize: preferences.fontSize,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-                fontFamily: fontFamily,
-              ),
-              strong: TextStyle(fontWeight: FontWeight.bold, color: textColor),
-              em: TextStyle(fontStyle: FontStyle.italic, color: textColor),
-              blockquote: TextStyle(
-                fontSize: preferences.fontSize,
-                color: textColor.withValues(alpha: 0.8),
-                fontStyle: FontStyle.italic,
-                fontFamily: fontFamily,
-              ),
-              code: TextStyle(
-                fontSize: preferences.fontSize * 0.9,
-                fontFamily: _getMonospaceFont(),
-                backgroundColor: textColor.withValues(alpha: 0.1),
-                color: textColor,
-              ),
-              listBullet: TextStyle(
-                fontSize: preferences.fontSize,
-                color: textColor,
-              ),
+              selectable: true,
             ),
-            selectable: true,
           ),
 
           const SizedBox(height: 48),
@@ -1080,6 +1151,146 @@ You can format text like:
         );
       }
     }
+  }
+
+  void _showHighlightColorPicker(
+    BuildContext context,
+    String selectedText,
+    dynamic chapter,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    String selectedColor = 'yellow';
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(l10n.highlightText),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.selectColor,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: HighlightColors.all.map((entry) {
+                  final colorName = entry.key;
+                  final color = entry.value;
+                  final isSelected = selectedColor == colorName;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedColor = colorName;
+                      });
+                    },
+                    child: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.transparent,
+                          width: 3,
+                        ),
+                      ),
+                      child: isSelected
+                          ? const Icon(Icons.check, color: Colors.white)
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: HighlightColors.fromString(selectedColor)
+                      .withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  selectedText.length > 100
+                      ? '${selectedText.substring(0, 100)}...'
+                      : selectedText,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () async {
+                // Calculate approximate position based on text content
+                final progressState = ref.read(
+                  readingProgressProvider(
+                    ReadingProgressParams(
+                      bookId: widget.bookId,
+                      chapterId: widget.chapterId,
+                    ),
+                  ),
+                );
+
+                // Use current scroll position as approximate position
+                final currentPosition = progressState.currentPosition;
+                // For start and end positions, use character-based approximation
+                final chapterContent = chapter.content ?? _getSampleText();
+                final textIndex = chapterContent.indexOf(selectedText);
+                final startPos = textIndex >= 0 ? textIndex : currentPosition;
+                final endPos = startPos + selectedText.length;
+
+                final repository = ref.read(bookRepositoryProvider);
+
+                try {
+                  await repository.createHighlight(
+                    bookId: widget.bookId,
+                    chapterId: widget.chapterId,
+                    startPosition: startPos,
+                    endPosition: endPos,
+                    highlightedText: selectedText,
+                    color: selectedColor,
+                  );
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.highlightAdded),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.errorAddingHighlight(e.toString())),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(l10n.highlight),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _addNote(BuildContext context) {
