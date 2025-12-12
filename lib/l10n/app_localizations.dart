@@ -963,6 +963,36 @@ abstract class AppLocalizations {
   /// **'Error adding note: {error}'**
   String errorAddingNote(String error);
 
+  /// Highlight button label
+  ///
+  /// In en, this message translates to:
+  /// **'Highlight'**
+  String get highlight;
+
+  /// Dialog title for highlighting text
+  ///
+  /// In en, this message translates to:
+  /// **'Highlight Text'**
+  String get highlightText;
+
+  /// Label for color selection
+  ///
+  /// In en, this message translates to:
+  /// **'Select color:'**
+  String get selectColor;
+
+  /// Snackbar message after adding highlight
+  ///
+  /// In en, this message translates to:
+  /// **'Highlight added'**
+  String get highlightAdded;
+
+  /// Error message when adding highlight fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error adding highlight: {error}'**
+  String errorAddingHighlight(String error);
+
   /// Success message when book title is updated from TOC response
   ///
   /// In en, this message translates to:

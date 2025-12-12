@@ -472,6 +472,23 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get highlight => 'Highlight';
+
+  @override
+  String get highlightText => 'Highlight Text';
+
+  @override
+  String get selectColor => 'Select color:';
+
+  @override
+  String get highlightAdded => 'Highlight added';
+
+  @override
+  String errorAddingHighlight(String error) {
+    return 'Error adding highlight: $error';
+  }
+
+  @override
   String bookTitleUpdated(String title) {
     return 'Book title updated to: \"$title\"';
   }

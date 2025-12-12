@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="#2196F3"/>
+  
+  <!-- Book Shape -->
+  <g id="book">
+    <!-- Left Page -->
+    <path d="M 140 160 L 140 380 L 250 360 L 250 140 Z" fill="#FFFFFF" opacity="0.95"/>
+    
+    <!-- Right Page -->
+    <path d="M 262 140 L 262 360 L 372 380 L 372 160 Z" fill="#FFFFFF" opacity="0.95"/>
+    
+    <!-- Center Binding -->
+    <rect x="248" y="140" width="16" height="240" fill="#E3F2FD"/>
+    
+    <!-- Page Lines (Left) -->
+    <line x1="160" y1="180" x2="230" y2="175" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="160" y1="210" x2="230" y2="205" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="160" y1="240" x2="230" y2="235" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="160" y1="270" x2="230" y2="265" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="160" y1="300" x2="230" y2="295" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    
+    <!-- Page Lines (Right) -->
+    <line x1="282" y1="175" x2="352" y2="180" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="282" y1="205" x2="352" y2="210" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="282" y1="235" x2="352" y2="240" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="282" y1="265" x2="352" y2="270" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+    <line x1="282" y1="295" x2="352" y2="300" stroke="#2196F3" stroke-width="2" opacity="0.3"/>
+  </g>
+  
+  <!-- Forge/Anvil Element (Bottom) -->
+  <g id="forge">
+    <!-- Anvil Base -->
+    <rect x="210" y="350" width="92" height="20" rx="4" fill="#1976D2"/>
+    <rect x="220" y="370" width="72" height="12" rx="2" fill="#1976D2"/>
+    
+    <!-- Hammer/Tool Icon (Small, representing creation) -->
+    <g transform="translate(340, 320) rotate(45)">
+      <rect x="0" y="-3" width="30" height="6" rx="2" fill="#FFC107"/>
+      <rect x="30" y="-6" width="12" height="12" rx="2" fill="#FF9800"/>
+    </g>
+  </g>
+  
+  <!-- AI Spark/Star Elements (Representing AI-powered) -->
+  <g id="ai-elements">
+    <!-- Top Right Spark -->
+    <circle cx="380" cy="140" r="4" fill="#FFD54F" opacity="0.9"/>
+    <line x1="380" y1="130" x2="380" y2="150" stroke="#FFD54F" stroke-width="2" opacity="0.7"/>
+    <line x1="370" y1="140" x2="390" y2="140" stroke="#FFD54F" stroke-width="2" opacity="0.7"/>
+    
+    <!-- Top Left Spark -->
+    <circle cx="132" cy="140" r="4" fill="#FFD54F" opacity="0.9"/>
+    <line x1="132" y1="130" x2="132" y2="150" stroke="#FFD54F" stroke-width="2" opacity="0.7"/>
+    <line x1="122" y1="140" x2="142" y2="140" stroke="#FFD54F" stroke-width="2" opacity="0.7"/>
+    
+    <!-- Small sparkles -->
+    <circle cx="360" cy="180" r="2.5" fill="#FFD54F" opacity="0.8"/>
+    <circle cx="152" cy="180" r="2.5" fill="#FFD54F" opacity="0.8"/>
+    <circle cx="256" cy="110" r="3" fill="#FFD54F" opacity="0.8"/>
+  </g>
+  
+  <!-- Book Border/Outline -->
+  <path d="M 140 160 L 140 380 L 250 360 L 250 140 Z M 262 140 L 262 360 L 372 380 L 372 160 Z" 
+        fill="none" stroke="#1976D2" stroke-width="3" stroke-linejoin="round"/>
+</svg>
