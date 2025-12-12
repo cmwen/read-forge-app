@@ -48,7 +48,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   ) {
     final l10n = AppLocalizations.of(context)!;
     final buttonItems = selectableRegionState.contextMenuButtonItems;
-    
+
     // Find the copy button and extract its logic to get selected text
     final copyButton = buttonItems.firstWhere(
       (item) => item.type == ContextMenuButtonType.copy,
@@ -68,23 +68,27 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
 
         // Trigger copy to get the selected text
         copyButton.onPressed?.call();
-        
+
         // Small delay to ensure clipboard is updated
         await Future.delayed(const Duration(milliseconds: 50));
-        
+
         // Get the selected text from clipboard
         final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
         final selectedText = clipboardData?.text;
-        
+
         // Restore previous clipboard if it existed
         if (previousClipboard?.text != null) {
-          await Clipboard.setData(ClipboardData(text: previousClipboard!.text!));
+          await Clipboard.setData(
+            ClipboardData(text: previousClipboard!.text!),
+          );
         }
-        
+
         // Close the context menu
         ContextMenuController.removeAny();
-        
-        if (selectedText != null && selectedText.isNotEmpty && context.mounted) {
+
+        if (selectedText != null &&
+            selectedText.isNotEmpty &&
+            context.mounted) {
           // Show highlight color picker
           _showHighlightColorPicker(context, selectedText, chapter);
         }
@@ -348,7 +352,10 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                   color: textColor,
                   fontFamily: fontFamily,
                 ),
-                strong: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                strong: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
                 em: TextStyle(fontStyle: FontStyle.italic, color: textColor),
                 blockquote: TextStyle(
                   fontSize: preferences.fontSize,
@@ -1212,8 +1219,9 @@ You can format text like:
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: HighlightColors.fromString(selectedColor)
-                      .withValues(alpha: 0.3),
+                  color: HighlightColors.fromString(
+                    selectedColor,
+                  ).withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
