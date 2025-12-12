@@ -1,79 +1,48 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-const base = import.meta.env.BASE_URL || '/';
 ---
 <BaseLayout title="ReadForge">
   <section>
-    <h2>Welcome to ReadForge 📚</h2>
-    <p class="lead">A <strong>local-first AI-powered</strong> book creation and reading app. Create, manage, and read LLM-generated books with full data ownership and privacy.</p>
-
-    <div class="card">
-      <h3>What's ReadForge?</h3>
-      <ul>
-        <li>AI-powered book and chapter generation</li>
-        <li>Local-first data storage with complete privacy</li>
-        <li>Multi-language support (English, Spanish, Chinese)</li>
-        <li>Beautiful Material Design 3 reading experience</li>
-      </ul>
+    <div class="hero">
+      <h2>Forge your own stories.</h2>
+      <p class="lead">
+        ReadForge is a <strong>local-first Android app</strong> for creating and reading AI-assisted books.
+        It helps you generate prompts, share them to the LLM app you prefer, and paste the results back into a structured library.
+      </p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/cmwen/read-forge-app/releases/latest" target="_blank" rel="noopener">Download latest release</a>
+        <a class="button secondary" href="install/">Developer install</a>
+        <a class="button secondary" href="https://github.com/cmwen/read-forge-app" target="_blank" rel="noopener">View on GitHub</a>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>✨ Key Features</h3>
-      <ul>
-        <li><strong>AI Title Generation:</strong> Let AI create book titles based on your description or learning goals</li>
-        <li><strong>Flexible Book Creation:</strong> Provide a title, description, or learning purpose - or let AI help</li>
-        <li><strong>Customizable Writing:</strong> Set style, tone, vocabulary, and favorite author for AI content</li>
-        <li><strong>Multi-Language:</strong> Full interface support for English, Spanish, and Chinese</li>
-        <li><strong>Rich Reader:</strong> Adjustable fonts, themes (Light/Dark/Sepia), highlights, notes, and bookmarks</li>
-        <li><strong>100% Private:</strong> All data stored locally - no cloud, no tracking</li>
-      </ul>
-    </div>
+    <div class="grid">
+      <div class="card span-6">
+        <h3>Core workflow</h3>
+        <ol>
+          <li>Create a book (title/description/purpose are optional)</li>
+          <li>Generate a prompt for TOC or a chapter</li>
+          <li>Share the prompt to any LLM app (LLM-agnostic)</li>
+          <li>Paste the response back to import and store locally</li>
+          <li>Read with a full-featured reader</li>
+        </ol>
+      </div>
 
-    <div class="card">
-      <h3>🚀 How It Works</h3>
-      <ol>
-        <li><strong>Create a Book:</strong> Provide a title, description, or learning goal (or all three!)</li>
-        <li><strong>AI Title Generation:</strong> Skip the title and let AI generate one based on your description</li>
-        <li><strong>Generate TOC:</strong> Use AI to create a table of contents with chapter outlines</li>
-        <li><strong>Write Chapters:</strong> Generate chapter content with AI, with your writing preferences applied</li>
-        <li><strong>Read & Annotate:</strong> Enjoy your book with highlights, notes, and bookmarks</li>
-      </ol>
-    </div>
+      <div class="card span-6">
+        <h3>What you get</h3>
+        <ul>
+          <li><strong>Local-first storage:</strong> your library lives on-device (SQLite/Drift)</li>
+          <li><strong>LLM-agnostic:</strong> share to your preferred AI app</li>
+          <li><strong>Reading tools:</strong> themes, bookmarks, highlights, and notes</li>
+          <li><strong>Customizable prompts:</strong> writing style, tone, vocabulary, language</li>
+          <li><strong>Export/import:</strong> backup and portability via JSON</li>
+        </ul>
+      </div>
 
-    <div class="card">
-      <h3>📥 Download</h3>
-      <p class="lead">Get the latest release for Android</p>
-      <p><a href="https://github.com/cmwen/read-forge-app/releases/latest" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">Download APK from GitHub Releases →</a></p>
-    </div>
-
-    <div class="card">
-      <h3>🛠️ Quick Start for Developers</h3>
-      <p class="lead">Build and run from source</p>
-      <pre style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;margin-top:8px;overflow:auto">git clone https://github.com/cmwen/read-forge-app.git
-cd read-forge-app
-flutter pub get
-flutter run</pre>
-      <p style="margin-top:8px"><a href={`${base}install`} style="color:var(--accent);text-decoration:none">View full installation guide →</a></p>
-    </div>
-
-    <div class="card">
-      <h3>🌍 Language Support</h3>
-      <p>ReadForge supports 12 languages and automatically uses your device language:</p>
-      <ul style="column-count: 2; column-gap: 20px;">
-        <li>🇬🇧 English</li>
-        <li>🇪🇸 Spanish</li>
-        <li>🇨🇳 Chinese (Simplified)</li>
-        <li>🇹🇼 Chinese (Traditional)</li>
-        <li>🇫🇷 French</li>
-        <li>🇩🇪 German</li>
-        <li>🇵🇹 Portuguese</li>
-        <li>🇯🇵 Japanese</li>
-        <li>🇰🇷 Korean</li>
-        <li>🇸🇦 Arabic</li>
-        <li>🇮🇳 Hindi</li>
-        <li>🇷🇺 Russian</li>
-      </ul>
-      <p style="margin-top:8px">More languages welcome! Contributions appreciated.</p>
+      <div class="card span-12">
+        <h3>Languages</h3>
+        <p>ReadForge includes UI translations for 12 languages (including English, Spanish, Chinese, French, German, Portuguese, Japanese, Korean, Arabic, Hindi, and Russian).</p>
+      </div>
     </div>
   </section>
 </BaseLayout>

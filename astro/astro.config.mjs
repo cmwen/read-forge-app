@@ -15,7 +15,7 @@ import { defineConfig } from 'astro/config';
 //
 // AI PROMPT: To update for your repo, replace:
 //   - 'cmwen' with your GitHub username
-//   - 'min-android-app-template' with your repository name
+//   - 'read-forge-app' with your repository name
 // ============================================================================
 
 const GITHUB_USERNAME = 'cmwen';
@@ -25,4 +25,6 @@ export default defineConfig({
   site: `https://${GITHUB_USERNAME}.github.io`,
   // IMPORTANT: include a trailing slash so import.meta.env.BASE_URL ends with '/'
   base: `/${REPO_NAME}/`,
+  // GitHub Pages serves directory indexes reliably; keep URLs consistent.
+  trailingSlash: 'always',
 });

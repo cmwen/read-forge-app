@@ -4,58 +4,57 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 <BaseLayout title="About ReadForge">
   <section>
     <h2>About ReadForge</h2>
-    <p>ReadForge is a local-first AI-powered book creation and reading application. It empowers you to create, manage, and read books generated with the help of Large Language Models (LLMs) like ChatGPT and Claude, while maintaining complete privacy and data ownership.</p>
+    <p>
+      ReadForge is a local-first Android app for creating and reading AI-assisted books.
+      Instead of locking you into a single provider, it supports an LLM-agnostic workflow: generate prompts in-app, share them to the LLM app you want, then paste responses back to import them into a structured library.
+    </p>
 
     <div class="card">
-      <h3>🎯 Vision</h3>
-      <p>We believe in:</p>
+      <h3>Vision</h3>
+      <p>ReadForge is built around:</p>
       <ul>
-        <li><strong>Privacy First:</strong> Your data belongs to you, stored locally on your device</li>
-        <li><strong>AI Augmentation:</strong> Use AI as a creative tool, not a replacement</li>
-        <li><strong>Learning Focus:</strong> Track learning goals and purposes for each book</li>
-        <li><strong>Accessibility:</strong> Multi-language support for users worldwide</li>
+        <li><strong>Data ownership:</strong> local-first storage and exportability</li>
+        <li><strong>LLM flexibility:</strong> share prompts to any LLM app</li>
+        <li><strong>Learning + creation:</strong> book purpose and preferences feed into prompt generation</li>
+        <li><strong>Accessibility:</strong> internationalization with multiple UI languages</li>
       </ul>
     </div>
 
     <div class="card">
-      <h3>✨ Core Features</h3>
+      <h3>Core features</h3>
       <ul>
-        <li><strong>Flexible Book Creation:</strong> Optional fields for title, description, and learning purpose</li>
-        <li><strong>AI Title Generation:</strong> Generate compelling book titles based on your content</li>
-        <li><strong>Customizable AI Prompts:</strong> Control writing style, tone, and vocabulary</li>
-        <li><strong>Multi-Language UI:</strong> 12 languages including English, Spanish, Chinese (Simplified & Traditional), French, German, Portuguese, Japanese, Korean, Arabic, Hindi, and Russian</li>
-        <li><strong>Rich Reading Experience:</strong> Themes, highlights, notes, and bookmarks</li>
-        <li><strong>Offline-First:</strong> Works completely offline after content generation</li>
+        <li><strong>Library management:</strong> organize books and chapters</li>
+        <li><strong>Prompt generation:</strong> generate TOC and chapter prompts with preferences</li>
+        <li><strong>Import:</strong> paste TOC/chapter responses back into the app</li>
+        <li><strong>Reader:</strong> themes (Light/Dark/Sepia), highlights, notes, bookmarks, and progress</li>
+        <li><strong>Internationalization:</strong> UI translations across 12 languages</li>
       </ul>
     </div>
 
     <div class="card">
-      <h3>🛠️ Tech Stack</h3>
+      <h3>Tech stack</h3>
       <ul>
-        <li><strong>Framework:</strong> Flutter 3.10.1+ with Dart 3.10.1+</li>
+        <li><strong>Framework:</strong> Flutter 3.10.1+ (Dart 3.10.1+)</li>
         <li><strong>UI:</strong> Material Design 3</li>
-        <li><strong>Database:</strong> Drift (SQLite) for local-first storage</li>
-        <li><strong>State Management:</strong> Riverpod</li>
-        <li><strong>Internationalization:</strong> Flutter l10n with ARB files</li>
-        <li><strong>Build:</strong> Gradle 8.0+ with Java 17</li>
+        <li><strong>Local storage:</strong> SQLite via Drift</li>
+        <li><strong>State management:</strong> Riverpod</li>
+        <li><strong>i18n:</strong> Flutter l10n (ARB files)</li>
+        <li><strong>Build:</strong> Gradle 8.0+ (Java 17)</li>
         <li><strong>CI/CD:</strong> GitHub Actions</li>
       </ul>
     </div>
 
     <div class="card">
-      <h3>🔐 Privacy & Security</h3>
+      <h3>Privacy</h3>
       <ul>
-        <li>✅ 100% local data storage</li>
-        <li>✅ No cloud synchronization</li>
-        <li>✅ No user tracking or analytics</li>
-        <li>✅ No external API calls (except when you explicitly share prompts)</li>
-        <li>✅ Full data ownership and control</li>
-        <li>✅ Export your books anytime</li>
+        <li>Local-first storage (no required cloud sync)</li>
+        <li>Export/import your books for backup and portability</li>
+        <li>LLM interaction happens via the share/paste workflow you initiate</li>
       </ul>
     </div>
 
     <div class="card">
-      <h3>🌍 Open Source</h3>
+      <h3>Open source</h3>
       <p>ReadForge is open source and welcomes contributions!</p>
       <p><a href="https://github.com/cmwen/read-forge-app" target="_blank" rel="noopener">View on GitHub →</a></p>
       <p style="margin-top:1rem">Contributions welcome for:</p>
@@ -68,17 +67,8 @@ import BaseLayout from '../layouts/BaseLayout.astro'
     </div>
 
     <div class="card">
-      <h3>📄 License</h3>
-      <p>MIT License - Free to use, modify, and distribute</p>
-    </div>
-
-    <div class="card">
-      <h3>How this site works</h3>
-      <ul>
-        <li>Source in <code>/astro</code></li>
-        <li>Built with Astro and Startlight-inspired theme</li>
-        <li>Deploys to GitHub Pages on release</li>
-      </ul>
+      <h3>License</h3>
+      <p>MIT License</p>
     </div>
   </section>
 </BaseLayout>
