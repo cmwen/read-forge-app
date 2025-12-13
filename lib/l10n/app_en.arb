@@ -676,5 +676,50 @@
         "type": "String"
       }
     }
+  },
+  "readAloud": "Read Aloud",
+  "@readAloud": {
+    "description": "Button/tooltip for TTS read aloud feature"
+  },
+  "play": "Play",
+  "@play": {
+    "description": "Play button for TTS"
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "Pause button for TTS"
+  },
+  "stop": "Stop",
+  "@stop": {
+    "description": "Stop button for TTS"
+  },
+  "speechSpeed": "Speech Speed",
+  "@speechSpeed": {
+    "description": "Label for speech speed control"
+  },
+  "slow": "Slow",
+  "@slow": {
+    "description": "Label for slow speed"
+  },
+  "normal": "Normal",
+  "@normal": {
+    "description": "Label for normal speed"
+  },
+  "fast": "Fast",
+  "@fast": {
+    "description": "Label for fast speed"
+  },
+  "ttsSettings": "Read Aloud Settings",
+  "@ttsSettings": {
+    "description": "Title for TTS settings dialog"
+  },
+  "ttsError": "Text-to-speech error: {error}",
+  "@ttsError": {
+    "description": "Error message for TTS failures",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -496,4 +496,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String bookTitleUpdated(String title) {
     return 'Book title updated to: \"$title\"';
   }
+
+  @override
+  String get readAloud => 'Read Aloud';
+
+  @override
+  String get play => 'Play';
+
+  @override
+  String get pause => 'Pause';
+
+  @override
+  String get stop => 'Stop';
+
+  @override
+  String get speechSpeed => 'Speech Speed';
+
+  @override
+  String get slow => 'Slow';
+
+  @override
+  String get normal => 'Normal';
+
+  @override
+  String get fast => 'Fast';
+
+  @override
+  String get ttsSettings => 'Read Aloud Settings';
+
+  @override
+  String ttsError(String error) {
+    return 'Text-to-speech error: $error';
+  }
 }
