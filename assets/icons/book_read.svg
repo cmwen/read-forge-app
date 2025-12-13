@@ -1,0 +1,22 @@
+<!--
+  Modified SVG icon: "book_read.svg"
+  Inspired by Feather Icons 'book-open' (https://github.com/feathericons/feather) - MIT License.
+  Small modifications: added bookmark ribbon and simplified pages for a friendly app icon.
+-->
+<!--
+  Simplified SVG icon: "book_read.svg"
+  Based on an open-source book icon; simplified shapes for clarity.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" aria-hidden="true" role="img">
+  <title>Book — Read</title>
+
+  <!-- Simplified open book -->
+  <g fill="none" stroke="currentColor" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M56 80h176v320H56c-13.3 0-24-10.7-24-24V104c0-13.3 10.7-24 24-24z"/>
+    <path d="M456 80H280v320h176c13.3 0 24-10.7 24-24V104c0-13.3-10.7-24-24-24z"/>
+    <path d="M256 96v320"/>
+  </g>
+
+  <!-- Simple bookmark on right page -->
+  <path d="M360 112v72l24 16 24-16V112z" fill="#FF6B6B"/>
+</svg>
