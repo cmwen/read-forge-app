@@ -393,8 +393,8 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
 
   Future<Map<String, String>> _getChapterInfo(WidgetRef ref) async {
     final repository = ref.read(bookRepositoryProvider);
-    final book = await repository.getBookById(bookId);
-    final chapter = await repository.getChapterById(chapterId);
+    final book = await repository.getBookById(widget.bookId);
+    final chapter = await repository.getChapterById(widget.chapterId);
     
     return {
       'bookTitle': book?.title ?? '',
