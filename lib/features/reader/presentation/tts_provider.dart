@@ -89,10 +89,7 @@ class TtsNotifier extends Notifier<TtsState> {
       state = state.copyWith(currentText: text);
       await _ttsService.speak(text);
     } catch (e) {
-      state = state.copyWith(
-        isPlaying: false,
-        errorMessage: e.toString(),
-      );
+      state = state.copyWith(isPlaying: false, errorMessage: e.toString());
     }
   }
 

@@ -6,7 +6,7 @@ class TtsService {
   bool _isInitialized = false;
   bool _isPlaying = false;
   double _speechRate = 0.5; // Default rate (0.0 - 1.0)
-  
+
   // Callbacks
   Function()? onComplete;
   Function()? onStart;
@@ -17,14 +17,14 @@ class TtsService {
   /// Initialize TTS service
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     try {
       // Configure TTS for Android
       await _flutterTts.setLanguage("en-US");
       await _flutterTts.setSpeechRate(_speechRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
-      
+
       // Enable background audio (allows screen to be turned off)
       await _flutterTts.setIosAudioCategory(
         IosTextToSpeechAudioCategory.playback,
@@ -36,33 +36,33 @@ class TtsService {
         ],
         IosTextToSpeechAudioMode.voicePrompt,
       );
-      
+
       // Set up handlers
       _flutterTts.setStartHandler(() {
         _isPlaying = true;
         onStart?.call();
       });
-      
+
       _flutterTts.setCompletionHandler(() {
         _isPlaying = false;
         onComplete?.call();
       });
-      
+
       _flutterTts.setPauseHandler(() {
         _isPlaying = false;
         onPause?.call();
       });
-      
+
       _flutterTts.setContinueHandler(() {
         _isPlaying = true;
         onContinue?.call();
       });
-      
+
       _flutterTts.setErrorHandler((msg) {
         _isPlaying = false;
         onError?.call(msg);
       });
-      
+
       _isInitialized = true;
     } catch (e) {
       throw Exception('Failed to initialize TTS: $e');
@@ -74,7 +74,7 @@ class TtsService {
     if (!_isInitialized) {
       await initialize();
     }
-    
+
     try {
       await _flutterTts.speak(text);
     } catch (e) {
@@ -85,7 +85,7 @@ class TtsService {
   /// Pause speaking
   Future<void> pause() async {
     if (!_isInitialized) return;
-    
+
     try {
       await _flutterTts.pause();
       _isPlaying = false;
@@ -97,7 +97,7 @@ class TtsService {
   /// Stop speaking
   Future<void> stop() async {
     if (!_isInitialized) return;
-    
+
     try {
       await _flutterTts.stop();
       _isPlaying = false;
@@ -111,7 +111,7 @@ class TtsService {
     if (!_isInitialized) {
       await initialize();
     }
-    
+
     _speechRate = rate.clamp(0.0, 1.0);
     await _flutterTts.setSpeechRate(_speechRate);
   }

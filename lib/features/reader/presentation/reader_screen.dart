@@ -111,7 +111,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   void dispose() {
     // Stop TTS if playing
     ref.read(ttsProvider.notifier).stop();
-    
+
     // Save reading progress when leaving the screen
     final progressNotifier = ref.read(
       readingProgressProvider(
@@ -1410,7 +1410,7 @@ You can format text like:
 
   void _startReading(BuildContext context) async {
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));
-    
+
     await chapterAsync.when(
       data: (chapter) async {
         if (chapter?.content != null && chapter!.content!.isNotEmpty) {
@@ -1424,9 +1424,9 @@ You can format text like:
         } else {
           if (context.mounted) {
             final l10n = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.noContentYet)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.noContentYet)));
           }
         }
       },
@@ -1521,39 +1521,39 @@ You can format text like:
   String _stripMarkdown(String markdown) {
     // Remove markdown formatting for better TTS reading
     String text = markdown;
-    
+
     // Remove headers
     text = text.replaceAll(RegExp(r'^#{1,6}\s+', multiLine: true), '');
-    
+
     // Remove bold and italic
     text = text.replaceAll(RegExp(r'\*\*([^*]+)\*\*'), r'$1');
     text = text.replaceAll(RegExp(r'\*([^*]+)\*'), r'$1');
     text = text.replaceAll(RegExp(r'__([^_]+)__'), r'$1');
     text = text.replaceAll(RegExp(r'_([^_]+)_'), r'$1');
-    
+
     // Remove links but keep text
     text = text.replaceAll(RegExp(r'\[([^\]]+)\]\([^)]+\)'), r'$1');
-    
+
     // Remove inline code
     text = text.replaceAll(RegExp(r'`([^`]+)`'), r'$1');
-    
+
     // Remove code blocks
     text = text.replaceAll(RegExp(r'```[^`]*```'), '');
-    
+
     // Remove blockquotes
     text = text.replaceAll(RegExp(r'^>\s+', multiLine: true), '');
-    
+
     // Remove list markers
     text = text.replaceAll(RegExp(r'^[-*+]\s+', multiLine: true), '');
     text = text.replaceAll(RegExp(r'^\d+\.\s+', multiLine: true), '');
-    
+
     // Remove horizontal rules
     text = text.replaceAll(RegExp(r'^[-*_]{3,}$', multiLine: true), '');
-    
+
     // Clean up extra whitespace
     text = text.replaceAll(RegExp(r'\n\n+'), '\n\n');
     text = text.trim();
-    
+
     return text;
   }
 }
