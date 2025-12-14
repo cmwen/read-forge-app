@@ -725,5 +725,17 @@
   "audioScreenOffInfo": "Audio will continue even with screen off",
   "@audioScreenOffInfo": {
     "description": "Info message about background audio playback"
+  },
+  "rewind": "Rewind 10 seconds",
+  "@rewind": {
+    "description": "Tooltip for rewind button"
+  },
+  "forward": "Forward 10 seconds",
+  "@forward": {
+    "description": "Tooltip for forward button"
+  },
+  "highlightSelected": "Highlight Selected Text",
+  "@highlightSelected": {
+    "description": "Button label for highlighting selected text"
   }
 }

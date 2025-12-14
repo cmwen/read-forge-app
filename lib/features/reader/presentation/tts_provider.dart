@@ -112,6 +112,39 @@ class TtsNotifier extends Notifier<TtsState> {
     }
   }
 
+  /// Resume speaking
+  Future<void> resume() async {
+    try {
+      if (state.currentText != null) {
+        await _ttsService.speak(state.currentText!);
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Rewind (restart from beginning for now)
+  Future<void> rewind() async {
+    try {
+      await _ttsService.stop();
+      if (state.currentText != null) {
+        await _ttsService.speak(state.currentText!);
+      }
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Forward (skip to end for now)
+  Future<void> forward() async {
+    try {
+      await _ttsService.stop();
+      state = state.copyWith(isPlaying: false);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
   /// Set speech rate
   Future<void> setSpeechRate(double rate) async {
     try {

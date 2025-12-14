@@ -9,6 +9,7 @@ import 'package:read_forge/features/reader/presentation/bookmarks_dialog.dart';
 import 'package:read_forge/features/reader/presentation/highlights_dialog.dart';
 import 'package:read_forge/features/reader/presentation/notes_dialog.dart';
 import 'package:read_forge/features/reader/presentation/tts_provider.dart';
+import 'package:read_forge/features/reader/presentation/tts_player_widget.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
@@ -207,29 +208,37 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           ),
         ],
       ),
-      body: chapterAsync.when(
-        data: (chapter) {
-          if (chapter == null) {
-            return Center(child: Text(l10n.chapterNotFound));
-          }
+      body: Column(
+        children: [
+          Expanded(
+            child: chapterAsync.when(
+              data: (chapter) {
+                if (chapter == null) {
+                  return Center(child: Text(l10n.chapterNotFound));
+                }
 
-          if (chapter.content == null || chapter.content!.isEmpty) {
-            return _buildEmptyContent(context, chapter, l10n);
-          }
+                if (chapter.content == null || chapter.content!.isEmpty) {
+                  return _buildEmptyContent(context, chapter, l10n);
+                }
 
-          return _buildReader(context, chapter, preferences, l10n);
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(l10n.errorMessage(error.toString())),
-            ],
+                return _buildReader(context, chapter, preferences, l10n);
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                    const SizedBox(height: 16),
+                    Text(l10n.errorMessage(error.toString())),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+          // TTS Player Widget at bottom
+          const TtsPlayerWidget(),
+        ],
       ),
       floatingActionButton: chapterAsync.maybeWhen(
         data: (chapter) {
@@ -1427,127 +1436,47 @@ You can format text like:
   // TTS methods
 
   void _startReading(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));
 
-    chapterAsync.when(
+    await chapterAsync.when(
       data: (chapter) async {
         if (chapter?.content != null && chapter!.content!.isNotEmpty) {
-          // Show TTS settings dialog first
-          final shouldStart = await _showTtsSettings(context);
-          if (shouldStart == true && context.mounted) {
-            // Strip markdown formatting for better TTS
-            final plainText = _stripMarkdown(chapter.content!);
+          // Strip markdown formatting for better TTS
+          final plainText = _stripMarkdown(chapter.content!);
+          
+          try {
             await ref.read(ttsProvider.notifier).speak(plainText);
+          } catch (e) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('TTS Error: ${e.toString()}')),
+              );
+            }
           }
         } else {
           if (context.mounted) {
-            final l10n = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(l10n.noContentYet)));
           }
         }
       },
-      loading: () {
+      loading: () async {
         if (context.mounted) {
-          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(l10n.loading)));
         }
       },
-      error: (error, stack) {
+      error: (error, stack) async {
         if (context.mounted) {
-          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(l10n.errorMessage(error.toString()))),
           );
         }
       },
     );
-  }
-
-  Future<bool?> _showTtsSettings(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => Consumer(
-        builder: (context, ref, _) {
-          final ttsState = ref.watch(ttsProvider);
-          return AlertDialog(
-            title: Text(l10n.ttsSettings),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.speechSpeed,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(l10n.slow, style: const TextStyle(fontSize: 12)),
-                    Expanded(
-                      child: Slider(
-                        value: ttsState.speechRate,
-                        min: 0.0,
-                        max: 1.0,
-                        divisions: 10,
-                        label: _getSpeechRateLabel(ttsState.speechRate, l10n),
-                        onChanged: (value) {
-                          ref.read(ttsProvider.notifier).setSpeechRate(value);
-                        },
-                      ),
-                    ),
-                    Text(l10n.fast, style: const TextStyle(fontSize: 12)),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.info_outline, size: 20),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          l10n.audioScreenOffInfo,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(l10n.cancel),
-              ),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).pop(true),
-                icon: const Icon(Icons.play_arrow),
-                label: Text(l10n.play),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  String _getSpeechRateLabel(double rate, AppLocalizations l10n) {
-    if (rate < 0.4) return l10n.slow;
-    if (rate > 0.6) return l10n.fast;
-    return l10n.normal;
   }
 
   String _stripMarkdown(String markdown) {

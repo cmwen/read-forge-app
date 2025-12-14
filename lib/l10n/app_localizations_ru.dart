@@ -533,4 +533,13 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get audioScreenOffInfo => 'Audio will continue even with screen off';
+
+  @override
+  String get rewind => 'Rewind 10 seconds';
+
+  @override
+  String get forward => 'Forward 10 seconds';
+
+  @override
+  String get highlightSelected => 'Highlight Selected Text';
 }

@@ -1064,6 +1064,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Audio will continue even with screen off'**
   String get audioScreenOffInfo;
+
+  /// Tooltip for rewind button
+  ///
+  /// In en, this message translates to:
+  /// **'Rewind 10 seconds'**
+  String get rewind;
+
+  /// Tooltip for forward button
+  ///
+  /// In en, this message translates to:
+  /// **'Forward 10 seconds'**
+  String get forward;
+
+  /// Button label for highlighting selected text
+  ///
+  /// In en, this message translates to:
+  /// **'Highlight Selected Text'**
+  String get highlightSelected;
 }
 
 class _AppLocalizationsDelegate
