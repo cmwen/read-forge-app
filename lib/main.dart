@@ -4,8 +4,26 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:read_forge/features/library/presentation/library_screen.dart';
 import 'package:read_forge/features/settings/presentation/locale_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
+import 'package:audio_service/audio_service.dart';
+import 'package:read_forge/features/reader/services/tts_audio_handler.dart';
 
-void main() {
+late AudioHandler audioHandler;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize audio service for background playback
+  audioHandler = await AudioService.init(
+    builder: () => TtsAudioHandler(),
+    config: const AudioServiceConfig(
+      androidNotificationChannelId: 'com.cmwen.read_forge.audio',
+      androidNotificationChannelName: 'Text-to-Speech Playback',
+      androidNotificationOngoing: true,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+      androidShowNotificationBadge: true,
+    ),
+  );
+  
   runApp(const ProviderScope(child: MyApp()));
 }
 

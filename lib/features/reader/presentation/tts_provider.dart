@@ -172,11 +172,15 @@ class TtsNotifier extends Notifier<TtsState> {
     }
   }
 
-  /// Set speech rate
+  /// Set speech rate (applies immediately, restarts playback if needed)
   Future<void> setSpeechRate(double rate) async {
     try {
+      final wasPlaying = state.isPlaying;
       await _ttsService.setSpeechRate(rate);
-      state = state.copyWith(speechRate: rate);
+      state = state.copyWith(
+        speechRate: rate,
+        isPlaying: wasPlaying, // Maintain playing state
+      );
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }

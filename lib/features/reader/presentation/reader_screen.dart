@@ -41,6 +41,8 @@ class ReaderScreen extends ConsumerStatefulWidget {
 }
 
 class _ReaderScreenState extends ConsumerState<ReaderScreen> {
+  static bool _playerScreenOpen = false;
+  
   // Listen to TTS state and navigate to player screen when playing
   @override
   void initState() {
@@ -50,8 +52,9 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       ref.listenManual(ttsProvider, (previous, next) {
         if (!mounted) return;
         
-        // Navigate to player screen when TTS starts playing
-        if (next.isPlaying && (previous?.isPlaying != true)) {
+        // Navigate to player screen when TTS starts playing (only once)
+        if (next.isPlaying && (previous?.isPlaying != true) && !_playerScreenOpen) {
+          _playerScreenOpen = true;
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => TtsPlayerScreen(
@@ -59,7 +62,9 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                 chapterId: widget.chapterId,
               ),
             ),
-          );
+          ).then((_) {
+            _playerScreenOpen = false;
+          });
         }
       });
     });
@@ -94,11 +99,42 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           error: (error, stackTrace) => Text(l10n.error),
         ),
         actions: [
-          // TTS play button
-          IconButton(
-            icon: const Icon(Icons.play_arrow),
-            onPressed: () => _startReading(context),
-            tooltip: l10n.play,
+          // TTS controls - show different button based on state
+          Consumer(
+            builder: (context, ref, _) {
+              final ttsState = ref.watch(ttsProvider);
+              if (ttsState.isPlaying || ttsState.currentText != null) {
+                // Show "Now Playing" button to open player
+                return IconButton(
+                  icon: Badge(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: const Icon(Icons.graphic_eq),
+                  ),
+                  onPressed: () {
+                    if (!_playerScreenOpen) {
+                      _playerScreenOpen = true;
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => TtsPlayerScreen(
+                            bookId: widget.bookId,
+                            chapterId: widget.chapterId,
+                          ),
+                        ),
+                      ).then((_) {
+                        _playerScreenOpen = false;
+                      });
+                    }
+                  },
+                  tooltip: l10n.textToSpeech,
+                );
+              }
+              // Show play button when not playing
+              return IconButton(
+                icon: const Icon(Icons.play_arrow),
+                onPressed: () => _startReading(context),
+                tooltip: l10n.play,
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.bookmark_border),

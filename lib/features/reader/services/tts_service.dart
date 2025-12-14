@@ -1,4 +1,5 @@
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:read_forge/main.dart' as main_app;
+import 'package:read_forge/features/reader/services/tts_audio_handler.dart';
 
 /// Abstraction for Text-to-Speech functionality to enable testing
 abstract class TtsServiceBase {
@@ -15,7 +16,7 @@ abstract class TtsServiceBase {
   int get totalChunks;
 
   Future<void> initialize();
-  Future<void> speak(String text);
+  Future<void> speak(String text, {String? bookTitle, String? chapterTitle});
   Future<void> pause();
   Future<void> stop();
   Future<void> setSpeechRate(double rate);
@@ -27,16 +28,14 @@ abstract class TtsServiceBase {
 
 /// Service for Text-to-Speech functionality
 class TtsService implements TtsServiceBase {
-  final FlutterTts _flutterTts = FlutterTts();
-  bool _isInitialized = false;
+  TtsAudioHandler get _audioHandler => main_app.audioHandler as TtsAudioHandler;
+  
   bool _isPlaying = false;
   double _speechRate = 0.5; // Default rate (0.0 - 1.0)
 
   // Text chunking for long content
   static const int _maxChunkLength = 4000; // Android TTS character limit
   List<String> _textChunks = [];
-  int _currentChunkIndex = 0;
-  bool _isStopped = false;
 
   // Callbacks
   @override
@@ -55,82 +54,22 @@ class TtsService implements TtsServiceBase {
   /// Initialize TTS service
   @override
   Future<void> initialize() async {
-    if (_isInitialized) return;
-
-    try {
-      await _flutterTts.awaitSpeakCompletion(true);
-
-      await _configureLanguage();
-
-      // Configure TTS for Android
-      await _flutterTts.setSpeechRate(_speechRate);
-      await _flutterTts.setVolume(1.0);
-      await _flutterTts.setPitch(1.0);
-
-      // Enable background audio (allows screen to be turned off)
-      await _flutterTts.setIosAudioCategory(
-        IosTextToSpeechAudioCategory.playback,
-        [
-          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
-          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
-          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
-          IosTextToSpeechAudioCategoryOptions.defaultToSpeaker,
-        ],
-        IosTextToSpeechAudioMode.voicePrompt,
-      );
-
-      // Set up handlers
-      _flutterTts.setStartHandler(() {
-        _isPlaying = true;
-        // Only call onStart for the first chunk
-        if (_currentChunkIndex == 0) {
-          onStart?.call();
-        }
-      });
-
-      _flutterTts.setCompletionHandler(() async {
-        // Move to next chunk if available
-        if (!_isStopped && _currentChunkIndex < _textChunks.length - 1) {
-          _currentChunkIndex++;
-          await _speakCurrentChunk();
-        } else {
-          // All chunks completed
-          _isPlaying = false;
-          _textChunks.clear();
-          _currentChunkIndex = 0;
-          onComplete?.call();
-        }
-      });
-
-      _flutterTts.setPauseHandler(() {
-        _isPlaying = false;
-        onPause?.call();
-      });
-
-      _flutterTts.setContinueHandler(() {
-        _isPlaying = true;
-        onContinue?.call();
-      });
-
-      _flutterTts.setErrorHandler((msg) {
-        _isPlaying = false;
-        _textChunks.clear();
-        _currentChunkIndex = 0;
-        onError?.call(msg);
-      });
-
-      _isInitialized = true;
-    } catch (e) {
-      throw Exception('Failed to initialize TTS: $e');
-    }
+    // Setup callbacks from audio handler
+    _audioHandler.onComplete = () {
+      _isPlaying = false;
+      _textChunks.clear();
+      onComplete?.call();
+    };
+    
+    _audioHandler.onProgress = (current, total) {
+      onProgress?.call(current, total);
+    };
   }
 
   /// Speak the given text (automatically chunks long text)
   @override
-  Future<void> speak(String text) async {
-    if (!_isInitialized) {
-      await initialize();
-    }
+  Future<void> speak(String text, {String? bookTitle, String? chapterTitle}) async {
+    await initialize();
 
     try {
       final sanitizedText = text.trim();
@@ -140,24 +79,23 @@ class TtsService implements TtsServiceBase {
 
       // Split text into chunks if needed
       _textChunks = _splitTextIntoChunks(sanitizedText);
-      _currentChunkIndex = 0;
-      _isStopped = false;
+      
+      _isPlaying = true;
+      onStart?.call();
 
-      // Start speaking the first chunk
-      await _speakCurrentChunk();
+      // Use audio handler for proper media integration
+      final fullText = _textChunks.join(' ');
+      await _audioHandler.speakText(
+        fullText,
+        title: chapterTitle ?? 'Text-to-Speech',
+        album: bookTitle ?? 'ReadForge',
+      );
     } catch (e) {
       throw Exception('Failed to speak: $e');
     }
   }
 
-  /// Speak the current chunk
-  Future<void> _speakCurrentChunk() async {
-    if (_currentChunkIndex < _textChunks.length) {
-      // Report progress
-      onProgress?.call(_currentChunkIndex + 1, _textChunks.length);
-      await _flutterTts.speak(_textChunks[_currentChunkIndex]);
-    }
-  }
+
 
   /// Split text into manageable chunks for TTS
   List<String> _splitTextIntoChunks(String text) {
@@ -198,11 +136,10 @@ class TtsService implements TtsServiceBase {
   /// Pause speaking
   @override
   Future<void> pause() async {
-    if (!_isInitialized) return;
-
     try {
-      await _flutterTts.pause();
+      await _audioHandler.pause();
       _isPlaying = false;
+      onPause?.call();
     } catch (e) {
       throw Exception('Failed to pause: $e');
     }
@@ -211,13 +148,9 @@ class TtsService implements TtsServiceBase {
   /// Stop speaking
   @override
   Future<void> stop() async {
-    if (!_isInitialized) return;
-
     try {
-      _isStopped = true;
       _textChunks.clear();
-      _currentChunkIndex = 0;
-      await _flutterTts.stop();
+      await _audioHandler.stop();
       _isPlaying = false;
     } catch (e) {
       throw Exception('Failed to stop: $e');
@@ -227,12 +160,8 @@ class TtsService implements TtsServiceBase {
   /// Set speech rate (0.0 - 1.0, where 0.5 is normal)
   @override
   Future<void> setSpeechRate(double rate) async {
-    if (!_isInitialized) {
-      await initialize();
-    }
-
     _speechRate = rate.clamp(0.0, 1.0);
-    await _flutterTts.setSpeechRate(_speechRate);
+    await _audioHandler.setSpeed(_speechRate);
   }
 
   /// Get current speech rate
@@ -245,77 +174,19 @@ class TtsService implements TtsServiceBase {
 
   /// Get current chunk index (1-based for display)
   @override
-  int get currentChunk => _currentChunkIndex + 1;
+  int get currentChunk => _audioHandler.currentChunk;
 
   /// Get total number of chunks
   @override
-  int get totalChunks => _textChunks.length;
-
-  /// Get available languages
-  Future<List<dynamic>> getLanguages() async {
-    if (!_isInitialized) {
-      await initialize();
-    }
-    return await _flutterTts.getLanguages;
-  }
-
-  /// Set language
-  Future<void> setLanguage(String language) async {
-    if (!_isInitialized) {
-      await initialize();
-    }
-    await _flutterTts.setLanguage(language);
-  }
-
-  /// Get available voices
-  Future<List<dynamic>> getVoices() async {
-    if (!_isInitialized) {
-      await initialize();
-    }
-    return await _flutterTts.getVoices;
-  }
-
-  Future<void> _configureLanguage() async {
-    final languages = await _flutterTts.getLanguages;
-    if (languages == null) return;
-
-    const preferredLanguages = ['en-US', 'en_US'];
-    String? selectedLanguage;
-
-    for (final preferred in preferredLanguages) {
-      if (languages.contains(preferred)) {
-        selectedLanguage = preferred;
-        break;
-      }
-    }
-
-    selectedLanguage ??= languages.isNotEmpty
-        ? languages.first.toString()
-        : null;
-
-    if (selectedLanguage == null) return;
-
-    final availability = await _flutterTts.isLanguageAvailable(
-      selectedLanguage,
-    );
-    final isAvailable =
-        availability == true || availability == 1 || availability == "1";
-
-    if (isAvailable) {
-      await _flutterTts.setLanguage(selectedLanguage);
-    }
-  }
+  int get totalChunks => _audioHandler.totalChunks;
 
   /// Seek to specific chunk
   @override
   Future<void> seekToChunk(int chunkIndex) async {
-    if (!_isInitialized) return;
-    if (chunkIndex < 0 || chunkIndex >= _textChunks.length) return;
+    if (chunkIndex < 0 || chunkIndex >= _audioHandler.totalChunks) return;
 
     try {
-      await _flutterTts.stop();
-      _currentChunkIndex = chunkIndex;
-      await _speakCurrentChunk();
+      await _audioHandler.seekToChunk(chunkIndex);
     } catch (e) {
       throw Exception('Failed to seek: $e');
     }
@@ -324,13 +195,10 @@ class TtsService implements TtsServiceBase {
   /// Go to previous chunk
   @override
   Future<void> previousChunk() async {
-    if (!_isInitialized) return;
-    if (_currentChunkIndex <= 0) return;
+    if (_audioHandler.currentChunk <= 1) return;
 
     try {
-      await _flutterTts.stop();
-      _currentChunkIndex--;
-      await _speakCurrentChunk();
+      await _audioHandler.skipToPrevious();
     } catch (e) {
       throw Exception('Failed to go to previous chunk: $e');
     }
@@ -339,13 +207,10 @@ class TtsService implements TtsServiceBase {
   /// Go to next chunk
   @override
   Future<void> nextChunk() async {
-    if (!_isInitialized) return;
-    if (_currentChunkIndex >= _textChunks.length - 1) return;
+    if (_audioHandler.currentChunk >= _audioHandler.totalChunks) return;
 
     try {
-      await _flutterTts.stop();
-      _currentChunkIndex++;
-      await _speakCurrentChunk();
+      await _audioHandler.skipToNext();
     } catch (e) {
       throw Exception('Failed to go to next chunk: $e');
     }
@@ -354,6 +219,6 @@ class TtsService implements TtsServiceBase {
   /// Dispose resources
   @override
   void dispose() {
-    _flutterTts.stop();
+    _audioHandler.stop();
   }
 }

@@ -2,8 +2,8 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 /// Audio handler for TTS integration with Android media controls
-class TtsAudioHandler extends BaseAudioHandler {
-  final FlutterTts _flutterTts;
+class TtsAudioHandler extends BaseAudioHandler with SeekHandler {
+  final FlutterTts _flutterTts = FlutterTts();
   
   // State management
   String? _currentText;
@@ -11,28 +11,41 @@ class TtsAudioHandler extends BaseAudioHandler {
   int _currentChunkIndex = 0;
   double _speechRate = 0.5;
   bool _isStopped = false;
+  bool _isInitialized = false;
   
   // Callbacks for state updates
   Function()? onComplete;
   Function(int current, int total)? onProgress;
   
-  TtsAudioHandler(this._flutterTts) {
+  TtsAudioHandler() {
     _init();
   }
   
   Future<void> _init() async {
+    if (_isInitialized) return;
+    
+    // Configure TTS
+    await _flutterTts.setLanguage('en-US');
+    await _flutterTts.setSpeechRate(_speechRate);
+    await _flutterTts.setVolume(1.0);
+    await _flutterTts.setPitch(1.0);
+    await _flutterTts.awaitSpeakCompletion(true);
+    
+    // Enable background audio for iOS (Android uses audio_service)
+    await _flutterTts.setIosAudioCategory(
+      IosTextToSpeechAudioCategory.playback,
+      [
+        IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+        IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+        IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+        IosTextToSpeechAudioCategoryOptions.defaultToSpeaker,
+      ],
+      IosTextToSpeechAudioMode.voicePrompt,
+    );
+    
     // Set up TTS handlers
     _flutterTts.setStartHandler(() {
-      playbackState.add(playbackState.value.copyWith(
-        playing: true,
-        controls: [
-          MediaControl.pause,
-          MediaControl.stop,
-          MediaControl.skipToPrevious,
-          MediaControl.skipToNext,
-        ],
-        processingState: AudioProcessingState.ready,
-      ));
+      _updatePlaybackState(playing: true);
     });
     
     _flutterTts.setCompletionHandler(() async {
@@ -42,36 +55,63 @@ class TtsAudioHandler extends BaseAudioHandler {
         await _speakCurrentChunk();
       } else {
         // All chunks completed
-        playbackState.add(playbackState.value.copyWith(
+        _updatePlaybackState(
           playing: false,
           processingState: AudioProcessingState.completed,
-        ));
+        );
         onComplete?.call();
       }
     });
     
     _flutterTts.setPauseHandler(() {
-      playbackState.add(playbackState.value.copyWith(playing: false));
+      _updatePlaybackState(playing: false);
     });
     
     _flutterTts.setContinueHandler(() {
-      playbackState.add(playbackState.value.copyWith(playing: true));
+      _updatePlaybackState(playing: true);
     });
     
     _flutterTts.setErrorHandler((msg) {
-      playbackState.add(playbackState.value.copyWith(
+      _updatePlaybackState(
         playing: false,
         processingState: AudioProcessingState.error,
-      ));
+      );
     });
     
     // Initialize playback state
-    playbackState.add(PlaybackState(
-      controls: [MediaControl.play],
+    _updatePlaybackState(
       playing: false,
       processingState: AudioProcessingState.idle,
-      speed: 1.0,
-      updatePosition: Duration.zero,
+    );
+    
+    _isInitialized = true;
+  }
+  
+  void _updatePlaybackState({
+    bool? playing,
+    AudioProcessingState? processingState,
+  }) {
+    playbackState.add(playbackState.value.copyWith(
+      playing: playing ?? playbackState.value.playing,
+      processingState: processingState ?? playbackState.value.processingState,
+      controls: [
+        if (playing == true) ...[
+          MediaControl.pause,
+          MediaControl.skipToPrevious,
+          MediaControl.skipToNext,
+          MediaControl.stop,
+        ] else ...[
+          MediaControl.play,
+          MediaControl.skipToPrevious,
+          MediaControl.skipToNext,
+          MediaControl.stop,
+        ],
+      ],
+      androidCompactActionIndices: const [0, 1, 2],
+      speed: _speechRate * 2, // Convert 0.0-1.0 to actual speed multiplier
+      updatePosition: Duration(
+        seconds: _currentChunkIndex * 10, // Rough estimate
+      ),
     ));
   }
   
@@ -111,21 +151,30 @@ class TtsAudioHandler extends BaseAudioHandler {
   }
   
   Future<void> speakText(String text, {String? title, String? album}) async {
+    if (!_isInitialized) await _init();
+    
     _currentText = text;
     _textChunks = _splitIntoChunks(text);
     _currentChunkIndex = 0;
     _isStopped = false;
     
-    // Update media item
+    // Update media item - this is critical for notification to show
     mediaItem.add(MediaItem(
       id: 'tts_${DateTime.now().millisecondsSinceEpoch}',
       album: album ?? 'ReadForge',
       title: title ?? 'Text-to-Speech',
-      duration: Duration.zero,
+      duration: Duration(seconds: _textChunks.length * 30), // Rough estimate
       artUri: null,
     ));
     
     onProgress?.call(_currentChunkIndex + 1, _textChunks.length);
+    
+    // Update state before speaking
+    _updatePlaybackState(
+      playing: false,
+      processingState: AudioProcessingState.ready,
+    );
+    
     await _speakCurrentChunk();
   }
   
@@ -175,10 +224,29 @@ class TtsAudioHandler extends BaseAudioHandler {
     }
   }
   
+  /// Seek to specific chunk (0-indexed)
+  Future<void> seekToChunk(int chunkIndex) async {
+    if (chunkIndex < 0 || chunkIndex >= _textChunks.length) return;
+    
+    await _flutterTts.stop();
+    _currentChunkIndex = chunkIndex;
+    onProgress?.call(_currentChunkIndex + 1, _textChunks.length);
+    await _speakCurrentChunk();
+  }
+  
   @override
   Future<void> setSpeed(double speed) async {
+    final wasPlaying = playbackState.value.playing;
     _speechRate = speed;
     await _flutterTts.setSpeechRate(_speechRate);
+    
+    // If currently playing, restart to apply new speed
+    if (wasPlaying && _textChunks.isNotEmpty) {
+      await _flutterTts.stop();
+      await _speakCurrentChunk();
+    }
+    
+    _updatePlaybackState(playing: wasPlaying);
   }
   
   int get currentChunk => _currentChunkIndex + 1;
