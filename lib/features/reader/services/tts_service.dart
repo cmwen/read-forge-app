@@ -28,7 +28,11 @@ abstract class TtsServiceBase {
 
 /// Service for Text-to-Speech functionality
 class TtsService implements TtsServiceBase {
-  TtsAudioHandler get _audioHandler => main_app.audioHandler as TtsAudioHandler;
+  TtsAudioHandler get _audioHandler {
+    // Lazy initialization of audio service
+    main_app.initAudioService();
+    return main_app.audioHandler as TtsAudioHandler;
+  }
   
   bool _isPlaying = false;
   double _speechRate = 0.5; // Default rate (0.0 - 1.0)
@@ -54,6 +58,9 @@ class TtsService implements TtsServiceBase {
   /// Initialize TTS service
   @override
   Future<void> initialize() async {
+    // Ensure audio service is initialized
+    await main_app.initAudioService();
+    
     // Setup callbacks from audio handler
     _audioHandler.onComplete = () {
       _isPlaying = false;

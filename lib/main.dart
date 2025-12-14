@@ -7,22 +7,41 @@ import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:read_forge/features/reader/services/tts_audio_handler.dart';
 
-late AudioHandler audioHandler;
+AudioHandler? _audioHandler;
 
-void main() async {
+AudioHandler get audioHandler {
+  if (_audioHandler == null) {
+    throw StateError('AudioHandler not initialized. Call initAudioService() first.');
+  }
+  return _audioHandler!;
+}
+
+Future<void> initAudioService() async {
+  if (_audioHandler != null) return;
+  
+  try {
+    _audioHandler = await AudioService.init(
+      builder: () => TtsAudioHandler(),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.cmwen.read_forge.audio',
+        androidNotificationChannelName: 'Text-to-Speech Playback',
+        androidNotificationOngoing: true,
+        androidNotificationIcon: 'mipmap/ic_launcher',
+        androidShowNotificationBadge: true,
+      ),
+    );
+  } catch (e) {
+    debugPrint('Failed to initialize AudioService: $e');
+    // Create a dummy handler if initialization fails
+    _audioHandler = TtsAudioHandler();
+  }
+}
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize audio service for background playback
-  audioHandler = await AudioService.init(
-    builder: () => TtsAudioHandler(),
-    config: const AudioServiceConfig(
-      androidNotificationChannelId: 'com.cmwen.read_forge.audio',
-      androidNotificationChannelName: 'Text-to-Speech Playback',
-      androidNotificationOngoing: true,
-      androidNotificationIcon: 'mipmap/ic_launcher',
-      androidShowNotificationBadge: true,
-    ),
-  );
+  // Don't block app startup on audio service initialization
+  // Initialize it lazily when needed
   
   runApp(const ProviderScope(child: MyApp()));
 }
