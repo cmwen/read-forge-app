@@ -73,15 +73,6 @@ class TtsPlayerWidget extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Rewind 10 seconds
-                IconButton(
-                  icon: const Icon(Icons.replay_10),
-                  onPressed: ttsState.isPlaying
-                      ? () => ref.read(ttsProvider.notifier).rewind()
-                      : null,
-                  tooltip: l10n.rewind,
-                ),
-
                 // Play/Pause
                 Container(
                   decoration: BoxDecoration(
@@ -103,15 +94,6 @@ class TtsPlayerWidget extends ConsumerWidget {
                     },
                     tooltip: ttsState.isPlaying ? l10n.pause : l10n.play,
                   ),
-                ),
-
-                // Forward 10 seconds
-                IconButton(
-                  icon: const Icon(Icons.forward_10),
-                  onPressed: ttsState.isPlaying
-                      ? () => ref.read(ttsProvider.notifier).forward()
-                      : null,
-                  tooltip: l10n.forward,
                 ),
 
                 // Stop

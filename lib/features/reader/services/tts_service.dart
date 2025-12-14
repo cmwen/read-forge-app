@@ -2,6 +2,20 @@ import 'package:read_forge/main.dart' as main_app;
 import 'package:read_forge/features/reader/services/tts_audio_handler.dart';
 
 /// Abstraction for Text-to-Speech functionality to enable testing
+/// 
+/// **TTS Time Tracking Limitations:**
+/// Flutter TTS does not provide real-time playback position tracking.
+/// It only provides callbacks for start, complete, pause, and error events.
+/// Therefore, this implementation uses chunk-based progress tracking instead
+/// of time-based tracking. Each "chunk" represents a section of text being spoken.
+/// 
+/// This means:
+/// - Progress is tracked by chunks (sections) not by time/position
+/// - Rewind/Forward operations skip between chunks, not by seconds
+/// - Seek operations jump to specific chunks, not time positions
+/// 
+/// For apps requiring precise time-based tracking, consider using
+/// just_audio with pre-recorded TTS audio files instead of live TTS.
 abstract class TtsServiceBase {
   Function()? onComplete;
   Function()? onStart;

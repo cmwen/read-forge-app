@@ -45,7 +45,10 @@ class TtsAudioHandler extends BaseAudioHandler with SeekHandler {
     
     // Set up TTS handlers
     _flutterTts.setStartHandler(() {
-      _updatePlaybackState(playing: true);
+      _updatePlaybackState(
+        playing: true,
+        processingState: AudioProcessingState.ready,
+      );
     });
     
     _flutterTts.setCompletionHandler(() async {
@@ -162,14 +165,24 @@ class TtsAudioHandler extends BaseAudioHandler with SeekHandler {
     _isStopped = false;
     
     // Update media item - this is critical for notification to show
+    // Use unique ID to ensure notification updates
     final newMediaItem = MediaItem(
       id: 'tts_${DateTime.now().millisecondsSinceEpoch}',
       album: album ?? 'ReadForge',
       title: title ?? 'Text-to-Speech',
+      artist: 'Text-to-Speech',
       duration: Duration(seconds: _textChunks.length * 30), // Rough estimate
       artUri: null,
+      displayTitle: title,
+      displaySubtitle: album,
     );
     mediaItem.add(newMediaItem);
+    
+    // Set initial playback state to show notification
+    _updatePlaybackState(
+      playing: true,
+      processingState: AudioProcessingState.ready,
+    );
     
     onProgress?.call(_currentChunkIndex + 1, _textChunks.length);
     
