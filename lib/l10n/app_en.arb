@@ -737,5 +737,13 @@
   "highlightSelected": "Highlight Selected Text",
   "@highlightSelected": {
     "description": "Button label for highlighting selected text"
+  },
+  "textToSpeech": "Text to Speech",
+  "@textToSpeech": {
+    "description": "Title for TTS player screen"
+  },
+  "playbackSpeed": "Playback Speed",
+  "@playbackSpeed": {
+    "description": "Label for playback speed control"
   }
 }

@@ -56,22 +56,6 @@ class Bookmarks extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-/// Highlights table - stores text highlights
-class Highlights extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get uuid => text().unique()();
-  IntColumn get bookId =>
-      integer().references(Books, #id, onDelete: KeyAction.cascade)();
-  IntColumn get chapterId =>
-      integer().references(Chapters, #id, onDelete: KeyAction.cascade)();
-  IntColumn get startPosition => integer()();
-  IntColumn get endPosition => integer()();
-  TextColumn get highlightedText => text()();
-  TextColumn get color => text().withDefault(const Constant('yellow'))();
-  TextColumn get note => text().nullable()();
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-}
-
 /// Notes table - stores margin notes
 class Notes extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -102,13 +86,25 @@ class ReadingProgress extends Table {
 }
 
 @DriftDatabase(
-  tables: [Books, Chapters, Bookmarks, Highlights, Notes, ReadingProgress],
+  tables: [Books, Chapters, Bookmarks, Notes, ReadingProgress],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+  
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: (migrator, from, to) async {
+        if (from < 2) {
+          // Drop the Highlights table
+          await customStatement('DROP TABLE IF EXISTS highlights');
+        }
+      },
+    );
+  }
 
   static QueryExecutor _openConnection() {
     return driftDatabase(name: 'readforge_db');

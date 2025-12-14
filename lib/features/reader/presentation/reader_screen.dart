@@ -6,10 +6,9 @@ import 'package:read_forge/core/providers/database_provider.dart';
 import 'package:read_forge/features/reader/presentation/reader_preferences_provider.dart';
 import 'package:read_forge/features/reader/presentation/reading_progress_provider.dart';
 import 'package:read_forge/features/reader/presentation/bookmarks_dialog.dart';
-import 'package:read_forge/features/reader/presentation/highlights_dialog.dart';
 import 'package:read_forge/features/reader/presentation/notes_dialog.dart';
 import 'package:read_forge/features/reader/presentation/tts_provider.dart';
-import 'package:read_forge/features/reader/presentation/tts_player_widget.dart';
+import 'package:read_forge/features/reader/presentation/tts_player_screen.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
@@ -42,95 +41,32 @@ class ReaderScreen extends ConsumerStatefulWidget {
 }
 
 class _ReaderScreenState extends ConsumerState<ReaderScreen> {
-  // Build custom context menu for text selection
-  Widget _buildCustomContextMenu(
-    BuildContext context,
-    SelectableRegionState selectableRegionState,
-    dynamic chapter,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    final buttonItems = selectableRegionState.contextMenuButtonItems;
-
-    // Find the copy button and extract its logic to get selected text
-    final copyButton = buttonItems.firstWhere(
-      (item) => item.type == ContextMenuButtonType.copy,
-      orElse: () => buttonItems.first,
-    );
-
-    // Add highlight button that uses the same copy logic to get text
-    final highlightButton = ContextMenuButtonItem(
-      onPressed: () async {
-        try {
-          // Save current clipboard
-          ClipboardData? previousClipboard;
-          try {
-            previousClipboard = await Clipboard.getData(Clipboard.kTextPlain);
-          } catch (e) {
-            // Ignore clipboard read errors
-          }
-
-          // Trigger copy to get the selected text
-          copyButton.onPressed?.call();
-
-          // Delay to ensure clipboard is updated (Android needs more time)
-          await Future.delayed(const Duration(milliseconds: 150));
-
-          // Get the selected text from clipboard
-          final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-          final selectedText = clipboardData?.text;
-
-          // Restore previous clipboard if it existed
-          if (previousClipboard?.text != null) {
-            try {
-              await Clipboard.setData(
-                ClipboardData(text: previousClipboard!.text!),
-              );
-            } catch (e) {
-              // Ignore clipboard write errors
-            }
-          }
-
-          // Close the context menu
-          ContextMenuController.removeAny();
-
-          if (selectedText != null &&
-              selectedText.isNotEmpty &&
-              context.mounted) {
-            // Show highlight color picker
-            _showHighlightColorPicker(context, selectedText, chapter);
-          } else if (context.mounted) {
-            // Show error if no text was selected
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(l10n.noContentYet)));
-          }
-        } catch (e) {
-          // Handle any unexpected errors
-          if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-          }
+  // Listen to TTS state and navigate to player screen when playing
+  @override
+  void initState() {
+    super.initState();
+    // Listen to TTS state changes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listenManual(ttsProvider, (previous, next) {
+        if (!mounted) return;
+        
+        // Navigate to player screen when TTS starts playing
+        if (next.isPlaying && (previous?.isPlaying != true)) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => TtsPlayerScreen(
+                bookId: widget.bookId,
+                chapterId: widget.chapterId,
+              ),
+            ),
+          );
         }
-      },
-      label: l10n.highlight,
-      type: ContextMenuButtonType.custom,
-    );
-
-    // Insert highlight button at the beginning
-    final customButtonItems = [highlightButton, ...buttonItems];
-
-    return AdaptiveTextSelectionToolbar.buttonItems(
-      anchors: selectableRegionState.contextMenuAnchors,
-      buttonItems: customButtonItems,
-    );
+      });
+    });
   }
 
   @override
   void dispose() {
-    // Stop TTS if playing
-    ref.read(ttsProvider.notifier).stop();
-
     // Save reading progress when leaving the screen
     final progressNotifier = ref.read(
       readingProgressProvider(
@@ -158,44 +94,16 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           error: (error, stackTrace) => Text(l10n.error),
         ),
         actions: [
-          // TTS play/pause/stop buttons
-          Consumer(
-            builder: (context, ref, _) {
-              final ttsState = ref.watch(ttsProvider);
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (ttsState.isPlaying)
-                    IconButton(
-                      icon: const Icon(Icons.pause),
-                      onPressed: () => ref.read(ttsProvider.notifier).pause(),
-                      tooltip: l10n.pause,
-                    )
-                  else
-                    IconButton(
-                      icon: const Icon(Icons.play_arrow),
-                      onPressed: () => _startReading(context),
-                      tooltip: l10n.play,
-                    ),
-                  if (ttsState.isPlaying || ttsState.currentText != null)
-                    IconButton(
-                      icon: const Icon(Icons.stop),
-                      onPressed: () => ref.read(ttsProvider.notifier).stop(),
-                      tooltip: l10n.stop,
-                    ),
-                ],
-              );
-            },
+          // TTS play button
+          IconButton(
+            icon: const Icon(Icons.play_arrow),
+            onPressed: () => _startReading(context),
+            tooltip: l10n.play,
           ),
           IconButton(
             icon: const Icon(Icons.bookmark_border),
             onPressed: () => _showBookmarksDialog(context),
             tooltip: l10n.bookmarks,
-          ),
-          IconButton(
-            icon: const Icon(Icons.highlight),
-            onPressed: () => _showHighlightsDialog(context),
-            tooltip: l10n.highlights,
           ),
           IconButton(
             icon: const Icon(Icons.note),
@@ -208,41 +116,33 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: chapterAsync.when(
-              data: (chapter) {
-                if (chapter == null) {
-                  return Center(child: Text(l10n.chapterNotFound));
-                }
+      body: chapterAsync.when(
+        data: (chapter) {
+          if (chapter == null) {
+            return Center(child: Text(l10n.chapterNotFound));
+          }
 
-                if (chapter.content == null || chapter.content!.isEmpty) {
-                  return _buildEmptyContent(context, chapter, l10n);
-                }
+          if (chapter.content == null || chapter.content!.isEmpty) {
+            return _buildEmptyContent(context, chapter, l10n);
+          }
 
-                return _buildReader(context, chapter, preferences, l10n);
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(l10n.errorMessage(error.toString())),
-                  ],
-                ),
+          return _buildReader(context, chapter, preferences, l10n);
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Colors.red,
               ),
-            ),
+              const SizedBox(height: 16),
+              Text(l10n.errorMessage(error.toString())),
+            ],
           ),
-          // TTS Player Widget at bottom
-          const TtsPlayerWidget(),
-        ],
+        ),
       ),
       floatingActionButton: chapterAsync.maybeWhen(
         data: (chapter) {
@@ -362,15 +262,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           Divider(color: textColor.withValues(alpha: 0.2)),
           const SizedBox(height: 24),
 
-          // Chapter content - Markdown support with custom selection toolbar
+          // Chapter content - Markdown support with text selection
           SelectionArea(
-            contextMenuBuilder: (context, selectableRegionState) {
-              return _buildCustomContextMenu(
-                context,
-                selectableRegionState,
-                chapter,
-              );
-            },
             child: MarkdownBody(
               data: chapter.content ?? _getSampleText(),
               styleSheet: MarkdownStyleSheet(
@@ -1095,49 +988,6 @@ You can format text like:
     );
   }
 
-  void _showHighlightsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => HighlightsDialog(
-        bookId: widget.bookId,
-        onHighlightTap: (chapterId, startPosition) {
-          if (chapterId == widget.chapterId) {
-            // Same chapter, scroll to position
-            final progressState = ref.read(
-              readingProgressProvider(
-                ReadingProgressParams(
-                  bookId: widget.bookId,
-                  chapterId: widget.chapterId,
-                ),
-              ),
-            );
-            if (progressState.scrollController.hasClients) {
-              final maxScroll =
-                  progressState.scrollController.position.maxScrollExtent;
-              final targetPosition = (startPosition / 1000.0 * maxScroll).clamp(
-                0.0,
-                maxScroll,
-              );
-              progressState.scrollController.animateTo(
-                targetPosition,
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-              );
-            }
-          } else {
-            // Different chapter, navigate
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) =>
-                    ReaderScreen(bookId: widget.bookId, chapterId: chapterId),
-              ),
-            );
-          }
-        },
-      ),
-    );
-  }
-
   void _showNotesDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -1222,147 +1072,6 @@ You can format text like:
         );
       }
     }
-  }
-
-  void _showHighlightColorPicker(
-    BuildContext context,
-    String selectedText,
-    dynamic chapter,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    String selectedColor = 'yellow';
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(l10n.highlightText),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.selectColor,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: HighlightColors.all.map((entry) {
-                  final colorName = entry.key;
-                  final color = entry.value;
-                  final isSelected = selectedColor == colorName;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedColor = colorName;
-                      });
-                    },
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.transparent,
-                          width: 3,
-                        ),
-                      ),
-                      child: isSelected
-                          ? const Icon(Icons.check, color: Colors.white)
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: HighlightColors.fromString(
-                    selectedColor,
-                  ).withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  selectedText.length > 100
-                      ? '${selectedText.substring(0, 100)}...'
-                      : selectedText,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: () async {
-                // Calculate approximate position based on text content
-                final progressState = ref.read(
-                  readingProgressProvider(
-                    ReadingProgressParams(
-                      bookId: widget.bookId,
-                      chapterId: widget.chapterId,
-                    ),
-                  ),
-                );
-
-                // Use current scroll position as approximate position
-                final currentPosition = progressState.currentPosition;
-                // For start and end positions, use character-based approximation
-                final chapterContent = chapter.content ?? _getSampleText();
-                final textIndex = chapterContent.indexOf(selectedText);
-                final startPos = textIndex >= 0 ? textIndex : currentPosition;
-                final endPos = startPos + selectedText.length;
-
-                final repository = ref.read(bookRepositoryProvider);
-
-                try {
-                  await repository.createHighlight(
-                    bookId: widget.bookId,
-                    chapterId: widget.chapterId,
-                    startPosition: startPos,
-                    endPosition: endPos,
-                    highlightedText: selectedText,
-                    color: selectedColor,
-                  );
-
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.highlightAdded),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.errorAddingHighlight(e.toString())),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                }
-              },
-              child: Text(l10n.highlight),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   void _addNote(BuildContext context) {

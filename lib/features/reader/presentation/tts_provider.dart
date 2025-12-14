@@ -181,6 +181,33 @@ class TtsNotifier extends Notifier<TtsState> {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
+
+  /// Seek to specific chunk
+  Future<void> seekToChunk(int chunkIndex) async {
+    try {
+      await _ttsService.seekToChunk(chunkIndex - 1); // Convert to 0-indexed
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Go to previous chunk
+  Future<void> previousChunk() async {
+    try {
+      await _ttsService.previousChunk();
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Go to next chunk
+  Future<void> nextChunk() async {
+    try {
+      await _ttsService.nextChunk();
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
 }
 
 /// TTS provider

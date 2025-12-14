@@ -81,6 +81,21 @@ class FakeTtsService implements TtsServiceBase {
 
   @override
   void dispose() {}
+
+  @override
+  Future<void> seekToChunk(int chunkIndex) async {
+    _currentChunk = chunkIndex + 1;
+  }
+
+  @override
+  Future<void> previousChunk() async {
+    if (_currentChunk > 1) _currentChunk--;
+  }
+
+  @override
+  Future<void> nextChunk() async {
+    if (_currentChunk < _totalChunks) _currentChunk++;
+  }
 }
 
 void main() {

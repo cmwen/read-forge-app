@@ -19,6 +19,9 @@ abstract class TtsServiceBase {
   Future<void> pause();
   Future<void> stop();
   Future<void> setSpeechRate(double rate);
+  Future<void> seekToChunk(int chunkIndex);
+  Future<void> previousChunk();
+  Future<void> nextChunk();
   void dispose();
 }
 
@@ -300,6 +303,51 @@ class TtsService implements TtsServiceBase {
 
     if (isAvailable) {
       await _flutterTts.setLanguage(selectedLanguage);
+    }
+  }
+
+  /// Seek to specific chunk
+  @override
+  Future<void> seekToChunk(int chunkIndex) async {
+    if (!_isInitialized) return;
+    if (chunkIndex < 0 || chunkIndex >= _textChunks.length) return;
+
+    try {
+      await _flutterTts.stop();
+      _currentChunkIndex = chunkIndex;
+      await _speakCurrentChunk();
+    } catch (e) {
+      throw Exception('Failed to seek: $e');
+    }
+  }
+
+  /// Go to previous chunk
+  @override
+  Future<void> previousChunk() async {
+    if (!_isInitialized) return;
+    if (_currentChunkIndex <= 0) return;
+
+    try {
+      await _flutterTts.stop();
+      _currentChunkIndex--;
+      await _speakCurrentChunk();
+    } catch (e) {
+      throw Exception('Failed to go to previous chunk: $e');
+    }
+  }
+
+  /// Go to next chunk
+  @override
+  Future<void> nextChunk() async {
+    if (!_isInitialized) return;
+    if (_currentChunkIndex >= _textChunks.length - 1) return;
+
+    try {
+      await _flutterTts.stop();
+      _currentChunkIndex++;
+      await _speakCurrentChunk();
+    } catch (e) {
+      throw Exception('Failed to go to next chunk: $e');
     }
   }
 

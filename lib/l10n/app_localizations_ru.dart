@@ -542,4 +542,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get highlightSelected => 'Highlight Selected Text';
+
+  @override
+  String get textToSpeech => 'Text to Speech';
+
+  @override
+  String get playbackSpeed => 'Playback Speed';
 }

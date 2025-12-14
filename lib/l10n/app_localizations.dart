@@ -1082,6 +1082,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Highlight Selected Text'**
   String get highlightSelected;
+
+  /// Title for TTS player screen
+  ///
+  /// In en, this message translates to:
+  /// **'Text to Speech'**
+  String get textToSpeech;
+
+  /// Label for playback speed control
+  ///
+  /// In en, this message translates to:
+  /// **'Playback Speed'**
+  String get playbackSpeed;
 }
 
 class _AppLocalizationsDelegate

@@ -1882,613 +1882,6 @@ class BookmarksCompanion extends UpdateCompanion<Bookmark> {
   }
 }
 
-class $HighlightsTable extends Highlights
-    with TableInfo<$HighlightsTable, Highlight> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $HighlightsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
-    'id',
-    aliasedName,
-    false,
-    hasAutoIncrement: true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'PRIMARY KEY AUTOINCREMENT',
-    ),
-  );
-  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
-  @override
-  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
-    'uuid',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
-  );
-  static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
-  @override
-  late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
-    'book_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES books (id) ON DELETE CASCADE',
-    ),
-  );
-  static const VerificationMeta _chapterIdMeta = const VerificationMeta(
-    'chapterId',
-  );
-  @override
-  late final GeneratedColumn<int> chapterId = GeneratedColumn<int>(
-    'chapter_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'REFERENCES chapters (id) ON DELETE CASCADE',
-    ),
-  );
-  static const VerificationMeta _startPositionMeta = const VerificationMeta(
-    'startPosition',
-  );
-  @override
-  late final GeneratedColumn<int> startPosition = GeneratedColumn<int>(
-    'start_position',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _endPositionMeta = const VerificationMeta(
-    'endPosition',
-  );
-  @override
-  late final GeneratedColumn<int> endPosition = GeneratedColumn<int>(
-    'end_position',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _highlightedTextMeta = const VerificationMeta(
-    'highlightedText',
-  );
-  @override
-  late final GeneratedColumn<String> highlightedText = GeneratedColumn<String>(
-    'highlighted_text',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _colorMeta = const VerificationMeta('color');
-  @override
-  late final GeneratedColumn<String> color = GeneratedColumn<String>(
-    'color',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('yellow'),
-  );
-  static const VerificationMeta _noteMeta = const VerificationMeta('note');
-  @override
-  late final GeneratedColumn<String> note = GeneratedColumn<String>(
-    'note',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _createdAtMeta = const VerificationMeta(
-    'createdAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
-    'created_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-    defaultValue: currentDateAndTime,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    uuid,
-    bookId,
-    chapterId,
-    startPosition,
-    endPosition,
-    highlightedText,
-    color,
-    note,
-    createdAt,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'highlights';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<Highlight> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('uuid')) {
-      context.handle(
-        _uuidMeta,
-        uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_uuidMeta);
-    }
-    if (data.containsKey('book_id')) {
-      context.handle(
-        _bookIdMeta,
-        bookId.isAcceptableOrUnknown(data['book_id']!, _bookIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_bookIdMeta);
-    }
-    if (data.containsKey('chapter_id')) {
-      context.handle(
-        _chapterIdMeta,
-        chapterId.isAcceptableOrUnknown(data['chapter_id']!, _chapterIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_chapterIdMeta);
-    }
-    if (data.containsKey('start_position')) {
-      context.handle(
-        _startPositionMeta,
-        startPosition.isAcceptableOrUnknown(
-          data['start_position']!,
-          _startPositionMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_startPositionMeta);
-    }
-    if (data.containsKey('end_position')) {
-      context.handle(
-        _endPositionMeta,
-        endPosition.isAcceptableOrUnknown(
-          data['end_position']!,
-          _endPositionMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_endPositionMeta);
-    }
-    if (data.containsKey('highlighted_text')) {
-      context.handle(
-        _highlightedTextMeta,
-        highlightedText.isAcceptableOrUnknown(
-          data['highlighted_text']!,
-          _highlightedTextMeta,
-        ),
-      );
-    } else if (isInserting) {
-      context.missing(_highlightedTextMeta);
-    }
-    if (data.containsKey('color')) {
-      context.handle(
-        _colorMeta,
-        color.isAcceptableOrUnknown(data['color']!, _colorMeta),
-      );
-    }
-    if (data.containsKey('note')) {
-      context.handle(
-        _noteMeta,
-        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
-      );
-    }
-    if (data.containsKey('created_at')) {
-      context.handle(
-        _createdAtMeta,
-        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Highlight map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Highlight(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}id'],
-      )!,
-      uuid: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}uuid'],
-      )!,
-      bookId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}book_id'],
-      )!,
-      chapterId: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}chapter_id'],
-      )!,
-      startPosition: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}start_position'],
-      )!,
-      endPosition: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}end_position'],
-      )!,
-      highlightedText: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}highlighted_text'],
-      )!,
-      color: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}color'],
-      )!,
-      note: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}note'],
-      ),
-      createdAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}created_at'],
-      )!,
-    );
-  }
-
-  @override
-  $HighlightsTable createAlias(String alias) {
-    return $HighlightsTable(attachedDatabase, alias);
-  }
-}
-
-class Highlight extends DataClass implements Insertable<Highlight> {
-  final int id;
-  final String uuid;
-  final int bookId;
-  final int chapterId;
-  final int startPosition;
-  final int endPosition;
-  final String highlightedText;
-  final String color;
-  final String? note;
-  final DateTime createdAt;
-  const Highlight({
-    required this.id,
-    required this.uuid,
-    required this.bookId,
-    required this.chapterId,
-    required this.startPosition,
-    required this.endPosition,
-    required this.highlightedText,
-    required this.color,
-    this.note,
-    required this.createdAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<int>(id);
-    map['uuid'] = Variable<String>(uuid);
-    map['book_id'] = Variable<int>(bookId);
-    map['chapter_id'] = Variable<int>(chapterId);
-    map['start_position'] = Variable<int>(startPosition);
-    map['end_position'] = Variable<int>(endPosition);
-    map['highlighted_text'] = Variable<String>(highlightedText);
-    map['color'] = Variable<String>(color);
-    if (!nullToAbsent || note != null) {
-      map['note'] = Variable<String>(note);
-    }
-    map['created_at'] = Variable<DateTime>(createdAt);
-    return map;
-  }
-
-  HighlightsCompanion toCompanion(bool nullToAbsent) {
-    return HighlightsCompanion(
-      id: Value(id),
-      uuid: Value(uuid),
-      bookId: Value(bookId),
-      chapterId: Value(chapterId),
-      startPosition: Value(startPosition),
-      endPosition: Value(endPosition),
-      highlightedText: Value(highlightedText),
-      color: Value(color),
-      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
-      createdAt: Value(createdAt),
-    );
-  }
-
-  factory Highlight.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Highlight(
-      id: serializer.fromJson<int>(json['id']),
-      uuid: serializer.fromJson<String>(json['uuid']),
-      bookId: serializer.fromJson<int>(json['bookId']),
-      chapterId: serializer.fromJson<int>(json['chapterId']),
-      startPosition: serializer.fromJson<int>(json['startPosition']),
-      endPosition: serializer.fromJson<int>(json['endPosition']),
-      highlightedText: serializer.fromJson<String>(json['highlightedText']),
-      color: serializer.fromJson<String>(json['color']),
-      note: serializer.fromJson<String?>(json['note']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
-      'uuid': serializer.toJson<String>(uuid),
-      'bookId': serializer.toJson<int>(bookId),
-      'chapterId': serializer.toJson<int>(chapterId),
-      'startPosition': serializer.toJson<int>(startPosition),
-      'endPosition': serializer.toJson<int>(endPosition),
-      'highlightedText': serializer.toJson<String>(highlightedText),
-      'color': serializer.toJson<String>(color),
-      'note': serializer.toJson<String?>(note),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-    };
-  }
-
-  Highlight copyWith({
-    int? id,
-    String? uuid,
-    int? bookId,
-    int? chapterId,
-    int? startPosition,
-    int? endPosition,
-    String? highlightedText,
-    String? color,
-    Value<String?> note = const Value.absent(),
-    DateTime? createdAt,
-  }) => Highlight(
-    id: id ?? this.id,
-    uuid: uuid ?? this.uuid,
-    bookId: bookId ?? this.bookId,
-    chapterId: chapterId ?? this.chapterId,
-    startPosition: startPosition ?? this.startPosition,
-    endPosition: endPosition ?? this.endPosition,
-    highlightedText: highlightedText ?? this.highlightedText,
-    color: color ?? this.color,
-    note: note.present ? note.value : this.note,
-    createdAt: createdAt ?? this.createdAt,
-  );
-  Highlight copyWithCompanion(HighlightsCompanion data) {
-    return Highlight(
-      id: data.id.present ? data.id.value : this.id,
-      uuid: data.uuid.present ? data.uuid.value : this.uuid,
-      bookId: data.bookId.present ? data.bookId.value : this.bookId,
-      chapterId: data.chapterId.present ? data.chapterId.value : this.chapterId,
-      startPosition: data.startPosition.present
-          ? data.startPosition.value
-          : this.startPosition,
-      endPosition: data.endPosition.present
-          ? data.endPosition.value
-          : this.endPosition,
-      highlightedText: data.highlightedText.present
-          ? data.highlightedText.value
-          : this.highlightedText,
-      color: data.color.present ? data.color.value : this.color,
-      note: data.note.present ? data.note.value : this.note,
-      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('Highlight(')
-          ..write('id: $id, ')
-          ..write('uuid: $uuid, ')
-          ..write('bookId: $bookId, ')
-          ..write('chapterId: $chapterId, ')
-          ..write('startPosition: $startPosition, ')
-          ..write('endPosition: $endPosition, ')
-          ..write('highlightedText: $highlightedText, ')
-          ..write('color: $color, ')
-          ..write('note: $note, ')
-          ..write('createdAt: $createdAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    uuid,
-    bookId,
-    chapterId,
-    startPosition,
-    endPosition,
-    highlightedText,
-    color,
-    note,
-    createdAt,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Highlight &&
-          other.id == this.id &&
-          other.uuid == this.uuid &&
-          other.bookId == this.bookId &&
-          other.chapterId == this.chapterId &&
-          other.startPosition == this.startPosition &&
-          other.endPosition == this.endPosition &&
-          other.highlightedText == this.highlightedText &&
-          other.color == this.color &&
-          other.note == this.note &&
-          other.createdAt == this.createdAt);
-}
-
-class HighlightsCompanion extends UpdateCompanion<Highlight> {
-  final Value<int> id;
-  final Value<String> uuid;
-  final Value<int> bookId;
-  final Value<int> chapterId;
-  final Value<int> startPosition;
-  final Value<int> endPosition;
-  final Value<String> highlightedText;
-  final Value<String> color;
-  final Value<String?> note;
-  final Value<DateTime> createdAt;
-  const HighlightsCompanion({
-    this.id = const Value.absent(),
-    this.uuid = const Value.absent(),
-    this.bookId = const Value.absent(),
-    this.chapterId = const Value.absent(),
-    this.startPosition = const Value.absent(),
-    this.endPosition = const Value.absent(),
-    this.highlightedText = const Value.absent(),
-    this.color = const Value.absent(),
-    this.note = const Value.absent(),
-    this.createdAt = const Value.absent(),
-  });
-  HighlightsCompanion.insert({
-    this.id = const Value.absent(),
-    required String uuid,
-    required int bookId,
-    required int chapterId,
-    required int startPosition,
-    required int endPosition,
-    required String highlightedText,
-    this.color = const Value.absent(),
-    this.note = const Value.absent(),
-    this.createdAt = const Value.absent(),
-  }) : uuid = Value(uuid),
-       bookId = Value(bookId),
-       chapterId = Value(chapterId),
-       startPosition = Value(startPosition),
-       endPosition = Value(endPosition),
-       highlightedText = Value(highlightedText);
-  static Insertable<Highlight> custom({
-    Expression<int>? id,
-    Expression<String>? uuid,
-    Expression<int>? bookId,
-    Expression<int>? chapterId,
-    Expression<int>? startPosition,
-    Expression<int>? endPosition,
-    Expression<String>? highlightedText,
-    Expression<String>? color,
-    Expression<String>? note,
-    Expression<DateTime>? createdAt,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (uuid != null) 'uuid': uuid,
-      if (bookId != null) 'book_id': bookId,
-      if (chapterId != null) 'chapter_id': chapterId,
-      if (startPosition != null) 'start_position': startPosition,
-      if (endPosition != null) 'end_position': endPosition,
-      if (highlightedText != null) 'highlighted_text': highlightedText,
-      if (color != null) 'color': color,
-      if (note != null) 'note': note,
-      if (createdAt != null) 'created_at': createdAt,
-    });
-  }
-
-  HighlightsCompanion copyWith({
-    Value<int>? id,
-    Value<String>? uuid,
-    Value<int>? bookId,
-    Value<int>? chapterId,
-    Value<int>? startPosition,
-    Value<int>? endPosition,
-    Value<String>? highlightedText,
-    Value<String>? color,
-    Value<String?>? note,
-    Value<DateTime>? createdAt,
-  }) {
-    return HighlightsCompanion(
-      id: id ?? this.id,
-      uuid: uuid ?? this.uuid,
-      bookId: bookId ?? this.bookId,
-      chapterId: chapterId ?? this.chapterId,
-      startPosition: startPosition ?? this.startPosition,
-      endPosition: endPosition ?? this.endPosition,
-      highlightedText: highlightedText ?? this.highlightedText,
-      color: color ?? this.color,
-      note: note ?? this.note,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
-    if (uuid.present) {
-      map['uuid'] = Variable<String>(uuid.value);
-    }
-    if (bookId.present) {
-      map['book_id'] = Variable<int>(bookId.value);
-    }
-    if (chapterId.present) {
-      map['chapter_id'] = Variable<int>(chapterId.value);
-    }
-    if (startPosition.present) {
-      map['start_position'] = Variable<int>(startPosition.value);
-    }
-    if (endPosition.present) {
-      map['end_position'] = Variable<int>(endPosition.value);
-    }
-    if (highlightedText.present) {
-      map['highlighted_text'] = Variable<String>(highlightedText.value);
-    }
-    if (color.present) {
-      map['color'] = Variable<String>(color.value);
-    }
-    if (note.present) {
-      map['note'] = Variable<String>(note.value);
-    }
-    if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('HighlightsCompanion(')
-          ..write('id: $id, ')
-          ..write('uuid: $uuid, ')
-          ..write('bookId: $bookId, ')
-          ..write('chapterId: $chapterId, ')
-          ..write('startPosition: $startPosition, ')
-          ..write('endPosition: $endPosition, ')
-          ..write('highlightedText: $highlightedText, ')
-          ..write('color: $color, ')
-          ..write('note: $note, ')
-          ..write('createdAt: $createdAt')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $NotesTable extends Notes with TableInfo<$NotesTable, Note> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -3426,7 +2819,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $BooksTable books = $BooksTable(this);
   late final $ChaptersTable chapters = $ChaptersTable(this);
   late final $BookmarksTable bookmarks = $BookmarksTable(this);
-  late final $HighlightsTable highlights = $HighlightsTable(this);
   late final $NotesTable notes = $NotesTable(this);
   late final $ReadingProgressTable readingProgress = $ReadingProgressTable(
     this,
@@ -3439,7 +2831,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     books,
     chapters,
     bookmarks,
-    highlights,
     notes,
     readingProgress,
   ];
@@ -3465,20 +2856,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('bookmarks', kind: UpdateKind.delete)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'books',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('highlights', kind: UpdateKind.delete)],
-    ),
-    WritePropagation(
-      on: TableUpdateQuery.onTableName(
-        'chapters',
-        limitUpdateKind: UpdateKind.delete,
-      ),
-      result: [TableUpdate('highlights', kind: UpdateKind.delete)],
     ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
@@ -3582,24 +2959,6 @@ final class $$BooksTableReferences
     ).filter((f) => f.bookId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_bookmarksRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$HighlightsTable, List<Highlight>>
-  _highlightsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.highlights,
-    aliasName: $_aliasNameGenerator(db.books.id, db.highlights.bookId),
-  );
-
-  $$HighlightsTableProcessedTableManager get highlightsRefs {
-    final manager = $$HighlightsTableTableManager(
-      $_db,
-      $_db.highlights,
-    ).filter((f) => f.bookId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_highlightsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -3764,31 +3123,6 @@ class $$BooksTableFilterComposer extends Composer<_$AppDatabase, $BooksTable> {
           }) => $$BookmarksTableFilterComposer(
             $db: $db,
             $table: $db.bookmarks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> highlightsRefs(
-    Expression<bool> Function($$HighlightsTableFilterComposer f) f,
-  ) {
-    final $$HighlightsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.highlights,
-      getReferencedColumn: (t) => t.bookId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HighlightsTableFilterComposer(
-            $db: $db,
-            $table: $db.highlights,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4036,31 +3370,6 @@ class $$BooksTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> highlightsRefs<T extends Object>(
-    Expression<T> Function($$HighlightsTableAnnotationComposer a) f,
-  ) {
-    final $$HighlightsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.highlights,
-      getReferencedColumn: (t) => t.bookId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HighlightsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.highlights,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
   Expression<T> notesRefs<T extends Object>(
     Expression<T> Function($$NotesTableAnnotationComposer a) f,
   ) {
@@ -4128,7 +3437,6 @@ class $$BooksTableTableManager
           PrefetchHooks Function({
             bool chaptersRefs,
             bool bookmarksRefs,
-            bool highlightsRefs,
             bool notesRefs,
             bool readingProgressRefs,
           })
@@ -4218,7 +3526,6 @@ class $$BooksTableTableManager
               ({
                 chaptersRefs = false,
                 bookmarksRefs = false,
-                highlightsRefs = false,
                 notesRefs = false,
                 readingProgressRefs = false,
               }) {
@@ -4227,7 +3534,6 @@ class $$BooksTableTableManager
                   explicitlyWatchedTables: [
                     if (chaptersRefs) db.chapters,
                     if (bookmarksRefs) db.bookmarks,
-                    if (highlightsRefs) db.highlights,
                     if (notesRefs) db.notes,
                     if (readingProgressRefs) db.readingProgress,
                   ],
@@ -4262,23 +3568,6 @@ class $$BooksTableTableManager
                                 table,
                                 p0,
                               ).bookmarksRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.bookId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (highlightsRefs)
-                        await $_getPrefetchedData<Book, $BooksTable, Highlight>(
-                          currentTable: table,
-                          referencedTable: $$BooksTableReferences
-                              ._highlightsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$BooksTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).highlightsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.bookId == item.id,
@@ -4342,7 +3631,6 @@ typedef $$BooksTableProcessedTableManager =
       PrefetchHooks Function({
         bool chaptersRefs,
         bool bookmarksRefs,
-        bool highlightsRefs,
         bool notesRefs,
         bool readingProgressRefs,
       })
@@ -4411,24 +3699,6 @@ final class $$ChaptersTableReferences
     ).filter((f) => f.chapterId.id.sqlEquals($_itemColumn<int>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_bookmarksRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$HighlightsTable, List<Highlight>>
-  _highlightsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
-    db.highlights,
-    aliasName: $_aliasNameGenerator(db.chapters.id, db.highlights.chapterId),
-  );
-
-  $$HighlightsTableProcessedTableManager get highlightsRefs {
-    final manager = $$HighlightsTableTableManager(
-      $_db,
-      $_db.highlights,
-    ).filter((f) => f.chapterId.id.sqlEquals($_itemColumn<int>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_highlightsRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -4575,31 +3845,6 @@ class $$ChaptersTableFilterComposer
           }) => $$BookmarksTableFilterComposer(
             $db: $db,
             $table: $db.bookmarks,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> highlightsRefs(
-    Expression<bool> Function($$HighlightsTableFilterComposer f) f,
-  ) {
-    final $$HighlightsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.highlights,
-      getReferencedColumn: (t) => t.chapterId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HighlightsTableFilterComposer(
-            $db: $db,
-            $table: $db.highlights,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4832,31 +4077,6 @@ class $$ChaptersTableAnnotationComposer
     return f(composer);
   }
 
-  Expression<T> highlightsRefs<T extends Object>(
-    Expression<T> Function($$HighlightsTableAnnotationComposer a) f,
-  ) {
-    final $$HighlightsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.highlights,
-      getReferencedColumn: (t) => t.chapterId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$HighlightsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.highlights,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
   Expression<T> notesRefs<T extends Object>(
     Expression<T> Function($$NotesTableAnnotationComposer a) f,
   ) {
@@ -4924,7 +4144,6 @@ class $$ChaptersTableTableManager
           PrefetchHooks Function({
             bool bookId,
             bool bookmarksRefs,
-            bool highlightsRefs,
             bool notesRefs,
             bool readingProgressRefs,
           })
@@ -5004,7 +4223,6 @@ class $$ChaptersTableTableManager
               ({
                 bookId = false,
                 bookmarksRefs = false,
-                highlightsRefs = false,
                 notesRefs = false,
                 readingProgressRefs = false,
               }) {
@@ -5012,7 +4230,6 @@ class $$ChaptersTableTableManager
                   db: db,
                   explicitlyWatchedTables: [
                     if (bookmarksRefs) db.bookmarks,
-                    if (highlightsRefs) db.highlights,
                     if (notesRefs) db.notes,
                     if (readingProgressRefs) db.readingProgress,
                   ],
@@ -5065,27 +4282,6 @@ class $$ChaptersTableTableManager
                                 table,
                                 p0,
                               ).bookmarksRefs,
-                          referencedItemsForCurrentItem:
-                              (item, referencedItems) => referencedItems.where(
-                                (e) => e.chapterId == item.id,
-                              ),
-                          typedResults: items,
-                        ),
-                      if (highlightsRefs)
-                        await $_getPrefetchedData<
-                          Chapter,
-                          $ChaptersTable,
-                          Highlight
-                        >(
-                          currentTable: table,
-                          referencedTable: $$ChaptersTableReferences
-                              ._highlightsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$ChaptersTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).highlightsRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.chapterId == item.id,
@@ -5157,7 +4353,6 @@ typedef $$ChaptersTableProcessedTableManager =
       PrefetchHooks Function({
         bool bookId,
         bool bookmarksRefs,
-        bool highlightsRefs,
         bool notesRefs,
         bool readingProgressRefs,
       })
@@ -5598,507 +4793,6 @@ typedef $$BookmarksTableProcessedTableManager =
       $$BookmarksTableUpdateCompanionBuilder,
       (Bookmark, $$BookmarksTableReferences),
       Bookmark,
-      PrefetchHooks Function({bool bookId, bool chapterId})
-    >;
-typedef $$HighlightsTableCreateCompanionBuilder =
-    HighlightsCompanion Function({
-      Value<int> id,
-      required String uuid,
-      required int bookId,
-      required int chapterId,
-      required int startPosition,
-      required int endPosition,
-      required String highlightedText,
-      Value<String> color,
-      Value<String?> note,
-      Value<DateTime> createdAt,
-    });
-typedef $$HighlightsTableUpdateCompanionBuilder =
-    HighlightsCompanion Function({
-      Value<int> id,
-      Value<String> uuid,
-      Value<int> bookId,
-      Value<int> chapterId,
-      Value<int> startPosition,
-      Value<int> endPosition,
-      Value<String> highlightedText,
-      Value<String> color,
-      Value<String?> note,
-      Value<DateTime> createdAt,
-    });
-
-final class $$HighlightsTableReferences
-    extends BaseReferences<_$AppDatabase, $HighlightsTable, Highlight> {
-  $$HighlightsTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static $BooksTable _bookIdTable(_$AppDatabase db) => db.books.createAlias(
-    $_aliasNameGenerator(db.highlights.bookId, db.books.id),
-  );
-
-  $$BooksTableProcessedTableManager get bookId {
-    final $_column = $_itemColumn<int>('book_id')!;
-
-    final manager = $$BooksTableTableManager(
-      $_db,
-      $_db.books,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_bookIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-
-  static $ChaptersTable _chapterIdTable(_$AppDatabase db) =>
-      db.chapters.createAlias(
-        $_aliasNameGenerator(db.highlights.chapterId, db.chapters.id),
-      );
-
-  $$ChaptersTableProcessedTableManager get chapterId {
-    final $_column = $_itemColumn<int>('chapter_id')!;
-
-    final manager = $$ChaptersTableTableManager(
-      $_db,
-      $_db.chapters,
-    ).filter((f) => f.id.sqlEquals($_column));
-    final item = $_typedResult.readTableOrNull(_chapterIdTable($_db));
-    if (item == null) return manager;
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: [item]),
-    );
-  }
-}
-
-class $$HighlightsTableFilterComposer
-    extends Composer<_$AppDatabase, $HighlightsTable> {
-  $$HighlightsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get uuid => $composableBuilder(
-    column: $table.uuid,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get startPosition => $composableBuilder(
-    column: $table.startPosition,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get endPosition => $composableBuilder(
-    column: $table.endPosition,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get highlightedText => $composableBuilder(
-    column: $table.highlightedText,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get color => $composableBuilder(
-    column: $table.color,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get note => $composableBuilder(
-    column: $table.note,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  $$BooksTableFilterComposer get bookId {
-    final $$BooksTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.bookId,
-      referencedTable: $db.books,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$BooksTableFilterComposer(
-            $db: $db,
-            $table: $db.books,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $$ChaptersTableFilterComposer get chapterId {
-    final $$ChaptersTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.chapterId,
-      referencedTable: $db.chapters,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ChaptersTableFilterComposer(
-            $db: $db,
-            $table: $db.chapters,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$HighlightsTableOrderingComposer
-    extends Composer<_$AppDatabase, $HighlightsTable> {
-  $$HighlightsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<int> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get uuid => $composableBuilder(
-    column: $table.uuid,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get startPosition => $composableBuilder(
-    column: $table.startPosition,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get endPosition => $composableBuilder(
-    column: $table.endPosition,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get highlightedText => $composableBuilder(
-    column: $table.highlightedText,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get color => $composableBuilder(
-    column: $table.color,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get note => $composableBuilder(
-    column: $table.note,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
-    column: $table.createdAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  $$BooksTableOrderingComposer get bookId {
-    final $$BooksTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.bookId,
-      referencedTable: $db.books,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$BooksTableOrderingComposer(
-            $db: $db,
-            $table: $db.books,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $$ChaptersTableOrderingComposer get chapterId {
-    final $$ChaptersTableOrderingComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.chapterId,
-      referencedTable: $db.chapters,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ChaptersTableOrderingComposer(
-            $db: $db,
-            $table: $db.chapters,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$HighlightsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $HighlightsTable> {
-  $$HighlightsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<int> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get uuid =>
-      $composableBuilder(column: $table.uuid, builder: (column) => column);
-
-  GeneratedColumn<int> get startPosition => $composableBuilder(
-    column: $table.startPosition,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get endPosition => $composableBuilder(
-    column: $table.endPosition,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get highlightedText => $composableBuilder(
-    column: $table.highlightedText,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get color =>
-      $composableBuilder(column: $table.color, builder: (column) => column);
-
-  GeneratedColumn<String> get note =>
-      $composableBuilder(column: $table.note, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get createdAt =>
-      $composableBuilder(column: $table.createdAt, builder: (column) => column);
-
-  $$BooksTableAnnotationComposer get bookId {
-    final $$BooksTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.bookId,
-      referencedTable: $db.books,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$BooksTableAnnotationComposer(
-            $db: $db,
-            $table: $db.books,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-
-  $$ChaptersTableAnnotationComposer get chapterId {
-    final $$ChaptersTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.chapterId,
-      referencedTable: $db.chapters,
-      getReferencedColumn: (t) => t.id,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ChaptersTableAnnotationComposer(
-            $db: $db,
-            $table: $db.chapters,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return composer;
-  }
-}
-
-class $$HighlightsTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $HighlightsTable,
-          Highlight,
-          $$HighlightsTableFilterComposer,
-          $$HighlightsTableOrderingComposer,
-          $$HighlightsTableAnnotationComposer,
-          $$HighlightsTableCreateCompanionBuilder,
-          $$HighlightsTableUpdateCompanionBuilder,
-          (Highlight, $$HighlightsTableReferences),
-          Highlight,
-          PrefetchHooks Function({bool bookId, bool chapterId})
-        > {
-  $$HighlightsTableTableManager(_$AppDatabase db, $HighlightsTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$HighlightsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$HighlightsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$HighlightsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                Value<String> uuid = const Value.absent(),
-                Value<int> bookId = const Value.absent(),
-                Value<int> chapterId = const Value.absent(),
-                Value<int> startPosition = const Value.absent(),
-                Value<int> endPosition = const Value.absent(),
-                Value<String> highlightedText = const Value.absent(),
-                Value<String> color = const Value.absent(),
-                Value<String?> note = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-              }) => HighlightsCompanion(
-                id: id,
-                uuid: uuid,
-                bookId: bookId,
-                chapterId: chapterId,
-                startPosition: startPosition,
-                endPosition: endPosition,
-                highlightedText: highlightedText,
-                color: color,
-                note: note,
-                createdAt: createdAt,
-              ),
-          createCompanionCallback:
-              ({
-                Value<int> id = const Value.absent(),
-                required String uuid,
-                required int bookId,
-                required int chapterId,
-                required int startPosition,
-                required int endPosition,
-                required String highlightedText,
-                Value<String> color = const Value.absent(),
-                Value<String?> note = const Value.absent(),
-                Value<DateTime> createdAt = const Value.absent(),
-              }) => HighlightsCompanion.insert(
-                id: id,
-                uuid: uuid,
-                bookId: bookId,
-                chapterId: chapterId,
-                startPosition: startPosition,
-                endPosition: endPosition,
-                highlightedText: highlightedText,
-                color: color,
-                note: note,
-                createdAt: createdAt,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable(table),
-                  $$HighlightsTableReferences(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback: ({bookId = false, chapterId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (bookId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.bookId,
-                                referencedTable: $$HighlightsTableReferences
-                                    ._bookIdTable(db),
-                                referencedColumn: $$HighlightsTableReferences
-                                    ._bookIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-                    if (chapterId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.chapterId,
-                                referencedTable: $$HighlightsTableReferences
-                                    ._chapterIdTable(db),
-                                referencedColumn: $$HighlightsTableReferences
-                                    ._chapterIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
-
-                    return state;
-                  },
-              getPrefetchedDataCallback: (items) async {
-                return [];
-              },
-            );
-          },
-        ),
-      );
-}
-
-typedef $$HighlightsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $HighlightsTable,
-      Highlight,
-      $$HighlightsTableFilterComposer,
-      $$HighlightsTableOrderingComposer,
-      $$HighlightsTableAnnotationComposer,
-      $$HighlightsTableCreateCompanionBuilder,
-      $$HighlightsTableUpdateCompanionBuilder,
-      (Highlight, $$HighlightsTableReferences),
-      Highlight,
       PrefetchHooks Function({bool bookId, bool chapterId})
     >;
 typedef $$NotesTableCreateCompanionBuilder =
@@ -7002,8 +5696,6 @@ class $AppDatabaseManager {
       $$ChaptersTableTableManager(_db, _db.chapters);
   $$BookmarksTableTableManager get bookmarks =>
       $$BookmarksTableTableManager(_db, _db.bookmarks);
-  $$HighlightsTableTableManager get highlights =>
-      $$HighlightsTableTableManager(_db, _db.highlights);
   $$NotesTableTableManager get notes =>
       $$NotesTableTableManager(_db, _db.notes);
   $$ReadingProgressTableTableManager get readingProgress =>

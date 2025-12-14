@@ -174,61 +174,6 @@ class BookRepository {
     await (_db.delete(_db.bookmarks)..where((tbl) => tbl.id.equals(id))).go();
   }
 
-  // Highlights operations
-
-  /// Get all highlights for a book
-  Future<List<Highlight>> getHighlightsForBook(int bookId) async {
-    return await (_db.select(_db.highlights)
-          ..where((tbl) => tbl.bookId.equals(bookId))
-          ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)]))
-        .get();
-  }
-
-  /// Get highlights for a chapter
-  Future<List<Highlight>> getHighlightsForChapter(int chapterId) async {
-    return await (_db.select(
-      _db.highlights,
-    )..where((tbl) => tbl.chapterId.equals(chapterId))).get();
-  }
-
-  /// Create a highlight
-  Future<int> createHighlight({
-    required int bookId,
-    required int chapterId,
-    required int startPosition,
-    required int endPosition,
-    required String highlightedText,
-    String color = 'yellow',
-    String? note,
-  }) async {
-    return await _db
-        .into(_db.highlights)
-        .insert(
-          HighlightsCompanion.insert(
-            uuid: _uuid.v4(),
-            bookId: bookId,
-            chapterId: chapterId,
-            startPosition: startPosition,
-            endPosition: endPosition,
-            highlightedText: highlightedText,
-            color: Value(color),
-            note: Value(note),
-          ),
-        );
-  }
-
-  /// Update a highlight's note
-  Future<void> updateHighlightNote(int id, String? note) async {
-    await (_db.update(_db.highlights)..where((tbl) => tbl.id.equals(id))).write(
-      HighlightsCompanion(note: Value(note)),
-    );
-  }
-
-  /// Delete a highlight
-  Future<void> deleteHighlight(int id) async {
-    await (_db.delete(_db.highlights)..where((tbl) => tbl.id.equals(id))).go();
-  }
-
   // Notes operations
 
   /// Get all notes for a book
