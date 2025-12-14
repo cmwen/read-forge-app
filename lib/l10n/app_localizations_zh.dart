@@ -524,6 +524,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String ttsError(String error) {
     return 'Text-to-speech error: $error';
   }
+
+  @override
+  String get audioScreenOffInfo => 'Audio will continue even with screen off';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).

@@ -1486,7 +1486,7 @@ You can format text like:
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Audio will continue even with screen off',
+                          l10n.audioScreenOffInfo,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),

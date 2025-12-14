@@ -721,5 +721,9 @@
         "type": "String"
       }
     }
+  },
+  "audioScreenOffInfo": "Audio will continue even with screen off",
+  "@audioScreenOffInfo": {
+    "description": "Info message about background audio playback"
   }
 }

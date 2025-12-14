@@ -1058,6 +1058,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Text-to-speech error: {error}'**
   String ttsError(String error);
+
+  /// Info message about background audio playback
+  ///
+  /// In en, this message translates to:
+  /// **'Audio will continue even with screen off'**
+  String get audioScreenOffInfo;
 }
 
 class _AppLocalizationsDelegate
