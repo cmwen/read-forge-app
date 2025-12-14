@@ -59,39 +59,57 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     // Add highlight button that uses the same copy logic to get text
     final highlightButton = ContextMenuButtonItem(
       onPressed: () async {
-        // Save current clipboard
-        ClipboardData? previousClipboard;
         try {
-          previousClipboard = await Clipboard.getData(Clipboard.kTextPlain);
+          // Save current clipboard
+          ClipboardData? previousClipboard;
+          try {
+            previousClipboard = await Clipboard.getData(Clipboard.kTextPlain);
+          } catch (e) {
+            // Ignore clipboard read errors
+          }
+
+          // Trigger copy to get the selected text
+          copyButton.onPressed?.call();
+
+          // Delay to ensure clipboard is updated (Android needs more time)
+          await Future.delayed(const Duration(milliseconds: 150));
+
+          // Get the selected text from clipboard
+          final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+          final selectedText = clipboardData?.text;
+
+          // Restore previous clipboard if it existed
+          if (previousClipboard?.text != null) {
+            try {
+              await Clipboard.setData(
+                ClipboardData(text: previousClipboard!.text!),
+              );
+            } catch (e) {
+              // Ignore clipboard write errors
+            }
+          }
+
+          // Close the context menu
+          ContextMenuController.removeAny();
+
+          if (selectedText != null &&
+              selectedText.isNotEmpty &&
+              context.mounted) {
+            // Show highlight color picker
+            _showHighlightColorPicker(context, selectedText, chapter);
+          } else if (context.mounted) {
+            // Show error if no text was selected
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(l10n.noContentYet)),
+            );
+          }
         } catch (e) {
-          // Ignore errors
-        }
-
-        // Trigger copy to get the selected text
-        copyButton.onPressed?.call();
-
-        // Small delay to ensure clipboard is updated
-        await Future.delayed(const Duration(milliseconds: 50));
-
-        // Get the selected text from clipboard
-        final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-        final selectedText = clipboardData?.text;
-
-        // Restore previous clipboard if it existed
-        if (previousClipboard?.text != null) {
-          await Clipboard.setData(
-            ClipboardData(text: previousClipboard!.text!),
-          );
-        }
-
-        // Close the context menu
-        ContextMenuController.removeAny();
-
-        if (selectedText != null &&
-            selectedText.isNotEmpty &&
-            context.mounted) {
-          // Show highlight color picker
-          _showHighlightColorPicker(context, selectedText, chapter);
+          // Handle any unexpected errors
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${e.toString()}')),
+            );
+          }
         }
       },
       label: l10n.highlight,
@@ -1411,7 +1429,7 @@ You can format text like:
   void _startReading(BuildContext context) async {
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));
 
-    await chapterAsync.when(
+    chapterAsync.when(
       data: (chapter) async {
         if (chapter?.content != null && chapter!.content!.isNotEmpty) {
           // Show TTS settings dialog first
@@ -1419,7 +1437,7 @@ You can format text like:
           if (shouldStart == true && context.mounted) {
             // Strip markdown formatting for better TTS
             final plainText = _stripMarkdown(chapter.content!);
-            ref.read(ttsProvider.notifier).speak(plainText);
+            await ref.read(ttsProvider.notifier).speak(plainText);
           }
         } else {
           if (context.mounted) {
@@ -1430,8 +1448,22 @@ You can format text like:
           }
         }
       },
-      loading: () {},
-      error: (error, stack) {},
+      loading: () {
+        if (context.mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l10n.loading)));
+        }
+      },
+      error: (error, stack) {
+        if (context.mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.errorMessage(error.toString()))),
+          );
+        }
+      },
     );
   }
 
