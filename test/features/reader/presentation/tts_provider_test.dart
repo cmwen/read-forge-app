@@ -9,6 +9,8 @@ class FakeTtsService implements TtsServiceBase {
   double rate = 0.5;
   String? lastText;
   bool throwOnSpeak = false;
+  int _currentChunk = 0;
+  int _totalChunks = 0;
 
   @override
   Function()? onComplete;
@@ -26,10 +28,19 @@ class FakeTtsService implements TtsServiceBase {
   Function()? onStart;
 
   @override
+  Function(int current, int total)? onProgress;
+
+  @override
   bool get isPlaying => playing;
 
   @override
   double get speechRate => rate;
+
+  @override
+  int get currentChunk => _currentChunk;
+
+  @override
+  int get totalChunks => _totalChunks;
 
   @override
   Future<void> initialize() async {
@@ -54,12 +65,17 @@ class FakeTtsService implements TtsServiceBase {
     }
     lastText = text;
     playing = true;
+    _currentChunk = 1;
+    _totalChunks = 1;
+    onProgress?.call(1, 1);
     onStart?.call();
   }
 
   @override
   Future<void> stop() async {
     playing = false;
+    _currentChunk = 0;
+    _totalChunks = 0;
     onComplete?.call();
   }
 

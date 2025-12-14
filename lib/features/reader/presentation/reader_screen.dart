@@ -100,16 +100,16 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
             _showHighlightColorPicker(context, selectedText, chapter);
           } else if (context.mounted) {
             // Show error if no text was selected
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(l10n.noContentYet)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.noContentYet)));
           }
         } catch (e) {
           // Handle any unexpected errors
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${e.toString()}')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
           }
         }
       },
@@ -228,7 +228,11 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red,
+                    ),
                     const SizedBox(height: 16),
                     Text(l10n.errorMessage(error.toString())),
                   ],
@@ -1444,7 +1448,7 @@ You can format text like:
         if (chapter?.content != null && chapter!.content!.isNotEmpty) {
           // Strip markdown formatting for better TTS
           final plainText = _stripMarkdown(chapter.content!);
-          
+
           try {
             await ref.read(ttsProvider.notifier).speak(plainText);
           } catch (e) {

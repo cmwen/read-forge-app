@@ -7,10 +7,7 @@ import 'package:read_forge/l10n/app_localizations.dart';
 class TtsPlayerWidget extends ConsumerWidget {
   final VoidCallback? onClose;
 
-  const TtsPlayerWidget({
-    super.key,
-    this.onClose,
-  });
+  const TtsPlayerWidget({super.key, this.onClose});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,13 +35,39 @@ class TtsPlayerWidget extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Progress indicator (placeholder - can be enhanced with actual progress)
-            if (ttsState.isPlaying)
+            // Progress indicator with chunk information
+            if (ttsState.isPlaying || ttsState.totalChunks > 0) ...[
+              if (ttsState.totalChunks > 1)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.article_outlined,
+                        size: 16,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Section ${ttsState.currentChunk} of ${ttsState.totalChunks}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               LinearProgressIndicator(
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                value: ttsState.totalChunks > 0
+                    ? ttsState.currentChunk / ttsState.totalChunks
+                    : null,
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest,
               ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ],
 
             // Playback controls
             Row(
@@ -142,9 +165,9 @@ class TtsPlayerWidget extends ConsumerWidget {
                 ),
                 Text(
                   _getSpeechRateLabel(ttsState.speechRate, l10n),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
