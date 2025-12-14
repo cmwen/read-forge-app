@@ -103,13 +103,17 @@ class TtsNotifier extends Notifier<TtsState> {
   }
 
   /// Speak text
-  Future<void> speak(String text) async {
+  Future<void> speak(String text, {String? bookTitle, String? chapterTitle}) async {
     try {
       if (!state.isInitialized) {
         await initialize();
       }
       state = state.copyWith(currentText: text);
-      await _ttsService.speak(text);
+      await _ttsService.speak(
+        text,
+        bookTitle: bookTitle,
+        chapterTitle: chapterTitle,
+      );
     } catch (e) {
       state = state.copyWith(isPlaying: false, errorMessage: e.toString());
     }

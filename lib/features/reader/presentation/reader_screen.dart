@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
+import 'package:read_forge/features/library/presentation/library_provider.dart';
 import 'package:read_forge/features/reader/presentation/reader_preferences_provider.dart';
 import 'package:read_forge/features/reader/presentation/reading_progress_provider.dart';
 import 'package:read_forge/features/reader/presentation/bookmarks_dialog.dart';
@@ -41,7 +42,7 @@ class ReaderScreen extends ConsumerStatefulWidget {
 }
 
 class _ReaderScreenState extends ConsumerState<ReaderScreen> {
-  static bool _playerScreenOpen = false;
+  bool _playerScreenOpen = false;
   
   // Listen to TTS state and navigate to player screen when playing
   @override
@@ -1185,6 +1186,9 @@ You can format text like:
   // TTS methods
 
   void _startReading(BuildContext context) async {
+    // Stop any existing playback first
+    await ref.read(ttsProvider.notifier).stop();
+    
     final l10n = AppLocalizations.of(context)!;
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));
 
@@ -1194,8 +1198,16 @@ You can format text like:
           // Strip markdown formatting for better TTS
           final plainText = _stripMarkdown(chapter.content!);
 
+          // Get book for metadata
+          final bookRepo = ref.read(bookRepositoryProvider);
+          final book = await bookRepo.getBookById(widget.bookId);
+          
           try {
-            await ref.read(ttsProvider.notifier).speak(plainText);
+            await ref.read(ttsProvider.notifier).speak(
+              plainText,
+              bookTitle: book?.title,
+              chapterTitle: chapter.title,
+            );
           } catch (e) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(

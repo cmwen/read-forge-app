@@ -153,34 +153,37 @@ class TtsAudioHandler extends BaseAudioHandler with SeekHandler {
   Future<void> speakText(String text, {String? title, String? album}) async {
     if (!_isInitialized) await _init();
     
+    // Stop any existing playback first
+    await stop();
+    
     _currentText = text;
     _textChunks = _splitIntoChunks(text);
     _currentChunkIndex = 0;
     _isStopped = false;
     
     // Update media item - this is critical for notification to show
-    mediaItem.add(MediaItem(
+    final newMediaItem = MediaItem(
       id: 'tts_${DateTime.now().millisecondsSinceEpoch}',
       album: album ?? 'ReadForge',
       title: title ?? 'Text-to-Speech',
       duration: Duration(seconds: _textChunks.length * 30), // Rough estimate
       artUri: null,
-    ));
+    );
+    mediaItem.add(newMediaItem);
     
     onProgress?.call(_currentChunkIndex + 1, _textChunks.length);
     
-    // Update state before speaking
-    _updatePlaybackState(
-      playing: false,
-      processingState: AudioProcessingState.ready,
-    );
-    
+    // Start speaking immediately
     await _speakCurrentChunk();
   }
   
   @override
   Future<void> play() async {
-    if (_currentText != null && !playbackState.value.playing) {
+    if (_currentText != null) {
+      if (_textChunks.isEmpty) {
+        // Restart from beginning if no chunks
+        _currentChunkIndex = 0;
+      }
       await _speakCurrentChunk();
     }
   }
@@ -198,10 +201,10 @@ class TtsAudioHandler extends BaseAudioHandler with SeekHandler {
     _textChunks.clear();
     _currentChunkIndex = 0;
     
-    playbackState.add(playbackState.value.copyWith(
+    _updatePlaybackState(
       playing: false,
       processingState: AudioProcessingState.idle,
-    ));
+    );
   }
   
   @override
