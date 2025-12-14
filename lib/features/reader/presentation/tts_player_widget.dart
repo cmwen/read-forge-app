@@ -7,10 +7,7 @@ import 'package:read_forge/l10n/app_localizations.dart';
 class TtsPlayerWidget extends ConsumerWidget {
   final VoidCallback? onClose;
 
-  const TtsPlayerWidget({
-    super.key,
-    this.onClose,
-  });
+  const TtsPlayerWidget({super.key, this.onClose});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,8 +62,9 @@ class TtsPlayerWidget extends ConsumerWidget {
                 value: ttsState.totalChunks > 0
                     ? ttsState.currentChunk / ttsState.totalChunks
                     : null,
-                backgroundColor:
-                    Theme.of(context).colorScheme.surfaceContainerHighest,
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest,
               ),
               const SizedBox(height: 16),
             ],
@@ -167,9 +165,9 @@ class TtsPlayerWidget extends ConsumerWidget {
                 ),
                 Text(
                   _getSpeechRateLabel(ttsState.speechRate, l10n),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),

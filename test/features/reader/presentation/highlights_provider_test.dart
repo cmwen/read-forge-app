@@ -25,65 +25,67 @@ void main() {
   });
 
   group('highlightsProvider', () {
-    test('returns highlights with chapter info and filters missing chapters',
-        () async {
-      final repository = MockBookRepository();
-      final highlight = Highlight(
-        id: 1,
-        uuid: 'uuid-1',
-        bookId: 10,
-        chapterId: 5,
-        startPosition: 0,
-        endPosition: 10,
-        highlightedText: 'Sample text',
-        color: 'green',
-        note: null,
-        createdAt: DateTime(2024, 1, 1),
-      );
-      final missingChapterHighlight = Highlight(
-        id: 2,
-        uuid: 'uuid-2',
-        bookId: 10,
-        chapterId: 6,
-        startPosition: 5,
-        endPosition: 15,
-        highlightedText: 'Other text',
-        color: 'yellow',
-        note: null,
-        createdAt: DateTime(2024, 1, 2),
-      );
-
-      when(() => repository.getHighlightsForBook(10)).thenAnswer(
-        (_) async => [highlight, missingChapterHighlight],
-      );
-      when(() => repository.getChapterById(5)).thenAnswer(
-        (_) async => ChapterModel(
-          id: 5,
-          uuid: 'chapter-uuid',
+    test(
+      'returns highlights with chapter info and filters missing chapters',
+      () async {
+        final repository = MockBookRepository();
+        final highlight = Highlight(
+          id: 1,
+          uuid: 'uuid-1',
           bookId: 10,
-          title: 'Chapter 1',
-          summary: null,
-          content: null,
-          status: 'draft',
-          orderIndex: 1,
-          wordCount: 100,
+          chapterId: 5,
+          startPosition: 0,
+          endPosition: 10,
+          highlightedText: 'Sample text',
+          color: 'green',
+          note: null,
           createdAt: DateTime(2024, 1, 1),
-          updatedAt: DateTime(2024, 1, 1),
-        ),
-      );
-      when(() => repository.getChapterById(6)).thenAnswer((_) async => null);
+        );
+        final missingChapterHighlight = Highlight(
+          id: 2,
+          uuid: 'uuid-2',
+          bookId: 10,
+          chapterId: 6,
+          startPosition: 5,
+          endPosition: 15,
+          highlightedText: 'Other text',
+          color: 'yellow',
+          note: null,
+          createdAt: DateTime(2024, 1, 2),
+        );
 
-      final container = ProviderContainer(
-        overrides: [bookRepositoryProvider.overrideWithValue(repository)],
-      );
-      addTearDown(container.dispose);
+        when(
+          () => repository.getHighlightsForBook(10),
+        ).thenAnswer((_) async => [highlight, missingChapterHighlight]);
+        when(() => repository.getChapterById(5)).thenAnswer(
+          (_) async => ChapterModel(
+            id: 5,
+            uuid: 'chapter-uuid',
+            bookId: 10,
+            title: 'Chapter 1',
+            summary: null,
+            content: null,
+            status: 'draft',
+            orderIndex: 1,
+            wordCount: 100,
+            createdAt: DateTime(2024, 1, 1),
+            updatedAt: DateTime(2024, 1, 1),
+          ),
+        );
+        when(() => repository.getChapterById(6)).thenAnswer((_) async => null);
 
-      final results = await container.read(highlightsProvider(10).future);
+        final container = ProviderContainer(
+          overrides: [bookRepositoryProvider.overrideWithValue(repository)],
+        );
+        addTearDown(container.dispose);
 
-      expect(results, hasLength(1));
-      expect(results.first.highlight.id, highlight.id);
-      expect(results.first.chapterTitle, 'Chapter 1');
-      expect(results.first.chapterOrderIndex, 1);
-    });
+        final results = await container.read(highlightsProvider(10).future);
+
+        expect(results, hasLength(1));
+        expect(results.first.highlight.id, highlight.id);
+        expect(results.first.chapterTitle, 'Chapter 1');
+        expect(results.first.chapterOrderIndex, 1);
+      },
+    );
   });
 }

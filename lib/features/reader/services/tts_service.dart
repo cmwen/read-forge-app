@@ -28,7 +28,7 @@ class TtsService implements TtsServiceBase {
   bool _isInitialized = false;
   bool _isPlaying = false;
   double _speechRate = 0.5; // Default rate (0.0 - 1.0)
-  
+
   // Text chunking for long content
   static const int _maxChunkLength = 4000; // Android TTS character limit
   List<String> _textChunks = [];
@@ -146,7 +146,7 @@ class TtsService implements TtsServiceBase {
       throw Exception('Failed to speak: $e');
     }
   }
-  
+
   /// Speak the current chunk
   Future<void> _speakCurrentChunk() async {
     if (_currentChunkIndex < _textChunks.length) {
@@ -155,7 +155,7 @@ class TtsService implements TtsServiceBase {
       await _flutterTts.speak(_textChunks[_currentChunkIndex]);
     }
   }
-  
+
   /// Split text into manageable chunks for TTS
   List<String> _splitTextIntoChunks(String text) {
     if (text.length <= _maxChunkLength) {
@@ -239,11 +239,11 @@ class TtsService implements TtsServiceBase {
   /// Check if currently playing
   @override
   bool get isPlaying => _isPlaying;
-  
+
   /// Get current chunk index (1-based for display)
   @override
   int get currentChunk => _currentChunkIndex + 1;
-  
+
   /// Get total number of chunks
   @override
   int get totalChunks => _textChunks.length;
@@ -286,12 +286,15 @@ class TtsService implements TtsServiceBase {
       }
     }
 
-    selectedLanguage ??=
-        languages.isNotEmpty ? languages.first.toString() : null;
+    selectedLanguage ??= languages.isNotEmpty
+        ? languages.first.toString()
+        : null;
 
     if (selectedLanguage == null) return;
 
-    final availability = await _flutterTts.isLanguageAvailable(selectedLanguage);
+    final availability = await _flutterTts.isLanguageAvailable(
+      selectedLanguage,
+    );
     final isAvailable =
         availability == true || availability == 1 || availability == "1";
 

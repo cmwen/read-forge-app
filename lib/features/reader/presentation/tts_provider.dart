@@ -64,11 +64,7 @@ class TtsNotifier extends Notifier<TtsState> {
     };
 
     _ttsService.onComplete = () {
-      state = state.copyWith(
-        isPlaying: false,
-        currentChunk: 0,
-        totalChunks: 0,
-      );
+      state = state.copyWith(isPlaying: false, currentChunk: 0, totalChunks: 0);
     };
 
     _ttsService.onPause = () {
@@ -89,10 +85,7 @@ class TtsNotifier extends Notifier<TtsState> {
     };
 
     _ttsService.onProgress = (current, total) {
-      state = state.copyWith(
-        currentChunk: current,
-        totalChunks: total,
-      );
+      state = state.copyWith(currentChunk: current, totalChunks: total);
     };
   }
 
