@@ -38,8 +38,11 @@ class TtsService implements TtsServiceBase {
     if (_isInitialized) return;
 
     try {
+      await _flutterTts.awaitSpeakCompletion(true);
+
+      await _configureLanguage();
+
       // Configure TTS for Android
-      await _flutterTts.setLanguage("en-US");
       await _flutterTts.setSpeechRate(_speechRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
@@ -95,7 +98,12 @@ class TtsService implements TtsServiceBase {
     }
 
     try {
-      await _flutterTts.speak(text);
+      final sanitizedText = text.trim();
+      if (sanitizedText.isEmpty) {
+        throw Exception('No readable text found for text-to-speech.');
+      }
+
+      await _flutterTts.speak(sanitizedText);
     } catch (e) {
       throw Exception('Failed to speak: $e');
     }
@@ -163,6 +171,34 @@ class TtsService implements TtsServiceBase {
       await initialize();
     }
     return await _flutterTts.getVoices;
+  }
+
+  Future<void> _configureLanguage() async {
+    final languages = await _flutterTts.getLanguages;
+    if (languages == null) return;
+
+    const preferredLanguages = ['en-US', 'en_US'];
+    String? selectedLanguage;
+
+    for (final preferred in preferredLanguages) {
+      if (languages.contains(preferred)) {
+        selectedLanguage = preferred;
+        break;
+      }
+    }
+
+    selectedLanguage ??=
+        languages.isNotEmpty ? languages.first.toString() : null;
+
+    if (selectedLanguage == null) return;
+
+    final availability = await _flutterTts.isLanguageAvailable(selectedLanguage);
+    final isAvailable =
+        availability == true || availability == 1 || availability == "1";
+
+    if (isAvailable) {
+      await _flutterTts.setLanguage(selectedLanguage);
+    }
   }
 
   /// Dispose resources
