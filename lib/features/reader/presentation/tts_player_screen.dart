@@ -21,33 +21,20 @@ class TtsPlayerScreen extends ConsumerStatefulWidget {
 }
 
 class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
+  // Scale factor for progress calculation (0-1000 for precision)
+  static const int _progressScale = 1000;
+  
   @override
   void initState() {
     super.initState();
-    
-    // Listen to TTS progress and sync with reading position
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.listenManual(ttsProvider, (previous, next) {
-        // Auto-close screen when playback stops
-        if (previous?.isPlaying == true && !next.isPlaying && next.currentText == null) {
-          if (mounted && context.mounted) {
-            Navigator.of(context).pop();
-          }
-        }
-        
-        // Sync reading progress when chunk changes
-        if (next.totalChunks > 0 && 
-            previous?.currentChunk != next.currentChunk) {
-          _syncReadingProgress(next.currentChunk, next.totalChunks);
-        }
-      });
-    });
   }
   
   /// Sync reading scroll position with TTS chunk progress
   void _syncReadingProgress(int currentChunk, int totalChunks) {
+    if (!mounted) return;
+    
     // Calculate approximate position based on chunk progress
-    final progress = (currentChunk / totalChunks * 1000).round();
+    final progress = (currentChunk / totalChunks * _progressScale).round();
     
     // Update reading progress (this will auto-scroll if user returns to reader)
     final progressNotifier = ref.read(
@@ -60,9 +47,9 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
     );
     
     // Update the position but don't save immediately (save on playback end)
-    if (progressNotifier.scrollController.hasClients) {
+    if (mounted && progressNotifier.scrollController.hasClients) {
       final maxScroll = progressNotifier.scrollController.position.maxScrollExtent;
-      final targetPosition = (progress / 1000.0 * maxScroll).clamp(0.0, maxScroll);
+      final targetPosition = (progress / _progressScale.toDouble() * maxScroll).clamp(0.0, maxScroll);
       
       // Smoothly scroll to sync position
       progressNotifier.scrollController.animateTo(
@@ -77,6 +64,22 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
   Widget build(BuildContext context) {
     final ttsState = ref.watch(ttsProvider);
     final l10n = AppLocalizations.of(context)!;
+    
+    // Listen to TTS state changes for auto-close and progress sync
+    ref.listen<TtsState>(ttsProvider, (previous, next) {
+      // Auto-close screen when playback stops
+      if (previous?.isPlaying == true && !next.isPlaying && next.currentText == null) {
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      }
+      
+      // Sync reading progress when chunk changes
+      if (next.totalChunks > 0 && 
+          previous?.currentChunk != next.currentChunk) {
+        _syncReadingProgress(next.currentChunk, next.totalChunks);
+      }
+    });
 
     return PopScope(
       canPop: true,
@@ -270,7 +273,7 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                       onPressed: ttsState.currentChunk > 1
                           ? () => ref.read(ttsProvider.notifier).previousChunk()
                           : null,
-                      tooltip: '${l10n.previous} Section',
+                      tooltip: l10n.previous,
                     ),
 
                     // Restart current section
@@ -280,7 +283,7 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                       onPressed: ttsState.isPlaying || ttsState.currentText != null
                           ? () => ref.read(ttsProvider.notifier).rewind()
                           : null,
-                      tooltip: 'Restart Section',
+                      tooltip: l10n.rewind,
                     ),
 
                     // Next section
@@ -290,7 +293,7 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                       onPressed: ttsState.currentChunk < ttsState.totalChunks
                           ? () => ref.read(ttsProvider.notifier).nextChunk()
                           : null,
-                      tooltip: '${l10n.next} Section',
+                      tooltip: l10n.next,
                     ),
                   ],
                 ),
