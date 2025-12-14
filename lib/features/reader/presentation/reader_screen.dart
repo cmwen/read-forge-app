@@ -8,6 +8,7 @@ import 'package:read_forge/features/reader/presentation/reading_progress_provide
 import 'package:read_forge/features/reader/presentation/bookmarks_dialog.dart';
 import 'package:read_forge/features/reader/presentation/highlights_dialog.dart';
 import 'package:read_forge/features/reader/presentation/notes_dialog.dart';
+import 'package:read_forge/features/reader/presentation/tts_provider.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
@@ -108,6 +109,9 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
 
   @override
   void dispose() {
+    // Stop TTS if playing
+    ref.read(ttsProvider.notifier).stop();
+
     // Save reading progress when leaving the screen
     final progressNotifier = ref.read(
       readingProgressProvider(
@@ -135,6 +139,35 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           error: (error, stackTrace) => Text(l10n.error),
         ),
         actions: [
+          // TTS play/pause/stop buttons
+          Consumer(
+            builder: (context, ref, _) {
+              final ttsState = ref.watch(ttsProvider);
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (ttsState.isPlaying)
+                    IconButton(
+                      icon: const Icon(Icons.pause),
+                      onPressed: () => ref.read(ttsProvider.notifier).pause(),
+                      tooltip: l10n.pause,
+                    )
+                  else
+                    IconButton(
+                      icon: const Icon(Icons.play_arrow),
+                      onPressed: () => _startReading(context),
+                      tooltip: l10n.play,
+                    ),
+                  if (ttsState.isPlaying || ttsState.currentText != null)
+                    IconButton(
+                      icon: const Icon(Icons.stop),
+                      onPressed: () => ref.read(ttsProvider.notifier).stop(),
+                      tooltip: l10n.stop,
+                    ),
+                ],
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.bookmark_border),
             onPressed: () => _showBookmarksDialog(context),
@@ -374,7 +407,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                   color: textColor,
                 ),
               ),
-              selectable: true,
+              selectable: false, // Handled by parent SelectionArea
             ),
           ),
 
@@ -1371,5 +1404,156 @@ You can format text like:
         ],
       ),
     );
+  }
+
+  // TTS methods
+
+  void _startReading(BuildContext context) async {
+    final chapterAsync = ref.read(chapterProvider(widget.chapterId));
+
+    await chapterAsync.when(
+      data: (chapter) async {
+        if (chapter?.content != null && chapter!.content!.isNotEmpty) {
+          // Show TTS settings dialog first
+          final shouldStart = await _showTtsSettings(context);
+          if (shouldStart == true && context.mounted) {
+            // Strip markdown formatting for better TTS
+            final plainText = _stripMarkdown(chapter.content!);
+            ref.read(ttsProvider.notifier).speak(plainText);
+          }
+        } else {
+          if (context.mounted) {
+            final l10n = AppLocalizations.of(context)!;
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.noContentYet)));
+          }
+        }
+      },
+      loading: () {},
+      error: (error, stack) {},
+    );
+  }
+
+  Future<bool?> _showTtsSettings(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final ttsState = ref.watch(ttsProvider);
+          return AlertDialog(
+            title: Text(l10n.ttsSettings),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.speechSpeed,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(l10n.slow, style: const TextStyle(fontSize: 12)),
+                    Expanded(
+                      child: Slider(
+                        value: ttsState.speechRate,
+                        min: 0.0,
+                        max: 1.0,
+                        divisions: 10,
+                        label: _getSpeechRateLabel(ttsState.speechRate, l10n),
+                        onChanged: (value) {
+                          ref.read(ttsProvider.notifier).setSpeechRate(value);
+                        },
+                      ),
+                    ),
+                    Text(l10n.fast, style: const TextStyle(fontSize: 12)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline, size: 20),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          l10n.audioScreenOffInfo,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.cancel),
+              ),
+              FilledButton.icon(
+                onPressed: () => Navigator.of(context).pop(true),
+                icon: const Icon(Icons.play_arrow),
+                label: Text(l10n.play),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  String _getSpeechRateLabel(double rate, AppLocalizations l10n) {
+    if (rate < 0.4) return l10n.slow;
+    if (rate > 0.6) return l10n.fast;
+    return l10n.normal;
+  }
+
+  String _stripMarkdown(String markdown) {
+    // Remove markdown formatting for better TTS reading
+    String text = markdown;
+
+    // Remove headers
+    text = text.replaceAll(RegExp(r'^#{1,6}\s+', multiLine: true), '');
+
+    // Remove bold and italic
+    text = text.replaceAll(RegExp(r'\*\*([^*]+)\*\*'), r'$1');
+    text = text.replaceAll(RegExp(r'\*([^*]+)\*'), r'$1');
+    text = text.replaceAll(RegExp(r'__([^_]+)__'), r'$1');
+    text = text.replaceAll(RegExp(r'_([^_]+)_'), r'$1');
+
+    // Remove links but keep text
+    text = text.replaceAll(RegExp(r'\[([^\]]+)\]\([^)]+\)'), r'$1');
+
+    // Remove inline code
+    text = text.replaceAll(RegExp(r'`([^`]+)`'), r'$1');
+
+    // Remove code blocks
+    text = text.replaceAll(RegExp(r'```[^`]*```'), '');
+
+    // Remove blockquotes
+    text = text.replaceAll(RegExp(r'^>\s+', multiLine: true), '');
+
+    // Remove list markers
+    text = text.replaceAll(RegExp(r'^[-*+]\s+', multiLine: true), '');
+    text = text.replaceAll(RegExp(r'^\d+\.\s+', multiLine: true), '');
+
+    // Remove horizontal rules
+    text = text.replaceAll(RegExp(r'^[-*_]{3,}$', multiLine: true), '');
+
+    // Clean up extra whitespace
+    text = text.replaceAll(RegExp(r'\n\n+'), '\n\n');
+    text = text.trim();
+
+    return text;
   }
 }

@@ -998,6 +998,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Book title updated to: \"{title}\"'**
   String bookTitleUpdated(String title);
+
+  /// Button/tooltip for TTS read aloud feature
+  ///
+  /// In en, this message translates to:
+  /// **'Read Aloud'**
+  String get readAloud;
+
+  /// Play button for TTS
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get play;
+
+  /// Pause button for TTS
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pause;
+
+  /// Stop button for TTS
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stop;
+
+  /// Label for speech speed control
+  ///
+  /// In en, this message translates to:
+  /// **'Speech Speed'**
+  String get speechSpeed;
+
+  /// Label for slow speed
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get slow;
+
+  /// Label for normal speed
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get normal;
+
+  /// Label for fast speed
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get fast;
+
+  /// Title for TTS settings dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Read Aloud Settings'**
+  String get ttsSettings;
+
+  /// Error message for TTS failures
+  ///
+  /// In en, this message translates to:
+  /// **'Text-to-speech error: {error}'**
+  String ttsError(String error);
+
+  /// Info message about background audio playback
+  ///
+  /// In en, this message translates to:
+  /// **'Audio will continue even with screen off'**
+  String get audioScreenOffInfo;
 }
 
 class _AppLocalizationsDelegate

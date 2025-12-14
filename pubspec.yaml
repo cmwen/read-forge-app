@@ -62,6 +62,9 @@ dependencies:
   # Package version info
   package_info_plus: ^9.0.0
   flutter_markdown_plus: ^1.0.5
+  
+  # Text-to-Speech
+  flutter_tts: ^4.2.0
 
 dev_dependencies:
   flutter_test:
