@@ -11,6 +11,8 @@ class TtsState {
   final double speechRate;
   final String? errorMessage;
   final String? currentText;
+  final int currentChunk;
+  final int totalChunks;
 
   const TtsState({
     this.isPlaying = false,
@@ -18,6 +20,8 @@ class TtsState {
     this.speechRate = 0.5,
     this.errorMessage,
     this.currentText,
+    this.currentChunk = 0,
+    this.totalChunks = 0,
   });
 
   TtsState copyWith({
@@ -26,6 +30,8 @@ class TtsState {
     double? speechRate,
     String? errorMessage,
     String? currentText,
+    int? currentChunk,
+    int? totalChunks,
     bool clearCurrentText = false,
   }) {
     return TtsState(
@@ -34,6 +40,8 @@ class TtsState {
       speechRate: speechRate ?? this.speechRate,
       errorMessage: errorMessage,
       currentText: clearCurrentText ? null : currentText ?? this.currentText,
+      currentChunk: currentChunk ?? this.currentChunk,
+      totalChunks: totalChunks ?? this.totalChunks,
     );
   }
 }
@@ -56,7 +64,11 @@ class TtsNotifier extends Notifier<TtsState> {
     };
 
     _ttsService.onComplete = () {
-      state = state.copyWith(isPlaying: false);
+      state = state.copyWith(
+        isPlaying: false,
+        currentChunk: 0,
+        totalChunks: 0,
+      );
     };
 
     _ttsService.onPause = () {
@@ -68,7 +80,19 @@ class TtsNotifier extends Notifier<TtsState> {
     };
 
     _ttsService.onError = (msg) {
-      state = state.copyWith(isPlaying: false, errorMessage: msg);
+      state = state.copyWith(
+        isPlaying: false,
+        errorMessage: msg,
+        currentChunk: 0,
+        totalChunks: 0,
+      );
+    };
+
+    _ttsService.onProgress = (current, total) {
+      state = state.copyWith(
+        currentChunk: current,
+        totalChunks: total,
+      );
     };
   }
 
@@ -111,7 +135,12 @@ class TtsNotifier extends Notifier<TtsState> {
   Future<void> stop() async {
     try {
       await _ttsService.stop();
-      state = state.copyWith(isPlaying: false, clearCurrentText: true);
+      state = state.copyWith(
+        isPlaying: false,
+        clearCurrentText: true,
+        currentChunk: 0,
+        totalChunks: 0,
+      );
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }

@@ -7,9 +7,12 @@ abstract class TtsServiceBase {
   Function()? onPause;
   Function()? onContinue;
   Function(String)? onError;
+  Function(int current, int total)? onProgress;
 
   double get speechRate;
   bool get isPlaying;
+  int get currentChunk;
+  int get totalChunks;
 
   Future<void> initialize();
   Future<void> speak(String text);
@@ -25,15 +28,29 @@ class TtsService implements TtsServiceBase {
   bool _isInitialized = false;
   bool _isPlaying = false;
   double _speechRate = 0.5; // Default rate (0.0 - 1.0)
+  
+  // Text chunking for long content
+  static const int _maxChunkLength = 4000; // Android TTS character limit
+  List<String> _textChunks = [];
+  int _currentChunkIndex = 0;
+  bool _isStopped = false;
 
   // Callbacks
+  @override
   Function()? onComplete;
+  @override
   Function()? onStart;
+  @override
   Function()? onPause;
+  @override
   Function()? onContinue;
+  @override
   Function(String)? onError;
+  @override
+  Function(int current, int total)? onProgress;
 
   /// Initialize TTS service
+  @override
   Future<void> initialize() async {
     if (_isInitialized) return;
 
@@ -62,12 +79,24 @@ class TtsService implements TtsServiceBase {
       // Set up handlers
       _flutterTts.setStartHandler(() {
         _isPlaying = true;
-        onStart?.call();
+        // Only call onStart for the first chunk
+        if (_currentChunkIndex == 0) {
+          onStart?.call();
+        }
       });
 
-      _flutterTts.setCompletionHandler(() {
-        _isPlaying = false;
-        onComplete?.call();
+      _flutterTts.setCompletionHandler(() async {
+        // Move to next chunk if available
+        if (!_isStopped && _currentChunkIndex < _textChunks.length - 1) {
+          _currentChunkIndex++;
+          await _speakCurrentChunk();
+        } else {
+          // All chunks completed
+          _isPlaying = false;
+          _textChunks.clear();
+          _currentChunkIndex = 0;
+          onComplete?.call();
+        }
       });
 
       _flutterTts.setPauseHandler(() {
@@ -82,6 +111,8 @@ class TtsService implements TtsServiceBase {
 
       _flutterTts.setErrorHandler((msg) {
         _isPlaying = false;
+        _textChunks.clear();
+        _currentChunkIndex = 0;
         onError?.call(msg);
       });
 
@@ -91,7 +122,8 @@ class TtsService implements TtsServiceBase {
     }
   }
 
-  /// Speak the given text
+  /// Speak the given text (automatically chunks long text)
+  @override
   Future<void> speak(String text) async {
     if (!_isInitialized) {
       await initialize();
@@ -103,13 +135,65 @@ class TtsService implements TtsServiceBase {
         throw Exception('No readable text found for text-to-speech.');
       }
 
-      await _flutterTts.speak(sanitizedText);
+      // Split text into chunks if needed
+      _textChunks = _splitTextIntoChunks(sanitizedText);
+      _currentChunkIndex = 0;
+      _isStopped = false;
+
+      // Start speaking the first chunk
+      await _speakCurrentChunk();
     } catch (e) {
       throw Exception('Failed to speak: $e');
     }
   }
+  
+  /// Speak the current chunk
+  Future<void> _speakCurrentChunk() async {
+    if (_currentChunkIndex < _textChunks.length) {
+      // Report progress
+      onProgress?.call(_currentChunkIndex + 1, _textChunks.length);
+      await _flutterTts.speak(_textChunks[_currentChunkIndex]);
+    }
+  }
+  
+  /// Split text into manageable chunks for TTS
+  List<String> _splitTextIntoChunks(String text) {
+    if (text.length <= _maxChunkLength) {
+      return [text];
+    }
+
+    final chunks = <String>[];
+    var startIndex = 0;
+
+    while (startIndex < text.length) {
+      var endIndex = startIndex + _maxChunkLength;
+
+      // If this is not the last chunk, try to break at a sentence boundary
+      if (endIndex < text.length) {
+        // Look for sentence endings: period, exclamation, question mark
+        final sentenceEnd = text.lastIndexOf(RegExp(r'[.!?]\s'), endIndex);
+        if (sentenceEnd > startIndex) {
+          endIndex = sentenceEnd + 1;
+        } else {
+          // No sentence break found, try to break at word boundary
+          final spaceIndex = text.lastIndexOf(' ', endIndex);
+          if (spaceIndex > startIndex) {
+            endIndex = spaceIndex;
+          }
+        }
+      } else {
+        endIndex = text.length;
+      }
+
+      chunks.add(text.substring(startIndex, endIndex).trim());
+      startIndex = endIndex;
+    }
+
+    return chunks;
+  }
 
   /// Pause speaking
+  @override
   Future<void> pause() async {
     if (!_isInitialized) return;
 
@@ -122,10 +206,14 @@ class TtsService implements TtsServiceBase {
   }
 
   /// Stop speaking
+  @override
   Future<void> stop() async {
     if (!_isInitialized) return;
 
     try {
+      _isStopped = true;
+      _textChunks.clear();
+      _currentChunkIndex = 0;
       await _flutterTts.stop();
       _isPlaying = false;
     } catch (e) {
@@ -134,6 +222,7 @@ class TtsService implements TtsServiceBase {
   }
 
   /// Set speech rate (0.0 - 1.0, where 0.5 is normal)
+  @override
   Future<void> setSpeechRate(double rate) async {
     if (!_isInitialized) {
       await initialize();
@@ -144,10 +233,20 @@ class TtsService implements TtsServiceBase {
   }
 
   /// Get current speech rate
+  @override
   double get speechRate => _speechRate;
 
   /// Check if currently playing
+  @override
   bool get isPlaying => _isPlaying;
+  
+  /// Get current chunk index (1-based for display)
+  @override
+  int get currentChunk => _currentChunkIndex + 1;
+  
+  /// Get total number of chunks
+  @override
+  int get totalChunks => _textChunks.length;
 
   /// Get available languages
   Future<List<dynamic>> getLanguages() async {
@@ -202,6 +301,7 @@ class TtsService implements TtsServiceBase {
   }
 
   /// Dispose resources
+  @override
   void dispose() {
     _flutterTts.stop();
   }
