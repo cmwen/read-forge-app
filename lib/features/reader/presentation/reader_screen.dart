@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
-import 'package:read_forge/features/library/presentation/library_provider.dart';
 import 'package:read_forge/features/reader/presentation/reader_preferences_provider.dart';
 import 'package:read_forge/features/reader/presentation/reading_progress_provider.dart';
 import 'package:read_forge/features/reader/presentation/bookmarks_dialog.dart';

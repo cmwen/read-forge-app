@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/reader/presentation/tts_provider.dart';
+import 'package:read_forge/features/reader/presentation/reading_progress_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
 
 /// Full-screen TTS player with controls and progress
-class TtsPlayerScreen extends ConsumerWidget {
+class TtsPlayerScreen extends ConsumerStatefulWidget {
   final int bookId;
   final int chapterId;
 
@@ -16,18 +17,66 @@ class TtsPlayerScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TtsPlayerScreen> createState() => _TtsPlayerScreenState();
+}
+
+class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // Listen to TTS progress and sync with reading position
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.listenManual(ttsProvider, (previous, next) {
+        // Auto-close screen when playback stops
+        if (previous?.isPlaying == true && !next.isPlaying && next.currentText == null) {
+          if (mounted && context.mounted) {
+            Navigator.of(context).pop();
+          }
+        }
+        
+        // Sync reading progress when chunk changes
+        if (next.totalChunks > 0 && 
+            previous?.currentChunk != next.currentChunk) {
+          _syncReadingProgress(next.currentChunk, next.totalChunks);
+        }
+      });
+    });
+  }
+  
+  /// Sync reading scroll position with TTS chunk progress
+  void _syncReadingProgress(int currentChunk, int totalChunks) {
+    // Calculate approximate position based on chunk progress
+    final progress = (currentChunk / totalChunks * 1000).round();
+    
+    // Update reading progress (this will auto-scroll if user returns to reader)
+    final progressNotifier = ref.read(
+      readingProgressProvider(
+        ReadingProgressParams(
+          bookId: widget.bookId,
+          chapterId: widget.chapterId,
+        ),
+      ),
+    );
+    
+    // Update the position but don't save immediately (save on playback end)
+    if (progressNotifier.scrollController.hasClients) {
+      final maxScroll = progressNotifier.scrollController.position.maxScrollExtent;
+      final targetPosition = (progress / 1000.0 * maxScroll).clamp(0.0, maxScroll);
+      
+      // Smoothly scroll to sync position
+      progressNotifier.scrollController.animateTo(
+        targetPosition,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final ttsState = ref.watch(ttsProvider);
     final l10n = AppLocalizations.of(context)!;
-
-    // Auto-close screen when playback stops
-    ref.listen<TtsState>(ttsProvider, (previous, next) {
-      if (previous?.isPlaying == true && !next.isPlaying && next.currentText == null) {
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      }
-    });
 
     return PopScope(
       canPop: true,
@@ -209,7 +258,8 @@ class TtsPlayerScreen extends ConsumerWidget {
                   const SizedBox(height: 32),
                 ],
 
-                // Control buttons row
+                // Control buttons row - chunk-based navigation
+                // Note: TTS doesn't support time-based seeking, only chunk-based
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -220,27 +270,17 @@ class TtsPlayerScreen extends ConsumerWidget {
                       onPressed: ttsState.currentChunk > 1
                           ? () => ref.read(ttsProvider.notifier).previousChunk()
                           : null,
-                      tooltip: l10n.previous,
+                      tooltip: '${l10n.previous} Section',
                     ),
 
-                    // Rewind 10 seconds
+                    // Restart current section
                     IconButton(
-                      icon: const Icon(Icons.replay_10),
+                      icon: const Icon(Icons.replay),
                       iconSize: 36,
-                      onPressed: ttsState.isPlaying
+                      onPressed: ttsState.isPlaying || ttsState.currentText != null
                           ? () => ref.read(ttsProvider.notifier).rewind()
                           : null,
-                      tooltip: l10n.rewind,
-                    ),
-
-                    // Fast forward 10 seconds
-                    IconButton(
-                      icon: const Icon(Icons.forward_10),
-                      iconSize: 36,
-                      onPressed: ttsState.isPlaying
-                          ? () => ref.read(ttsProvider.notifier).forward()
-                          : null,
-                      tooltip: l10n.forward,
+                      tooltip: 'Restart Section',
                     ),
 
                     // Next section
@@ -250,7 +290,7 @@ class TtsPlayerScreen extends ConsumerWidget {
                       onPressed: ttsState.currentChunk < ttsState.totalChunks
                           ? () => ref.read(ttsProvider.notifier).nextChunk()
                           : null,
-                      tooltip: l10n.next,
+                      tooltip: '${l10n.next} Section',
                     ),
                   ],
                 ),
