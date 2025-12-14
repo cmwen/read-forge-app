@@ -1,7 +1,26 @@
 import 'package:flutter_tts/flutter_tts.dart';
 
+/// Abstraction for Text-to-Speech functionality to enable testing
+abstract class TtsServiceBase {
+  Function()? onComplete;
+  Function()? onStart;
+  Function()? onPause;
+  Function()? onContinue;
+  Function(String)? onError;
+
+  double get speechRate;
+  bool get isPlaying;
+
+  Future<void> initialize();
+  Future<void> speak(String text);
+  Future<void> pause();
+  Future<void> stop();
+  Future<void> setSpeechRate(double rate);
+  void dispose();
+}
+
 /// Service for Text-to-Speech functionality
-class TtsService {
+class TtsService implements TtsServiceBase {
   final FlutterTts _flutterTts = FlutterTts();
   bool _isInitialized = false;
   bool _isPlaying = false;

@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/reader/services/tts_service.dart';
 
+/// Provider to allow injecting a custom TTS service (e.g., in tests)
+final ttsServiceProvider = Provider<TtsServiceBase>((ref) => TtsService());
+
 /// TTS state
 class TtsState {
   final bool isPlaying;
@@ -23,24 +26,26 @@ class TtsState {
     double? speechRate,
     String? errorMessage,
     String? currentText,
+    bool clearCurrentText = false,
   }) {
     return TtsState(
       isPlaying: isPlaying ?? this.isPlaying,
       isInitialized: isInitialized ?? this.isInitialized,
       speechRate: speechRate ?? this.speechRate,
       errorMessage: errorMessage,
-      currentText: currentText ?? this.currentText,
+      currentText: clearCurrentText ? null : currentText ?? this.currentText,
     );
   }
 }
 
 /// TTS state notifier
 class TtsNotifier extends Notifier<TtsState> {
-  late final TtsService _ttsService;
+  late final TtsServiceBase _ttsService;
 
   @override
   TtsState build() {
-    _ttsService = TtsService();
+    _ttsService = ref.read(ttsServiceProvider);
+    ref.onDispose(_ttsService.dispose);
     _setupCallbacks();
     return const TtsState();
   }
@@ -106,7 +111,7 @@ class TtsNotifier extends Notifier<TtsState> {
   Future<void> stop() async {
     try {
       await _ttsService.stop();
-      state = state.copyWith(isPlaying: false, currentText: null);
+      state = state.copyWith(isPlaying: false, clearCurrentText: true);
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
