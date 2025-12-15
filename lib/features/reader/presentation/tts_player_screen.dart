@@ -23,19 +23,19 @@ class TtsPlayerScreen extends ConsumerStatefulWidget {
 class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
   // Scale factor for progress calculation (0-1000 for precision)
   static const int _progressScale = 1000;
-  
+
   @override
   void initState() {
     super.initState();
   }
-  
+
   /// Sync reading scroll position with TTS chunk progress
   void _syncReadingProgress(int currentChunk, int totalChunks) {
     if (!mounted) return;
-    
+
     // Calculate approximate position based on chunk progress
     final progress = (currentChunk / totalChunks * _progressScale).round();
-    
+
     // Update reading progress (this will auto-scroll if user returns to reader)
     final progressNotifier = ref.read(
       readingProgressProvider(
@@ -45,12 +45,14 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
         ),
       ),
     );
-    
+
     // Update the position but don't save immediately (save on playback end)
     if (mounted && progressNotifier.scrollController.hasClients) {
-      final maxScroll = progressNotifier.scrollController.position.maxScrollExtent;
-      final targetPosition = (progress / _progressScale.toDouble() * maxScroll).clamp(0.0, maxScroll);
-      
+      final maxScroll =
+          progressNotifier.scrollController.position.maxScrollExtent;
+      final targetPosition = (progress / _progressScale.toDouble() * maxScroll)
+          .clamp(0.0, maxScroll);
+
       // Smoothly scroll to sync position
       progressNotifier.scrollController.animateTo(
         targetPosition,
@@ -64,19 +66,20 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
   Widget build(BuildContext context) {
     final ttsState = ref.watch(ttsProvider);
     final l10n = AppLocalizations.of(context)!;
-    
+
     // Listen to TTS state changes for auto-close and progress sync
     ref.listen<TtsState>(ttsProvider, (previous, next) {
       // Auto-close screen when playback stops
-      if (previous?.isPlaying == true && !next.isPlaying && next.currentText == null) {
+      if (previous?.isPlaying == true &&
+          !next.isPlaying &&
+          next.currentText == null) {
         if (context.mounted) {
           Navigator.of(context).pop();
         }
       }
-      
+
       // Sync reading progress when chunk changes
-      if (next.totalChunks > 0 && 
-          previous?.currentChunk != next.currentChunk) {
+      if (next.totalChunks > 0 && previous?.currentChunk != next.currentChunk) {
         _syncReadingProgress(next.currentChunk, next.totalChunks);
       }
     });
@@ -117,9 +120,8 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                         children: [
                           Text(
                             data['bookTitle'] ?? '',
-                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -127,9 +129,12 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                           const SizedBox(height: 8),
                           Text(
                             data['chapterTitle'] ?? '',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -181,7 +186,10 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                 if (ttsState.totalChunks > 0) ...[
                   // Current section indicator
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(20),
@@ -192,21 +200,29 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                         Icon(
                           Icons.article_outlined,
                           size: 20,
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimaryContainer,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Section ${ttsState.currentChunk}',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         Text(
                           ' of ${ttsState.totalChunks}',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimaryContainer,
+                              ),
                         ),
                       ],
                     ),
@@ -237,7 +253,9 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                                 : 1,
                             label: 'Section ${ttsState.currentChunk}',
                             onChanged: (value) {
-                              ref.read(ttsProvider.notifier).seekToChunk(value.toInt());
+                              ref
+                                  .read(ttsProvider.notifier)
+                                  .seekToChunk(value.toInt());
                             },
                           ),
                         ),
@@ -280,7 +298,8 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                     IconButton(
                       icon: const Icon(Icons.replay),
                       iconSize: 36,
-                      onPressed: ttsState.isPlaying || ttsState.currentText != null
+                      onPressed:
+                          ttsState.isPlaying || ttsState.currentText != null
                           ? () => ref.read(ttsProvider.notifier).rewind()
                           : null,
                       tooltip: l10n.rewind,
@@ -312,7 +331,9 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                             Icon(
                               Icons.speed,
                               size: 20,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(width: 8),
                             Text(
@@ -322,9 +343,8 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                             const Spacer(),
                             Text(
                               _getSpeechRateLabel(ttsState.speechRate, l10n),
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -341,9 +361,14 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                                 min: 0.0,
                                 max: 1.0,
                                 divisions: 10,
-                                label: _getSpeechRateLabel(ttsState.speechRate, l10n),
+                                label: _getSpeechRateLabel(
+                                  ttsState.speechRate,
+                                  l10n,
+                                ),
                                 onChanged: (value) {
-                                  ref.read(ttsProvider.notifier).setSpeechRate(value);
+                                  ref
+                                      .read(ttsProvider.notifier)
+                                      .setSpeechRate(value);
                                 },
                               ),
                             ),
@@ -377,9 +402,12 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                         Expanded(
                           child: Text(
                             ttsState.errorMessage!,
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onErrorContainer,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onErrorContainer,
+                                ),
                           ),
                         ),
                       ],
@@ -398,7 +426,7 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
     final repository = ref.read(bookRepositoryProvider);
     final book = await repository.getBookById(widget.bookId);
     final chapter = await repository.getChapterById(widget.chapterId);
-    
+
     return {
       'bookTitle': book?.title ?? '',
       'chapterTitle': chapter?.title ?? '',

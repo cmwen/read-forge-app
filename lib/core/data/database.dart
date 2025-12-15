@@ -85,15 +85,13 @@ class ReadingProgress extends Table {
   DateTimeColumn get lastReadAt => dateTime().nullable()();
 }
 
-@DriftDatabase(
-  tables: [Books, Chapters, Bookmarks, Notes, ReadingProgress],
-)
+@DriftDatabase(tables: [Books, Chapters, Bookmarks, Notes, ReadingProgress])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 2;
-  
+
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
