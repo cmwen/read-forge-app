@@ -59,7 +59,11 @@ class FakeTtsService implements TtsServiceBase {
   }
 
   @override
-  Future<void> speak(String text, {String? bookTitle, String? chapterTitle}) async {
+  Future<void> speak(
+    String text, {
+    String? bookTitle,
+    String? chapterTitle,
+  }) async {
     if (throwOnSpeak) {
       throw Exception('speak failed');
     }
