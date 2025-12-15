@@ -11,14 +11,16 @@ AudioHandler? _audioHandler;
 
 AudioHandler get audioHandler {
   if (_audioHandler == null) {
-    throw StateError('AudioHandler not initialized. Call initAudioService() first.');
+    throw StateError(
+      'AudioHandler not initialized. Call initAudioService() first.',
+    );
   }
   return _audioHandler!;
 }
 
 Future<void> initAudioService() async {
   if (_audioHandler != null) return;
-  
+
   try {
     _audioHandler = await AudioService.init(
       builder: () => TtsAudioHandler(),
@@ -39,10 +41,10 @@ Future<void> initAudioService() async {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Don't block app startup on audio service initialization
   // Initialize it lazily when needed
-  
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
