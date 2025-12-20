@@ -103,7 +103,11 @@ class TtsNotifier extends Notifier<TtsState> {
   }
 
   /// Speak text
-  Future<void> speak(String text, {String? bookTitle, String? chapterTitle}) async {
+  Future<void> speak(
+    String text, {
+    String? bookTitle,
+    String? chapterTitle,
+  }) async {
     try {
       if (!state.isInitialized) {
         await initialize();

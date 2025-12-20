@@ -2,18 +2,18 @@ import 'package:read_forge/main.dart' as main_app;
 import 'package:read_forge/features/reader/services/tts_audio_handler.dart';
 
 /// Abstraction for Text-to-Speech functionality to enable testing
-/// 
+///
 /// **TTS Time Tracking Limitations:**
 /// Flutter TTS does not provide real-time playback position tracking.
 /// It only provides callbacks for start, complete, pause, and error events.
 /// Therefore, this implementation uses chunk-based progress tracking instead
 /// of time-based tracking. Each "chunk" represents a section of text being spoken.
-/// 
+///
 /// This means:
 /// - Progress is tracked by chunks (sections) not by time/position
 /// - Rewind/Forward operations skip between chunks, not by seconds
 /// - Seek operations jump to specific chunks, not time positions
-/// 
+///
 /// For apps requiring precise time-based tracking, consider using
 /// just_audio with pre-recorded TTS audio files instead of live TTS.
 abstract class TtsServiceBase {
@@ -47,7 +47,7 @@ class TtsService implements TtsServiceBase {
     main_app.initAudioService();
     return main_app.audioHandler as TtsAudioHandler;
   }
-  
+
   bool _isPlaying = false;
   double _speechRate = 0.5; // Default rate (0.0 - 1.0)
 
@@ -74,14 +74,14 @@ class TtsService implements TtsServiceBase {
   Future<void> initialize() async {
     // Ensure audio service is initialized
     await main_app.initAudioService();
-    
+
     // Setup callbacks from audio handler
     _audioHandler.onComplete = () {
       _isPlaying = false;
       _textChunks.clear();
       onComplete?.call();
     };
-    
+
     _audioHandler.onProgress = (current, total) {
       onProgress?.call(current, total);
     };
@@ -89,7 +89,11 @@ class TtsService implements TtsServiceBase {
 
   /// Speak the given text (automatically chunks long text)
   @override
-  Future<void> speak(String text, {String? bookTitle, String? chapterTitle}) async {
+  Future<void> speak(
+    String text, {
+    String? bookTitle,
+    String? chapterTitle,
+  }) async {
     await initialize();
 
     try {
@@ -100,7 +104,7 @@ class TtsService implements TtsServiceBase {
 
       // Split text into chunks if needed
       _textChunks = _splitTextIntoChunks(sanitizedText);
-      
+
       _isPlaying = true;
       onStart?.call();
 
@@ -115,8 +119,6 @@ class TtsService implements TtsServiceBase {
       throw Exception('Failed to speak: $e');
     }
   }
-
-
 
   /// Split text into manageable chunks for TTS
   List<String> _splitTextIntoChunks(String text) {

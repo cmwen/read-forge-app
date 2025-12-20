@@ -42,7 +42,7 @@ class ReaderScreen extends ConsumerStatefulWidget {
 
 class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   bool _playerScreenOpen = false;
-  
+
   // Listen to TTS state and navigate to player screen when playing
   @override
   void initState() {
@@ -51,20 +51,24 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listenManual(ttsProvider, (previous, next) {
         if (!mounted) return;
-        
+
         // Navigate to player screen when TTS starts playing (only once)
-        if (next.isPlaying && (previous?.isPlaying != true) && !_playerScreenOpen) {
+        if (next.isPlaying &&
+            (previous?.isPlaying != true) &&
+            !_playerScreenOpen) {
           _playerScreenOpen = true;
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => TtsPlayerScreen(
-                bookId: widget.bookId,
-                chapterId: widget.chapterId,
-              ),
-            ),
-          ).then((_) {
-            _playerScreenOpen = false;
-          });
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => TtsPlayerScreen(
+                    bookId: widget.bookId,
+                    chapterId: widget.chapterId,
+                  ),
+                ),
+              )
+              .then((_) {
+                _playerScreenOpen = false;
+              });
         }
       });
     });
@@ -113,16 +117,18 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                   onPressed: () {
                     if (!_playerScreenOpen) {
                       _playerScreenOpen = true;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => TtsPlayerScreen(
-                            bookId: widget.bookId,
-                            chapterId: widget.chapterId,
-                          ),
-                        ),
-                      ).then((_) {
-                        _playerScreenOpen = false;
-                      });
+                      Navigator.of(context)
+                          .push(
+                            MaterialPageRoute(
+                              builder: (context) => TtsPlayerScreen(
+                                bookId: widget.bookId,
+                                chapterId: widget.chapterId,
+                              ),
+                            ),
+                          )
+                          .then((_) {
+                            _playerScreenOpen = false;
+                          });
                     }
                   },
                   tooltip: l10n.textToSpeech,
@@ -169,11 +175,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
               Text(l10n.errorMessage(error.toString())),
             ],
@@ -1187,7 +1189,7 @@ You can format text like:
   void _startReading(BuildContext context) async {
     // Stop any existing playback first
     await ref.read(ttsProvider.notifier).stop();
-    
+
     final l10n = AppLocalizations.of(context)!;
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));
 
@@ -1200,13 +1202,15 @@ You can format text like:
           // Get book for metadata
           final bookRepo = ref.read(bookRepositoryProvider);
           final book = await bookRepo.getBookById(widget.bookId);
-          
+
           try {
-            await ref.read(ttsProvider.notifier).speak(
-              plainText,
-              bookTitle: book?.title,
-              chapterTitle: chapter.title,
-            );
+            await ref
+                .read(ttsProvider.notifier)
+                .speak(
+                  plainText,
+                  bookTitle: book?.title,
+                  chapterTitle: chapter.title,
+                );
           } catch (e) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
