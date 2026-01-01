@@ -506,6 +506,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get stop => 'Stop';
 
   @override
+  String get playing => 'Playing';
+
+  @override
+  String get paused => 'Paused';
+
+  @override
   String get speechSpeed => 'Speech Speed';
 
   @override

@@ -13,6 +13,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:uuid/uuid.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
+import 'package:read_forge/features/reader/presentation/tts_mini_player.dart';
 
 /// Provider for book reading progress
 final bookReadingProgressProvider = FutureProvider.family
@@ -48,24 +49,30 @@ class BookDetailScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: bookAsync.when(
-        data: (book) {
-          if (book == null) {
-            return Center(child: Text(l10n.bookNotFound));
-          }
-          return _buildBookDetail(context, ref, book, chaptersAsync, l10n);
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(l10n.errorMessage(error.toString())),
-            ],
+      body: Stack(
+        children: [
+          bookAsync.when(
+            data: (book) {
+              if (book == null) {
+                return Center(child: Text(l10n.bookNotFound));
+              }
+              return _buildBookDetail(context, ref, book, chaptersAsync, l10n);
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(l10n.errorMessage(error.toString())),
+                ],
+              ),
+            ),
           ),
-        ),
+          // Floating mini player
+          const TtsMiniPlayer(),
+        ],
       ),
     );
   }

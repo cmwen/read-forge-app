@@ -226,3 +226,37 @@ class TtsNotifier extends Notifier<TtsState> {
 final ttsProvider = NotifierProvider<TtsNotifier, TtsState>(() {
   return TtsNotifier();
 });
+
+/// TTS context to track which book/chapter is currently being played
+class TtsContext {
+  final int? bookId;
+  final int? chapterId;
+
+  const TtsContext({this.bookId, this.chapterId});
+
+  TtsContext copyWith({int? bookId, int? chapterId}) {
+    return TtsContext(
+      bookId: bookId ?? this.bookId,
+      chapterId: chapterId ?? this.chapterId,
+    );
+  }
+}
+
+/// Notifier for TTS context
+class TtsContextNotifier extends Notifier<TtsContext> {
+  @override
+  TtsContext build() => const TtsContext();
+
+  void setContext(int bookId, int chapterId) {
+    state = TtsContext(bookId: bookId, chapterId: chapterId);
+  }
+
+  void clear() {
+    state = const TtsContext();
+  }
+}
+
+/// Provider for TTS context
+final ttsContextProvider = NotifierProvider<TtsContextNotifier, TtsContext>(
+  TtsContextNotifier.new,
+);

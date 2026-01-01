@@ -9,6 +9,7 @@ import 'package:read_forge/features/reader/presentation/bookmarks_dialog.dart';
 import 'package:read_forge/features/reader/presentation/notes_dialog.dart';
 import 'package:read_forge/features/reader/presentation/tts_provider.dart';
 import 'package:read_forge/features/reader/presentation/tts_player_screen.dart';
+import 'package:read_forge/features/reader/presentation/tts_mini_player.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
@@ -86,6 +87,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   Widget build(BuildContext context) {
     final chapterAsync = ref.watch(chapterProvider(widget.chapterId));
     final preferences = ref.watch(readerPreferencesProvider);
+    final ttsState = ref.watch(ttsProvider);
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
@@ -151,52 +153,66 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           ),
         ],
       ),
-      body: chapterAsync.when(
-        data: (chapter) {
-          if (chapter == null) {
-            return Center(child: Text(l10n.chapterNotFound));
-          }
+      body: Stack(
+        children: [
+          chapterAsync.when(
+            data: (chapter) {
+              if (chapter == null) {
+                return Center(child: Text(l10n.chapterNotFound));
+              }
 
-          if (chapter.content == null || chapter.content!.isEmpty) {
-            return _buildEmptyContent(context, chapter, l10n);
-          }
+              if (chapter.content == null || chapter.content!.isEmpty) {
+                return _buildEmptyContent(context, chapter, l10n);
+              }
 
-          return _buildReader(context, chapter, preferences, l10n);
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(l10n.errorMessage(error.toString())),
-            ],
+              return _buildReader(context, chapter, preferences, l10n);
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(l10n.errorMessage(error.toString())),
+                ],
+              ),
+            ),
           ),
-        ),
+          // Floating mini player
+          const TtsMiniPlayer(),
+        ],
       ),
       floatingActionButton: chapterAsync.maybeWhen(
         data: (chapter) {
           if (chapter != null &&
               chapter.content != null &&
               chapter.content!.isNotEmpty) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                  heroTag: 'note_fab',
-                  onPressed: () => _addNote(context),
-                  tooltip: l10n.addNote,
-                  child: const Icon(Icons.note_add),
-                ),
-                const SizedBox(height: 12),
-                FloatingActionButton(
-                  heroTag: 'bookmark_fab',
-                  onPressed: () => _addBookmark(context),
-                  tooltip: l10n.addBookmark,
-                  child: const Icon(Icons.bookmark_add),
-                ),
-              ],
+            // Add bottom padding when mini player is visible
+            final bottomPadding =
+                (ttsState.isPlaying || ttsState.currentText != null)
+                ? 88.0
+                : 0.0;
+            return Padding(
+              padding: EdgeInsets.only(bottom: bottomPadding),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'note_fab',
+                    onPressed: () => _addNote(context),
+                    tooltip: l10n.addNote,
+                    child: const Icon(Icons.note_add),
+                  ),
+                  const SizedBox(height: 12),
+                  FloatingActionButton(
+                    heroTag: 'bookmark_fab',
+                    onPressed: () => _addBookmark(context),
+                    tooltip: l10n.addBookmark,
+                    child: const Icon(Icons.bookmark_add),
+                  ),
+                ],
+              ),
             );
           }
           return null;
@@ -1182,6 +1198,11 @@ You can format text like:
   void _startReading(BuildContext context) async {
     // Stop any existing playback first
     await ref.read(ttsProvider.notifier).stop();
+
+    // Set TTS context for this book/chapter
+    ref
+        .read(ttsContextProvider.notifier)
+        .setContext(widget.bookId, widget.chapterId);
 
     final l10n = AppLocalizations.of(context)!;
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));

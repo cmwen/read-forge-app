@@ -693,6 +693,14 @@
   "@stop": {
     "description": "Stop button for TTS"
   },
+  "playing": "Playing",
+  "@playing": {
+    "description": "Status text for when TTS is playing"
+  },
+  "paused": "Paused",
+  "@paused": {
+    "description": "Status text for when TTS is paused"
+  },
   "speechSpeed": "Speech Speed",
   "@speechSpeed": {
     "description": "Label for speech speed control"

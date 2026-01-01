@@ -1023,6 +1023,18 @@ abstract class AppLocalizations {
   /// **'Stop'**
   String get stop;
 
+  /// Status text for when TTS is playing
+  ///
+  /// In en, this message translates to:
+  /// **'Playing'**
+  String get playing;
+
+  /// Status text for when TTS is paused
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get paused;
+
   /// Label for speech speed control
   ///
   /// In en, this message translates to:

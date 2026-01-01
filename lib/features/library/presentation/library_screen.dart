@@ -8,6 +8,7 @@ import 'package:read_forge/features/book/presentation/book_detail_screen.dart';
 import 'package:read_forge/features/settings/presentation/settings_screen.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
+import 'package:read_forge/features/reader/presentation/tts_mini_player.dart';
 
 /// Library screen showing all books
 class LibraryScreen extends ConsumerWidget {
@@ -34,29 +35,36 @@ class LibraryScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: booksAsync.when(
-        data: (books) {
-          if (books.isEmpty) {
-            return _buildEmptyState(context, l10n);
-          }
-          return _buildBookGrid(context, ref, books, l10n);
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(l10n.errorLoadingBooks(error.toString())),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.read(libraryProvider.notifier).loadBooks(),
-                child: Text(l10n.retry),
+      body: Stack(
+        children: [
+          booksAsync.when(
+            data: (books) {
+              if (books.isEmpty) {
+                return _buildEmptyState(context, l10n);
+              }
+              return _buildBookGrid(context, ref, books, l10n);
+            },
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(l10n.errorLoadingBooks(error.toString())),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () =>
+                        ref.read(libraryProvider.notifier).loadBooks(),
+                    child: Text(l10n.retry),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+          // Floating mini player
+          const TtsMiniPlayer(),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showCreateBookDialog(context, ref, l10n),
