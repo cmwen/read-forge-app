@@ -2,8 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:read_forge/features/reader/domain/reader_preferences.dart';
 import 'package:read_forge/features/reader/services/reader_preferences_service.dart';
+import 'package:read_forge/core/utils/shared_preferences_cache.dart';
 
 /// Provider for SharedPreferences
+/// Note: SharedPreferences must be initialized in main() before the app runs
+/// This is no longer used as a FutureProvider; kept for backwards compatibility
 final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) {
   return SharedPreferences.getInstance();
 });
@@ -12,13 +15,10 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) {
 final readerPreferencesServiceProvider = Provider<ReaderPreferencesService>((
   ref,
 ) {
-  final prefs = ref
-      .watch(sharedPreferencesProvider)
-      .maybeWhen(
-        data: (prefs) => prefs,
-        orElse: () => throw StateError('SharedPreferences not initialized'),
-      );
-  return ReaderPreferencesService(prefs);
+  // Get the cached SharedPreferences instance
+  // This is safe because initSharedPreferencesCache() is called in main()
+  final prefsInstance = getSharedPreferencesCache();
+  return ReaderPreferencesService(prefsInstance);
 });
 
 /// Notifier for managing reader preferences

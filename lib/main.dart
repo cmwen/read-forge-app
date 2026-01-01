@@ -6,6 +6,7 @@ import 'package:read_forge/features/settings/presentation/locale_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:read_forge/features/reader/services/tts_audio_handler.dart';
+import 'package:read_forge/core/utils/shared_preferences_cache.dart';
 
 AudioHandler? _audioHandler;
 
@@ -39,8 +40,12 @@ Future<void> initAudioService() async {
   }
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize SharedPreferences before running the app
+  // This caches the instance for synchronous access
+  await initSharedPreferencesCache();
 
   // Don't block app startup on audio service initialization
   // Initialize it lazily when needed

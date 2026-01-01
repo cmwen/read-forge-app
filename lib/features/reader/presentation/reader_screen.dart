@@ -76,16 +76,9 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
 
   @override
   void dispose() {
-    // Save reading progress when leaving the screen
-    final progressNotifier = ref.read(
-      readingProgressProvider(
-        ReadingProgressParams(
-          bookId: widget.bookId,
-          chapterId: widget.chapterId,
-        ),
-      ),
-    );
-    progressNotifier.saveProgress();
+    // Progress is already saved before navigation in _buildChapterNavigation
+    // and when navigating to TTS player. Don't use ref here as it's unsafe
+    // when the widget is being unmounted.
     super.dispose();
   }
 

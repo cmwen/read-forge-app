@@ -1,16 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/settings/domain/app_settings.dart';
 import 'package:read_forge/features/settings/services/app_settings_service.dart';
-import 'package:read_forge/features/reader/presentation/reader_preferences_provider.dart';
+import 'package:read_forge/core/utils/shared_preferences_cache.dart';
 
 /// Provider for AppSettingsService
 final appSettingsServiceProvider = Provider<AppSettingsService>((ref) {
-  final prefs = ref
-      .watch(sharedPreferencesProvider)
-      .maybeWhen(
-        data: (prefs) => prefs,
-        orElse: () => throw StateError('SharedPreferences not initialized'),
-      );
+  // SharedPreferences should be initialized in main() before the app runs
+  // Get the cached SharedPreferences instance
+  // This is safe because initSharedPreferencesCache() is called in main()
+  final prefs = getSharedPreferencesCache();
   return AppSettingsService(prefs);
 });
 
