@@ -16,6 +16,9 @@ import 'package:read_forge/core/data/database.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
+import 'package:read_forge/features/ollama/presentation/providers/ollama_providers.dart';
+import 'package:read_forge/features/ollama/domain/ollama_connection_status.dart';
+import 'package:read_forge/ollama_toolkit/ollama_toolkit.dart';
 
 /// Provider for a specific chapter
 final chapterProvider = FutureProvider.family.autoDispose((
@@ -649,6 +652,169 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
     dynamic chapter,
     AppLocalizations l10n,
   ) async {
+    // Check if Ollama is configured and ready
+    final ollamaConfig = ref.read(ollamaConfigProvider);
+
+    // Wait for connection status to complete
+    bool isConnected = false;
+    if (ollamaConfig.enabled && ollamaConfig.selectedModel != null) {
+      try {
+        final connectionStatus = await ref.read(
+          ollamaConnectionStatusProvider.future,
+        );
+        isConnected = connectionStatus.type == ConnectionStatusType.connected;
+      } catch (e) {
+        isConnected = false;
+      }
+    }
+
+    final isOllamaReady =
+        ollamaConfig.enabled &&
+        ollamaConfig.selectedModel != null &&
+        isConnected;
+
+    if (isOllamaReady) {
+      _generateChapterWithOllama(context, chapter, l10n);
+    } else {
+      _generateChapterWithCopyPaste(context, chapter, l10n);
+    }
+  }
+
+  void _generateChapterWithOllama(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) async {
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.loading),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              const Text('Generating Chapter Content with Ollama...'),
+              const SizedBox(height: 8),
+              Text(
+                'This may take a few minutes',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final llmService = LLMIntegrationService();
+      final database = ref.read(databaseProvider);
+      final ollamaConfig = ref.read(ollamaConfigProvider);
+      final ollamaClient = ref.read(ollamaClientProvider);
+
+      // Get book info for context
+      final book = await (database.select(
+        database.books,
+      )..where((tbl) => tbl.id.equals(widget.bookId))).getSingleOrNull();
+
+      if (book == null) {
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          _showOllamaErrorDialog(context, 'Book not found', l10n);
+        }
+        return;
+      }
+
+      // Get previous chapters for context
+      final previousChapters =
+          await (database.select(database.chapters)
+                ..where((tbl) => tbl.bookId.equals(widget.bookId))
+                ..where(
+                  (tbl) =>
+                      tbl.orderIndex.isSmallerThanValue(chapter.orderIndex),
+                )
+                ..orderBy([
+                  (tbl) => drift.OrderingTerm(expression: tbl.orderIndex),
+                ]))
+              .get();
+
+      final previousSummaries = previousChapters
+          .where((ch) => ch.summary != null)
+          .map((ch) => ch.summary!)
+          .toList();
+
+      final settings = ref.read(appSettingsProvider);
+      final prompt = llmService.generateChapterPromptWithFormat(
+        book.title,
+        chapter.orderIndex,
+        chapter.title,
+        bookDescription: book.description,
+        previousChapterSummaries: previousSummaries.isNotEmpty
+            ? previousSummaries
+            : null,
+        writingStyle: settings.writingStyle,
+        language: settings.language,
+        tone: settings.tone,
+        vocabularyLevel: settings.vocabularyLevel,
+        favoriteAuthor: settings.favoriteAuthor,
+      );
+
+      if (ollamaClient == null || ollamaConfig.selectedModel == null) {
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          _showOllamaErrorDialog(context, 'Ollama not configured', l10n);
+        }
+        return;
+      }
+
+      try {
+        final response = await ollamaClient.chat(ollamaConfig.selectedModel!, [
+          OllamaMessage.user(prompt),
+        ]);
+
+        if (!context.mounted) return;
+        Navigator.of(context).pop();
+
+        // Parse response
+        final chapterResponse = llmService.parseResponse(
+          response.message.content,
+        );
+
+        if (chapterResponse is ChapterResponse) {
+          _showChapterPreview(context, chapter, chapterResponse, l10n);
+        } else {
+          _showOllamaErrorDialog(
+            context,
+            'Failed to parse Ollama response',
+            l10n,
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          _showOllamaErrorDialog(
+            context,
+            'Ollama generation error: ${e.toString()}',
+            l10n,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        _showOllamaErrorDialog(context, 'Error: ${e.toString()}', l10n);
+      }
+    }
+  }
+
+  void _generateChapterWithCopyPaste(
+    BuildContext context,
+    dynamic chapter,
+    AppLocalizations l10n,
+  ) async {
     final llmService = LLMIntegrationService();
 
     // Get book info for context
@@ -924,6 +1090,122 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       }
     } catch (e) {
       if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.errorImportingContent(e.toString())),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showOllamaErrorDialog(
+    BuildContext context,
+    String error,
+    AppLocalizations l10n,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(error),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showChapterPreview(
+    BuildContext context,
+    dynamic chapter,
+    ChapterResponse response,
+    AppLocalizations l10n,
+  ) async {
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Generated Chapter Content'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Title: ${chapter.title}',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Content Preview:',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                response.content.length > 500
+                    ? '${response.content.substring(0, 500)}...'
+                    : response.content,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldSave == true && context.mounted) {
+      _saveChapterToDatabase(context, chapter, response);
+    }
+  }
+
+  void _saveChapterToDatabase(
+    BuildContext context,
+    dynamic chapter,
+    ChapterResponse response,
+  ) async {
+    try {
+      final database = ref.read(databaseProvider);
+      final l10n = AppLocalizations.of(context)!;
+
+      await (database.update(
+        database.chapters,
+      )..where((tbl) => tbl.id.equals(chapter.id))).write(
+        ChaptersCompanion(
+          content: drift.Value(response.content),
+          status: const drift.Value('generated'),
+          wordCount: drift.Value(response.content.split(' ').length),
+          updatedAt: drift.Value(DateTime.now()),
+        ),
+      );
+
+      // Invalidate the chapter provider to refresh the UI
+      ref.invalidate(chapterProvider(chapter.id));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.contentImported),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.errorImportingContent(e.toString())),

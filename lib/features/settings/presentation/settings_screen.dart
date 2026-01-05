@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 import 'package:read_forge/features/settings/domain/app_settings.dart';
+import 'package:read_forge/features/ollama/presentation/widgets/ollama_configuration_panel.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -108,6 +109,11 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () =>
                 _showChapterCountPicker(context, notifier, settings, l10n),
           ),
+
+          const Divider(),
+
+          // Ollama Configuration Section
+          const OllamaConfigurationPanel(),
 
           const Divider(),
 
