@@ -324,22 +324,25 @@ class BookDetailScreen extends ConsumerWidget {
   ) async {
     // Check if Ollama is configured and ready
     final ollamaConfig = ref.read(ollamaConfigProvider);
-    
+
     // Wait for connection status to complete
     bool isConnected = false;
     if (ollamaConfig.enabled && ollamaConfig.selectedModel != null) {
       try {
-        final connectionStatus = await ref.read(ollamaConnectionStatusProvider.future);
+        final connectionStatus = await ref.read(
+          ollamaConnectionStatusProvider.future,
+        );
         isConnected = connectionStatus.type == ConnectionStatusType.connected;
       } catch (e) {
         isConnected = false;
       }
     }
-    
-    final isOllamaReady = ollamaConfig.enabled && 
+
+    final isOllamaReady =
+        ollamaConfig.enabled &&
         ollamaConfig.selectedModel != null &&
         isConnected;
-    
+
     if (isOllamaReady) {
       // Use Ollama generation directly
       _generateTOCWithOllama(context, ref, book, l10n);
@@ -387,8 +390,12 @@ class BookDetailScreen extends ConsumerWidget {
       final ollamaClient = ref.read(ollamaClientProvider);
 
       print('[DEBUG] In _generateTOCWithOllama:');
-      print('[DEBUG]   ollamaClient: ${ollamaClient != null ? 'NOT NULL' : 'NULL'}');
-      print('[DEBUG]   ollamaConfig.selectedModel: ${ollamaConfig.selectedModel}');
+      print(
+        '[DEBUG]   ollamaClient: ${ollamaClient != null ? 'NOT NULL' : 'NULL'}',
+      );
+      print(
+        '[DEBUG]   ollamaConfig.selectedModel: ${ollamaConfig.selectedModel}',
+      );
 
       // Generate prompt
       final prompt = llmService.generateTOCPromptWithFormat(
@@ -408,21 +415,18 @@ class BookDetailScreen extends ConsumerWidget {
         print('[DEBUG] Error: ollamaClient or selectedModel is null');
         if (context.mounted) {
           Navigator.of(context).pop(); // Close loading
-          _showOllamaErrorDialog(
-            context,
-            'Ollama not configured',
-            l10n,
-          );
+          _showOllamaErrorDialog(context, 'Ollama not configured', l10n);
         }
         return;
       }
 
       try {
-        print('[DEBUG] Calling ollamaClient.chat with model: ${ollamaConfig.selectedModel}');
-        final response = await ollamaClient.chat(
-          ollamaConfig.selectedModel!,
-          [OllamaMessage.user(prompt)],
+        print(
+          '[DEBUG] Calling ollamaClient.chat with model: ${ollamaConfig.selectedModel}',
         );
+        final response = await ollamaClient.chat(ollamaConfig.selectedModel!, [
+          OllamaMessage.user(prompt),
+        ]);
 
         print('[DEBUG] Got response from Ollama');
         if (!context.mounted) return;
@@ -433,11 +437,15 @@ class BookDetailScreen extends ConsumerWidget {
         print('[DEBUG] Parsed response type: ${tocResponse.runtimeType}');
 
         if (tocResponse is TOCResponse) {
-          print('[DEBUG] Response is TOCResponse with ${tocResponse.chapters.length} chapters');
+          print(
+            '[DEBUG] Response is TOCResponse with ${tocResponse.chapters.length} chapters',
+          );
           // Show preview dialog
           _showTOCPreview(context, ref, book, tocResponse, l10n);
         } else {
-          print('[DEBUG] Response is not TOCResponse: ${tocResponse.runtimeType}');
+          print(
+            '[DEBUG] Response is not TOCResponse: ${tocResponse.runtimeType}',
+          );
           _showOllamaErrorDialog(
             context,
             'Failed to parse Ollama response',
@@ -461,11 +469,7 @@ class BookDetailScreen extends ConsumerWidget {
       print('[DEBUG] Stack trace: ${StackTrace.current}');
       if (context.mounted) {
         Navigator.of(context).pop(); // Close loading
-        _showOllamaErrorDialog(
-          context,
-          'Error: ${e.toString()}',
-          l10n,
-        );
+        _showOllamaErrorDialog(context, 'Error: ${e.toString()}', l10n);
       }
     }
   }
@@ -632,18 +636,17 @@ class BookDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
               ],
-              Text(
-                'Chapters:',
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
+              Text('Chapters:', style: Theme.of(context).textTheme.labelMedium),
               const SizedBox(height: 8),
-              ...tocResponse.chapters.map((chapter) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  '${chapter.number}. ${chapter.title}\n${chapter.summary}',
-                  style: Theme.of(context).textTheme.bodySmall,
+              ...tocResponse.chapters.map(
+                (chapter) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    '${chapter.number}. ${chapter.title}\n${chapter.summary}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
         ),

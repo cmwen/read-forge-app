@@ -654,22 +654,25 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
   ) async {
     // Check if Ollama is configured and ready
     final ollamaConfig = ref.read(ollamaConfigProvider);
-    
+
     // Wait for connection status to complete
     bool isConnected = false;
     if (ollamaConfig.enabled && ollamaConfig.selectedModel != null) {
       try {
-        final connectionStatus = await ref.read(ollamaConnectionStatusProvider.future);
+        final connectionStatus = await ref.read(
+          ollamaConnectionStatusProvider.future,
+        );
         isConnected = connectionStatus.type == ConnectionStatusType.connected;
       } catch (e) {
         isConnected = false;
       }
     }
-    
-    final isOllamaReady = ollamaConfig.enabled && 
+
+    final isOllamaReady =
+        ollamaConfig.enabled &&
         ollamaConfig.selectedModel != null &&
         isConnected;
-    
+
     if (isOllamaReady) {
       _generateChapterWithOllama(context, chapter, l10n);
     } else {
@@ -731,7 +734,8 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
           await (database.select(database.chapters)
                 ..where((tbl) => tbl.bookId.equals(widget.bookId))
                 ..where(
-                  (tbl) => tbl.orderIndex.isSmallerThanValue(chapter.orderIndex),
+                  (tbl) =>
+                      tbl.orderIndex.isSmallerThanValue(chapter.orderIndex),
                 )
                 ..orderBy([
                   (tbl) => drift.OrderingTerm(expression: tbl.orderIndex),
@@ -760,8 +764,12 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       );
 
       print('[DEBUG] In _generateChapterWithOllama:');
-      print('[DEBUG]   ollamaClient: ${ollamaClient != null ? 'NOT NULL' : 'NULL'}');
-      print('[DEBUG]   ollamaConfig.selectedModel: ${ollamaConfig.selectedModel}');
+      print(
+        '[DEBUG]   ollamaClient: ${ollamaClient != null ? 'NOT NULL' : 'NULL'}',
+      );
+      print(
+        '[DEBUG]   ollamaConfig.selectedModel: ${ollamaConfig.selectedModel}',
+      );
 
       if (ollamaClient == null || ollamaConfig.selectedModel == null) {
         print('[DEBUG] Error: ollamaClient or selectedModel is null');
@@ -773,26 +781,35 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       }
 
       try {
-        print('[DEBUG] Calling ollamaClient.chat with model: ${ollamaConfig.selectedModel}');
-        final response = await ollamaClient.chat(
-          ollamaConfig.selectedModel!,
-          [OllamaMessage.user(prompt)],
+        print(
+          '[DEBUG] Calling ollamaClient.chat with model: ${ollamaConfig.selectedModel}',
         );
+        final response = await ollamaClient.chat(ollamaConfig.selectedModel!, [
+          OllamaMessage.user(prompt),
+        ]);
 
         print('[DEBUG] Got response from Ollama');
         if (!context.mounted) return;
         Navigator.of(context).pop();
 
         // Parse response
-        final chapterResponse = llmService.parseResponse(response.message.content);
+        final chapterResponse = llmService.parseResponse(
+          response.message.content,
+        );
         print('[DEBUG] Parsed response type: ${chapterResponse.runtimeType}');
 
         if (chapterResponse is ChapterResponse) {
           print('[DEBUG] Response is ChapterResponse');
           _showChapterPreview(context, chapter, chapterResponse, l10n);
         } else {
-          print('[DEBUG] Response is not ChapterResponse: ${chapterResponse.runtimeType}');
-          _showOllamaErrorDialog(context, 'Failed to parse Ollama response', l10n);
+          print(
+            '[DEBUG] Response is not ChapterResponse: ${chapterResponse.runtimeType}',
+          );
+          _showOllamaErrorDialog(
+            context,
+            'Failed to parse Ollama response',
+            l10n,
+          );
         }
       } catch (e) {
         print('[DEBUG] Exception in inner try block: $e');
@@ -809,11 +826,7 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
       print('[DEBUG] Exception in outer try block: $e');
       if (context.mounted) {
         Navigator.of(context).pop();
-        _showOllamaErrorDialog(
-          context,
-          'Error: ${e.toString()}',
-          l10n,
-        );
+        _showOllamaErrorDialog(context, 'Error: ${e.toString()}', l10n);
       }
     }
   }
