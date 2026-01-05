@@ -14,6 +14,9 @@ import 'package:uuid/uuid.dart';
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:read_forge/features/reader/presentation/tts_mini_player.dart';
+import 'package:read_forge/features/ollama/presentation/providers/ollama_providers.dart';
+import 'package:read_forge/ollama_toolkit/ollama_toolkit.dart';
+import 'package:read_forge/features/ollama/domain/ollama_connection_status.dart';
 
 /// Provider for book reading progress
 final bookReadingProgressProvider = FutureProvider.family
@@ -319,6 +322,160 @@ class BookDetailScreen extends ConsumerWidget {
     dynamic book,
     AppLocalizations l10n,
   ) async {
+    // Check if Ollama is configured and ready
+    final ollamaConfig = ref.read(ollamaConfigProvider);
+    
+    // Wait for connection status to complete
+    bool isConnected = false;
+    if (ollamaConfig.enabled && ollamaConfig.selectedModel != null) {
+      try {
+        final connectionStatus = await ref.read(ollamaConnectionStatusProvider.future);
+        isConnected = connectionStatus.type == ConnectionStatusType.connected;
+      } catch (e) {
+        isConnected = false;
+      }
+    }
+    
+    final isOllamaReady = ollamaConfig.enabled && 
+        ollamaConfig.selectedModel != null &&
+        isConnected;
+    
+    if (isOllamaReady) {
+      // Use Ollama generation directly
+      _generateTOCWithOllama(context, ref, book, l10n);
+    } else {
+      // Fall back to copy-paste mode
+      _generateTOCWithCopyPaste(context, ref, book, l10n);
+    }
+  }
+
+  void _generateTOCWithOllama(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+    AppLocalizations l10n,
+  ) async {
+    print('[DEBUG] _generateTOCWithOllama: Starting Ollama generation');
+    try {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.loading),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              const Text('Generating Table of Contents with Ollama...'),
+              const SizedBox(height: 8),
+              Text(
+                'This may take a minute for large models',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      final llmService = LLMIntegrationService();
+      final settings = ref.read(appSettingsProvider);
+      final ollamaConfig = ref.read(ollamaConfigProvider);
+      final ollamaClient = ref.read(ollamaClientProvider);
+
+      print('[DEBUG] In _generateTOCWithOllama:');
+      print('[DEBUG]   ollamaClient: ${ollamaClient != null ? 'NOT NULL' : 'NULL'}');
+      print('[DEBUG]   ollamaConfig.selectedModel: ${ollamaConfig.selectedModel}');
+
+      // Generate prompt
+      final prompt = llmService.generateTOCPromptWithFormat(
+        book.title,
+        description: book.description,
+        purpose: book.purpose,
+        suggestedChapters: settings.suggestedChapters,
+        writingStyle: settings.writingStyle,
+        language: settings.language,
+        tone: settings.tone,
+        vocabularyLevel: settings.vocabularyLevel,
+        favoriteAuthor: settings.favoriteAuthor,
+      );
+
+      // Generate with Ollama
+      if (ollamaClient == null || ollamaConfig.selectedModel == null) {
+        print('[DEBUG] Error: ollamaClient or selectedModel is null');
+        if (context.mounted) {
+          Navigator.of(context).pop(); // Close loading
+          _showOllamaErrorDialog(
+            context,
+            'Ollama not configured',
+            l10n,
+          );
+        }
+        return;
+      }
+
+      try {
+        print('[DEBUG] Calling ollamaClient.chat with model: ${ollamaConfig.selectedModel}');
+        final response = await ollamaClient.chat(
+          ollamaConfig.selectedModel!,
+          [OllamaMessage.user(prompt)],
+        );
+
+        print('[DEBUG] Got response from Ollama');
+        if (!context.mounted) return;
+        Navigator.of(context).pop(); // Close loading
+
+        // Parse response
+        final tocResponse = llmService.parseResponse(response.message.content);
+        print('[DEBUG] Parsed response type: ${tocResponse.runtimeType}');
+
+        if (tocResponse is TOCResponse) {
+          print('[DEBUG] Response is TOCResponse with ${tocResponse.chapters.length} chapters');
+          // Show preview dialog
+          _showTOCPreview(context, ref, book, tocResponse, l10n);
+        } else {
+          print('[DEBUG] Response is not TOCResponse: ${tocResponse.runtimeType}');
+          _showOllamaErrorDialog(
+            context,
+            'Failed to parse Ollama response',
+            l10n,
+          );
+        }
+      } catch (e) {
+        print('[DEBUG] Exception in inner try block: $e');
+        print('[DEBUG] Stack trace: ${StackTrace.current}');
+        if (context.mounted) {
+          Navigator.of(context).pop(); // Close loading
+          _showOllamaErrorDialog(
+            context,
+            'Ollama generation error: ${e.toString()}',
+            l10n,
+          );
+        }
+      }
+    } catch (e) {
+      print('[DEBUG] Exception in outer try block: $e');
+      print('[DEBUG] Stack trace: ${StackTrace.current}');
+      if (context.mounted) {
+        Navigator.of(context).pop(); // Close loading
+        _showOllamaErrorDialog(
+          context,
+          'Error: ${e.toString()}',
+          l10n,
+        );
+      }
+    }
+  }
+
+  void _generateTOCWithCopyPaste(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+    AppLocalizations l10n,
+  ) async {
     final llmService = LLMIntegrationService();
     final settings = ref.read(appSettingsProvider);
     final prompt = llmService.generateTOCPromptWithFormat(
@@ -424,6 +581,181 @@ class BookDetailScreen extends ConsumerWidget {
       ).showSnackBar(SnackBar(content: Text(l10n.promptCopied)));
       // Show paste dialog
       _showPasteDialog(context, ref, book, l10n);
+    }
+  }
+
+  void _showOllamaErrorDialog(
+    BuildContext context,
+    String error,
+    AppLocalizations l10n,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(error),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showTOCPreview(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+    TOCResponse tocResponse,
+    AppLocalizations l10n,
+  ) async {
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Generated Table of Contents'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (tocResponse.description != null) ...[
+                Text(
+                  'Description:',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  tocResponse.description!,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 16),
+              ],
+              Text(
+                'Chapters:',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 8),
+              ...tocResponse.chapters.map((chapter) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  '${chapter.number}. ${chapter.title}\n${chapter.summary}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              )),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldSave == true && context.mounted) {
+      _saveTOCToDatabase(context, ref, book, tocResponse);
+    }
+  }
+
+  void _saveTOCToDatabase(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic book,
+    TOCResponse tocResponse,
+  ) async {
+    try {
+      final database = ref.read(databaseProvider);
+      final uuid = const Uuid();
+      final l10n = AppLocalizations.of(context)!;
+
+      // Update book title if provided and different from "Untitled"
+      if (tocResponse.bookTitle.isNotEmpty &&
+          tocResponse.bookTitle != 'Untitled' &&
+          (book.title == l10n.untitledBook || book.title.isEmpty)) {
+        await (database.update(
+          database.books,
+        )..where((tbl) => tbl.id.equals(book.id))).write(
+          BooksCompanion(
+            title: drift.Value(tocResponse.bookTitle),
+            description: tocResponse.description != null
+                ? drift.Value(tocResponse.description)
+                : drift.Value(book.description),
+            updatedAt: drift.Value(DateTime.now()),
+          ),
+        );
+
+        // Invalidate book provider to refresh
+        ref.invalidate(bookDetailProvider(book.id));
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.bookTitleUpdated(tocResponse.bookTitle)),
+              backgroundColor: Colors.blue,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } else if (tocResponse.description != null &&
+          (book.description == null || book.description!.isEmpty)) {
+        // Update only description if no title update was needed
+        await (database.update(
+          database.books,
+        )..where((tbl) => tbl.id.equals(book.id))).write(
+          BooksCompanion(
+            description: drift.Value(tocResponse.description),
+            updatedAt: drift.Value(DateTime.now()),
+          ),
+        );
+
+        // Invalidate book provider to refresh
+        ref.invalidate(bookDetailProvider(book.id));
+      }
+
+      for (final tocChapter in tocResponse.chapters) {
+        await database
+            .into(database.chapters)
+            .insert(
+              ChaptersCompanion.insert(
+                uuid: uuid.v4(),
+                bookId: book.id,
+                title: tocChapter.title,
+                summary: drift.Value(tocChapter.summary),
+                orderIndex: tocChapter.number,
+                status: drift.Value('empty'),
+              ),
+            );
+      }
+
+      // Invalidate the chapters provider to refresh the UI
+      ref.invalidate(bookChaptersProvider(book.id));
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.chaptersImported(tocResponse.chapters.length)),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.errorImportingChapters(e.toString())),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

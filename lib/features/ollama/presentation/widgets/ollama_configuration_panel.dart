@@ -207,9 +207,6 @@ class _OllamaConfigurationPanelState
     // Enable Ollama
     await ref.read(ollamaConfigProvider.notifier).setEnabled(true);
 
-    // Test connection
-    await ref.read(ollamaConfigProvider.notifier).testConnection();
-
     if (mounted) {
       ScaffoldMessenger.of(
         context,

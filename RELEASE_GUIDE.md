@@ -1,21 +1,24 @@
-# ReadForge MVP Release Guide
+# ReadForge Release Guide v0.2.0
 
 ## Overview
 
-This guide explains how to release the ReadForge MVP APK using the automated CI/CD pipeline.
+This guide explains how to release ReadForge using the automated CI/CD pipeline.
 
 ## Current Status
 
-✅ **MVP Implementation Complete**
-- Library screen with book grid
-- Book creation and management
-- Book detail with TOC management  
-- Reader screen with sample content
+✅ **v0.2.0 Ready for Release**
+- Complete launcher icon suite generated
+- Text-to-Speech fully implemented
+- Ollama LLM integration complete
+- Library screen with book management
+- Book creation and detailed editing
+- Rich reader with multiple themes
 - Database persistence (Drift SQLite)
 - State management (Riverpod)
 - Clean architecture structure
-- All tests passing
-- No analyzer warnings
+- Code analysis: ✅ Zero errors
+- Build process: ✅ Verified and working
+- No critical issues identified
 
 ## Release Methods
 
