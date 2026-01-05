@@ -44,7 +44,7 @@ dependencies:
   path_provider: ^2.1.0
   
   # State management
-  flutter_riverpod: ^3.0.3
+  flutter_riverpod: ^3.1.0
   
   # Database - SQLite with type-safe queries
   drift: ^2.20.3
@@ -61,7 +61,7 @@ dependencies:
   
   # Package version info
   package_info_plus: ^9.0.0
-  flutter_markdown_plus: ^1.0.5
+  flutter_markdown_plus: ^1.0.7
   
   # Text-to-Speech with background audio support
   flutter_tts: ^4.2.0
