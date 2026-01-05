@@ -7,6 +7,10 @@ import 'package:read_forge/features/library/presentation/library_provider.dart';
 import 'package:read_forge/features/book/presentation/book_detail_screen.dart';
 import 'package:read_forge/features/settings/presentation/settings_screen.dart';
 import 'package:read_forge/core/services/llm_integration_service.dart';
+import 'package:read_forge/features/ollama/domain/generation_mode.dart';
+import 'package:read_forge/features/ollama/presentation/providers/ollama_providers.dart';
+import 'package:read_forge/features/ollama/presentation/widgets/generation_mode_selector.dart';
+import 'package:read_forge/features/ollama/presentation/widgets/ollama_generation_loader.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:read_forge/features/reader/presentation/tts_mini_player.dart';
 
@@ -281,6 +285,157 @@ class LibraryScreen extends ConsumerWidget {
   }
 
   void _showTitleGenerationDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    String? description,
+    String? purpose,
+  ) async {
+    // Get current generation mode and Ollama status
+    final currentMode = ref.read(generationModeProvider);
+
+    // Show mode selector first
+    final selectedMode = await showDialog<GenerationMode>(
+      context: context,
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          return AlertDialog(
+            title: Text(l10n.generateBookTitle),
+            content: SingleChildScrollView(
+              child: GenerationModeSelector(
+                selectedMode: currentMode,
+                onModeChanged: (mode) {
+                  Navigator.of(context).pop(mode);
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.cancel),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    if (selectedMode == null || !context.mounted) return;
+
+    // Save the selected mode for future use
+    await ref.read(generationModeProvider.notifier).setMode(selectedMode);
+
+    // Generate based on selected mode
+    if (selectedMode == GenerationMode.ollama) {
+      _generateWithOllama(context, ref, l10n, description, purpose);
+    } else {
+      _generateWithCopyPaste(context, ref, l10n, description, purpose);
+    }
+  }
+
+  Future<void> _generateWithOllama(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    String? description,
+    String? purpose,
+  ) async {
+    final generationService = ref.read(unifiedGenerationServiceProvider);
+    final config = ref.read(ollamaConfigProvider);
+
+    if (config.selectedModel == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a model in Settings')),
+        );
+      }
+      return;
+    }
+
+    final llmService = LLMIntegrationService();
+    final prompt = llmService.generateBookTitlePrompt(
+      description: description,
+      purpose: purpose,
+    );
+
+    // Show loading dialog with streaming
+    final shouldContinue = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: OllamaGenerationLoader(
+          contentStream: generationService.generateStream(
+            prompt: prompt,
+            model: config.selectedModel!,
+          ),
+          model: config.selectedModel!,
+          onCancel: () => Navigator.of(context).pop(false),
+        ),
+      ),
+    );
+
+    if (shouldContinue == false || !context.mounted) return;
+
+    // Try to generate with smart fallback
+    final result = await generationService.generate(
+      prompt: prompt,
+      preferredMode: GenerationMode.ollama,
+      allowFallback: true,
+    );
+
+    if (!context.mounted) return;
+
+    if (result.usedFallback) {
+      // Show fallback notice
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Ollama server unreachable. Falling back to copy-paste mode.',
+          ),
+          action: SnackBarAction(label: 'OK', onPressed: () {}),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+      // Continue with copy-paste flow
+      _generateWithCopyPaste(context, ref, l10n, description, purpose);
+      return;
+    }
+
+    if (result.success && result.response != null) {
+      // Create book with generated title
+      final book = await ref
+          .read(libraryProvider.notifier)
+          .createBook(
+            title: result.response!.title,
+            description: description,
+            purpose: purpose,
+            isTitleGenerated: true,
+          );
+
+      if (book != null && context.mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => BookDetailScreen(bookId: book.id),
+          ),
+        );
+      }
+    } else {
+      // Show error and fallback
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Generation failed: ${result.error}'),
+          action: SnackBarAction(
+            label: 'Retry',
+            onPressed: () {
+              _generateWithCopyPaste(context, ref, l10n, description, purpose);
+            },
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _generateWithCopyPaste(
     BuildContext context,
     WidgetRef ref,
     AppLocalizations l10n,
