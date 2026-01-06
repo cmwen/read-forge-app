@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:read_forge/features/reader/utils/markdown_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -1493,7 +1494,7 @@ You can format text like:
       data: (chapter) async {
         if (chapter?.content != null && chapter!.content!.isNotEmpty) {
           // Strip markdown formatting for better TTS
-          final plainText = _stripMarkdown(chapter.content!);
+          final plainText = MarkdownUtils.stripMarkdown(chapter.content!);
 
           // Get book for metadata
           final bookRepo = ref.read(bookRepositoryProvider);
@@ -1537,44 +1538,5 @@ You can format text like:
         }
       },
     );
-  }
-
-  String _stripMarkdown(String markdown) {
-    // Remove markdown formatting for better TTS reading
-    String text = markdown;
-
-    // Remove headers
-    text = text.replaceAll(RegExp(r'^#{1,6}\s+', multiLine: true), '');
-
-    // Remove bold and italic
-    text = text.replaceAll(RegExp(r'\*\*([^*]+)\*\*'), r'$1');
-    text = text.replaceAll(RegExp(r'\*([^*]+)\*'), r'$1');
-    text = text.replaceAll(RegExp(r'__([^_]+)__'), r'$1');
-    text = text.replaceAll(RegExp(r'_([^_]+)_'), r'$1');
-
-    // Remove links but keep text
-    text = text.replaceAll(RegExp(r'\[([^\]]+)\]\([^)]+\)'), r'$1');
-
-    // Remove inline code
-    text = text.replaceAll(RegExp(r'`([^`]+)`'), r'$1');
-
-    // Remove code blocks
-    text = text.replaceAll(RegExp(r'```[^`]*```'), '');
-
-    // Remove blockquotes
-    text = text.replaceAll(RegExp(r'^>\s+', multiLine: true), '');
-
-    // Remove list markers
-    text = text.replaceAll(RegExp(r'^[-*+]\s+', multiLine: true), '');
-    text = text.replaceAll(RegExp(r'^\d+\.\s+', multiLine: true), '');
-
-    // Remove horizontal rules
-    text = text.replaceAll(RegExp(r'^[-*_]{3,}$', multiLine: true), '');
-
-    // Clean up extra whitespace
-    text = text.replaceAll(RegExp(r'\n\n+'), '\n\n');
-    text = text.trim();
-
-    return text;
   }
 }
