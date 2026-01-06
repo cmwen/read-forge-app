@@ -1,20 +1,27 @@
 # TTS Dollar Sign Fix
 
 ## Problem
-When using the text-to-speech (TTS) feature, the TTS engine would read dollar signs literally, causing interruptions like:
-- `$1` → "ONE DOLLAR"
-- `$2` → "TWO DOLLARS"
-- `$100` → "ONE HUNDRED DOLLARS" (awkward phrasing)
+When using the text-to-speech (TTS) feature, the TTS engine would read "one dollar" repeatedly, even though the text "$1" wasn't visible in the rendered markdown content. This occurred due to:
 
-This occurred in markdown content containing:
-- Currency amounts: `$50`, `$99.99`
-- Variable names: `$variable`, `$count`
-- Math expressions: `$$x^2 + y^2$$`, `$x = 5$`
+1. **Regex Replacement Bugs**: Using `r'$1'` as a replacement string in regex operations literally inserted the text `$1` into the processed content, which TTS read as "ONE DOLLAR"
+2. **Markdown Syntax Characters**: Special markdown characters (asterisks, brackets, parentheses) were being passed to TTS, potentially confusing the engine
+3. **Actual Dollar Signs**: Currency amounts, variable names, and math expressions in markdown also contained dollar signs
+
+The main issue was that regex replacement patterns like `r'$1'` were being used instead of callback functions, leaving literal `$1` text that was invisible to users but read aloud by TTS.
 
 ## Solution
 Created a comprehensive markdown sanitization utility that:
 
-### 1. Converts Currency to Spoken Form
+### 1. Uses Callbacks Instead of String Replacements
+```dart
+// WRONG - leaves literal $1 in text:
+text.replaceAll(RegExp(r'\*\*([^*]+)\*\*'), r'$1');
+
+// CORRECT - uses callback function:
+text.replaceAllMapped(RegExp(r'\*\*([^*]+)\*\*'), (m) => m.group(1)!);
+```
+
+### 2. Converts Currency to Spoken Form
 ```markdown
 Input:  "The price is $100"
 Output: "The price is 100 dollars"
@@ -31,6 +38,28 @@ Output: "Use the variable here"
 Input:  "The formula $$x^2 + y^2 = z^2$$ explains..."
 Output: "The formula explains..."
 ```
+
+### 4. Cleans Up Markdown Punctuation
+- Removes standalone asterisks, underscores, hashes
+- Removes pipe characters (table markers)
+- Normalizes multiple punctuation (!! → !, ?? → ?)
+- Cleans up stray brackets and parentheses
+
+## Root Cause
+
+The primary issue was **regex replacement patterns leaving literal `$1` in the text**:
+
+```dart
+// This code was creating the problem:
+text = text.replaceAll(RegExp(r'([!?.])\1+'), r'$1');
+// Result: "Really??" → "Really$1" (TTS reads as "Really ONE DOLLAR")
+
+// Fixed version uses callback:
+text = text.replaceAllMapped(RegExp(r'([!?.])\1+'), (m) => m.group(1)!);
+// Result: "Really??" → "Really?" (TTS reads correctly)
+```
+
+This explains why users couldn't see "one dollar" in the rendered content but heard it through TTS - the `$1` pattern was invisible in normal rendering but pronounced by the TTS engine.
 
 ## Implementation
 

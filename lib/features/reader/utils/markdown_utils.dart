@@ -127,6 +127,25 @@ class MarkdownUtils {
     // Replace any remaining standalone dollar signs
     text = text.replaceAll(r'$', '');
 
+    // Remove any remaining markdown punctuation that could confuse TTS
+    // Remove standalone brackets, parentheses that aren't part of words
+    text = text.replaceAll(RegExp(r'\s*\[\s*'), ' ');
+    text = text.replaceAll(RegExp(r'\s*\]\s*'), ' ');
+    text = text.replaceAll(RegExp(r'\s*\(\s*'), ' (');
+    text = text.replaceAll(RegExp(r'\s*\)\s*'), ') ');
+    
+    // Remove standalone asterisks, underscores, hashes
+    text = text.replaceAll(RegExp(r'(?<!\w)[*_#]+(?!\w)'), '');
+    
+    // Remove pipe characters (table markers)
+    text = text.replaceAll('|', '');
+    
+    // Remove multiple punctuation marks (like !!, ??, ...)
+    text = text.replaceAllMapped(
+      RegExp(r'([!?.])\1+'),
+      (m) => m.group(1)!,
+    );
+
     // Clean up extra whitespace
     text = text.replaceAll(RegExp(r'\n\n+'), '\n\n');
     text = text.replaceAll(RegExp(r'[ \t]+'), ' ');

@@ -270,6 +270,44 @@ void main() {
       });
     });
 
+    group('Markdown punctuation cleanup', () {
+      test('should remove standalone asterisks and underscores', () {
+        expect(
+          MarkdownUtils.stripMarkdown('Text with * standalone * marks'),
+          'Text with standalone marks',
+        );
+        expect(
+          MarkdownUtils.stripMarkdown('Text with _ standalone _ marks'),
+          'Text with standalone marks',
+        );
+      });
+
+      test('should remove pipe characters (table markers)', () {
+        expect(
+          MarkdownUtils.stripMarkdown('| Column 1 | Column 2 |'),
+          'Column 1 Column 2',
+        );
+      });
+
+      test('should clean up stray brackets and parentheses', () {
+        expect(
+          MarkdownUtils.stripMarkdown('Text [ with ] brackets'),
+          contains('Text'),
+        );
+        expect(
+          MarkdownUtils.stripMarkdown('Text [ with ] brackets'),
+          contains('with'),
+        );
+      });
+
+      test('should normalize multiple punctuation marks', () {
+        expect(
+          MarkdownUtils.stripMarkdown('Really?? Amazing!!'),
+          'Really? Amazing!',
+        );
+      });
+    });
+
     group('Real-world scenarios', () {
       test('should handle complex markdown with dollar signs', () {
         final markdown = '''
