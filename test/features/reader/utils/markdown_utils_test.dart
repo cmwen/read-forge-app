@@ -53,7 +53,9 @@ void main() {
 
       test('should remove LaTeX math expressions', () {
         expect(
-          MarkdownUtils.stripMarkdown('This is a formula: \$\$x^2 + y^2 = z^2\$\$'),
+          MarkdownUtils.stripMarkdown(
+            'This is a formula: \$\$x^2 + y^2 = z^2\$\$',
+          ),
           'This is a formula:',
         );
         expect(
@@ -139,25 +141,17 @@ void main() {
           'Click here',
         );
         expect(
-          MarkdownUtils.stripMarkdown(
-            'Visit [Google](https://google.com) now',
-          ),
+          MarkdownUtils.stripMarkdown('Visit [Google](https://google.com) now'),
           'Visit Google now',
         );
       });
 
       test('should handle reference-style links', () {
-        expect(
-          MarkdownUtils.stripMarkdown('[Link text][ref]'),
-          'Link text',
-        );
+        expect(MarkdownUtils.stripMarkdown('[Link text][ref]'), 'Link text');
       });
 
       test('should remove images', () {
-        expect(
-          MarkdownUtils.stripMarkdown('![Alt text](image.png)'),
-          '',
-        );
+        expect(MarkdownUtils.stripMarkdown('![Alt text](image.png)'), '');
         expect(
           MarkdownUtils.stripMarkdown('See ![diagram](chart.png) above'),
           'See above',
@@ -235,10 +229,7 @@ void main() {
           MarkdownUtils.stripMarkdown('Text with <b>HTML</b>'),
           'Text with HTML',
         );
-        expect(
-          MarkdownUtils.stripMarkdown('<div>Content</div>'),
-          'Content',
-        );
+        expect(MarkdownUtils.stripMarkdown('<div>Content</div>'), 'Content');
       });
 
       test('should remove footnote references', () {
