@@ -64,7 +64,7 @@ dependencies:
   flutter_markdown_plus: ^1.0.7
   
   # Text-to-Speech with background audio support
-  flutter_tts: ^4.2.0
+  flutter_tts: ^4.2.5
   audio_service: ^0.18.15
   just_audio: ^0.10.5
 
