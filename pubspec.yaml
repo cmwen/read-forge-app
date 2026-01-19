@@ -44,10 +44,10 @@ dependencies:
   path_provider: ^2.1.0
   
   # State management
-  flutter_riverpod: ^3.1.0
+  flutter_riverpod: ^3.2.0
   
   # Database - SQLite with type-safe queries
-  drift: ^2.20.3
+  drift: ^2.30.1
   drift_flutter: ^0.2.0
   sqlite3_flutter_libs: ^0.5.24
   
@@ -64,7 +64,7 @@ dependencies:
   flutter_markdown_plus: ^1.0.7
   
   # Text-to-Speech with background audio support
-  flutter_tts: ^4.2.0
+  flutter_tts: ^4.2.5
   audio_service: ^0.18.15
   just_audio: ^0.10.5
 
@@ -81,8 +81,8 @@ dev_dependencies:
   mocktail: ^1.0.3
   
   # Code generation for drift
-  drift_dev: ^2.20.3
-  build_runner: ^2.4.13
+  drift_dev: ^2.30.1
+  build_runner: ^2.10.5
   
   # Icon generation
   flutter_launcher_icons: ^0.14.2
