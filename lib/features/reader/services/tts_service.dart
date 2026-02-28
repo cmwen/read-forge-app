@@ -1,46 +1,62 @@
 import 'package:read_forge/main.dart' as main_app;
 import 'package:read_forge/features/reader/services/tts_audio_handler.dart';
 
-/// Abstraction for Text-to-Speech functionality to enable testing
+/// Abstraction for Text-to-Speech functionality to enable testing.
 ///
-/// **TTS Time Tracking Limitations:**
-/// Flutter TTS does not provide real-time playback position tracking.
-/// It only provides callbacks for start, complete, pause, and error events.
-/// Therefore, this implementation uses chunk-based progress tracking instead
-/// of time-based tracking. Each "chunk" represents a section of text being spoken.
+/// Progress is tracked at two granularities:
+/// - **Chunk-level**: Which section (1..N) is currently being spoken
+/// - **Character-level**: Exact character offset within the full text,
+///   updated word-by-word via flutter_tts's progress handler
 ///
-/// This means:
-/// - Progress is tracked by chunks (sections) not by time/position
-/// - Rewind/Forward operations skip between chunks, not by seconds
-/// - Seek operations jump to specific chunks, not time positions
-///
-/// For apps requiring precise time-based tracking, consider using
-/// just_audio with pre-recorded TTS audio files instead of live TTS.
+/// This enables smooth progress bars, estimated time tracking,
+/// and word highlighting in the reader view.
 abstract class TtsServiceBase {
   Function()? onComplete;
   Function()? onStart;
   Function()? onPause;
   Function()? onContinue;
   Function(String)? onError;
-  Function(int current, int total)? onProgress;
+  Function(int current, int total)? onChunkProgress;
+  Function(int globalCharOffset, int totalChars, String currentWord)?
+  onWordProgress;
 
   double get speechRate;
   bool get isPlaying;
+  bool get isPaused;
   int get currentChunk;
   int get totalChunks;
+  int get currentCharOffset;
+  int get totalCharacters;
+  String get currentWord;
+  Duration get estimatedDuration;
+  Duration get estimatedPosition;
 
   Future<void> initialize();
-  Future<void> speak(String text, {String? bookTitle, String? chapterTitle});
+  Future<void> speak(
+    String text, {
+    String? bookTitle,
+    String? chapterTitle,
+    String? language,
+  });
   Future<void> pause();
+  Future<void> resume();
   Future<void> stop();
   Future<void> setSpeechRate(double rate);
+  Future<void> setLanguage(String language);
   Future<void> seekToChunk(int chunkIndex);
   Future<void> previousChunk();
   Future<void> nextChunk();
   void dispose();
 }
 
-/// Service for Text-to-Speech functionality
+/// Service for Text-to-Speech functionality.
+///
+/// This is a thin wrapper around TtsAudioHandler that:
+/// - Manages initialization of the audio service
+/// - Wires callbacks from the audio handler to the provider layer
+/// - Delegates all actual TTS operations to the audio handler
+///
+/// Text chunking is handled entirely by TtsAudioHandler (no duplicate chunking).
 class TtsService implements TtsServiceBase {
   TtsAudioHandler get _audioHandler {
     // Lazy initialization of audio service
@@ -49,11 +65,8 @@ class TtsService implements TtsServiceBase {
   }
 
   bool _isPlaying = false;
+  bool _isPaused = false;
   double _speechRate = 0.5; // Default rate (0.0 - 1.0)
-
-  // Text chunking for long content
-  static const int _maxChunkLength = 4000; // Android TTS character limit
-  List<String> _textChunks = [];
 
   // Callbacks
   @override
@@ -67,7 +80,10 @@ class TtsService implements TtsServiceBase {
   @override
   Function(String)? onError;
   @override
-  Function(int current, int total)? onProgress;
+  Function(int current, int total)? onChunkProgress;
+  @override
+  Function(int globalCharOffset, int totalChars, String currentWord)?
+  onWordProgress;
 
   /// Initialize TTS service
   @override
@@ -78,21 +94,38 @@ class TtsService implements TtsServiceBase {
     // Setup callbacks from audio handler
     _audioHandler.onComplete = () {
       _isPlaying = false;
-      _textChunks.clear();
+      _isPaused = false;
       onComplete?.call();
     };
 
-    _audioHandler.onProgress = (current, total) {
-      onProgress?.call(current, total);
+    _audioHandler.onChunkProgress = (current, total) {
+      onChunkProgress?.call(current, total);
+    };
+
+    _audioHandler.onWordProgress = (globalOffset, totalChars, word) {
+      onWordProgress?.call(globalOffset, totalChars, word);
+    };
+
+    _audioHandler.onPauseCallback = () {
+      _isPlaying = false;
+      _isPaused = true;
+      onPause?.call();
+    };
+
+    _audioHandler.onResumeCallback = () {
+      _isPlaying = true;
+      _isPaused = false;
+      onContinue?.call();
     };
   }
 
-  /// Speak the given text (automatically chunks long text)
+  /// Speak the given text. Chunking is handled by TtsAudioHandler.
   @override
   Future<void> speak(
     String text, {
     String? bookTitle,
     String? chapterTitle,
+    String? language,
   }) async {
     await initialize();
 
@@ -102,79 +135,55 @@ class TtsService implements TtsServiceBase {
         throw Exception('No readable text found for text-to-speech.');
       }
 
-      // Split text into chunks if needed
-      _textChunks = _splitTextIntoChunks(sanitizedText);
-
       _isPlaying = true;
+      _isPaused = false;
       onStart?.call();
 
-      // Use audio handler for proper media integration
-      final fullText = _textChunks.join(' ');
+      // Delegate directly to audio handler - no duplicate chunking
       await _audioHandler.speakText(
-        fullText,
+        sanitizedText,
         title: chapterTitle ?? 'Text-to-Speech',
         album: bookTitle ?? 'ReadForge',
+        language: language,
       );
     } catch (e) {
+      _isPlaying = false;
+      _isPaused = false;
       throw Exception('Failed to speak: $e');
     }
   }
 
-  /// Split text into manageable chunks for TTS
-  List<String> _splitTextIntoChunks(String text) {
-    if (text.length <= _maxChunkLength) {
-      return [text];
-    }
-
-    final chunks = <String>[];
-    var startIndex = 0;
-
-    while (startIndex < text.length) {
-      var endIndex = startIndex + _maxChunkLength;
-
-      // If this is not the last chunk, try to break at a sentence boundary
-      if (endIndex < text.length) {
-        // Look for sentence endings: period, exclamation, question mark
-        final sentenceEnd = text.lastIndexOf(RegExp(r'[.!?]\s'), endIndex);
-        if (sentenceEnd > startIndex) {
-          endIndex = sentenceEnd + 1;
-        } else {
-          // No sentence break found, try to break at word boundary
-          final spaceIndex = text.lastIndexOf(' ', endIndex);
-          if (spaceIndex > startIndex) {
-            endIndex = spaceIndex;
-          }
-        }
-      } else {
-        endIndex = text.length;
-      }
-
-      chunks.add(text.substring(startIndex, endIndex).trim());
-      startIndex = endIndex;
-    }
-
-    return chunks;
-  }
-
-  /// Pause speaking
+  /// Pause speaking (preserves position for resume)
   @override
   Future<void> pause() async {
     try {
       await _audioHandler.pause();
-      _isPlaying = false;
-      onPause?.call();
+      // State updated via callback
     } catch (e) {
       throw Exception('Failed to pause: $e');
     }
   }
 
-  /// Stop speaking
+  /// Resume speaking from where it was paused
+  @override
+  Future<void> resume() async {
+    try {
+      await _audioHandler.play();
+      _isPlaying = true;
+      _isPaused = false;
+      onContinue?.call();
+    } catch (e) {
+      throw Exception('Failed to resume: $e');
+    }
+  }
+
+  /// Stop speaking (clears all state)
   @override
   Future<void> stop() async {
     try {
-      _textChunks.clear();
       await _audioHandler.stop();
       _isPlaying = false;
+      _isPaused = false;
     } catch (e) {
       throw Exception('Failed to stop: $e');
     }
@@ -187,6 +196,12 @@ class TtsService implements TtsServiceBase {
     await _audioHandler.setSpeed(_speechRate);
   }
 
+  /// Set the TTS language (e.g., 'en-US', 'es-ES', 'zh-CN')
+  @override
+  Future<void> setLanguage(String language) async {
+    await _audioHandler.setLanguage(language);
+  }
+
   /// Get current speech rate
   @override
   double get speechRate => _speechRate;
@@ -194,6 +209,10 @@ class TtsService implements TtsServiceBase {
   /// Check if currently playing
   @override
   bool get isPlaying => _isPlaying;
+
+  /// Check if currently paused (can resume)
+  @override
+  bool get isPaused => _isPaused;
 
   /// Get current chunk index (1-based for display)
   @override
@@ -203,13 +222,35 @@ class TtsService implements TtsServiceBase {
   @override
   int get totalChunks => _audioHandler.totalChunks;
 
-  /// Seek to specific chunk
+  /// Get current global character offset
+  @override
+  int get currentCharOffset => _audioHandler.currentCharOffset;
+
+  /// Get total character count
+  @override
+  int get totalCharacters => _audioHandler.totalCharacters;
+
+  /// Get the word currently being spoken
+  @override
+  String get currentWord => _audioHandler.currentWord;
+
+  /// Get estimated total duration
+  @override
+  Duration get estimatedDuration => _audioHandler.estimatedDuration;
+
+  /// Get estimated current position
+  @override
+  Duration get estimatedPosition => _audioHandler.estimatedPosition;
+
+  /// Seek to specific chunk (0-indexed)
   @override
   Future<void> seekToChunk(int chunkIndex) async {
     if (chunkIndex < 0 || chunkIndex >= _audioHandler.totalChunks) return;
 
     try {
       await _audioHandler.seekToChunk(chunkIndex);
+      _isPlaying = true;
+      _isPaused = false;
     } catch (e) {
       throw Exception('Failed to seek: $e');
     }
@@ -218,10 +259,10 @@ class TtsService implements TtsServiceBase {
   /// Go to previous chunk
   @override
   Future<void> previousChunk() async {
-    if (_audioHandler.currentChunk <= 1) return;
-
     try {
       await _audioHandler.skipToPrevious();
+      _isPlaying = true;
+      _isPaused = false;
     } catch (e) {
       throw Exception('Failed to go to previous chunk: $e');
     }
@@ -234,6 +275,8 @@ class TtsService implements TtsServiceBase {
 
     try {
       await _audioHandler.skipToNext();
+      _isPlaying = true;
+      _isPaused = false;
     } catch (e) {
       throw Exception('Failed to go to next chunk: $e');
     }

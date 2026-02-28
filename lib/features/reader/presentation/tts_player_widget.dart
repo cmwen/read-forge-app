@@ -3,18 +3,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:read_forge/features/reader/presentation/tts_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 
-/// TTS Player widget with podcast-style controls
+/// TTS Player widget with podcast-style controls and real-time progress
 class TtsPlayerWidget extends ConsumerWidget {
   final VoidCallback? onClose;
 
   const TtsPlayerWidget({super.key, this.onClose});
+
+  /// Format a Duration as "m:ss"
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds.remainder(60);
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ttsState = ref.watch(ttsProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    if (!ttsState.isPlaying && ttsState.currentText == null) {
+    final isActive =
+        ttsState.isPlaying || ttsState.isPaused || ttsState.currentText != null;
+    if (!isActive) {
       return const SizedBox.shrink();
     }
 
@@ -35,37 +44,64 @@ class TtsPlayerWidget extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Progress indicator with chunk information
-            if (ttsState.isPlaying || ttsState.totalChunks > 0) ...[
-              if (ttsState.totalChunks > 1)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.article_outlined,
-                        size: 16,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Section ${ttsState.currentChunk} of ${ttsState.totalChunks}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            // Real-time progress indicator
+            if (ttsState.totalCharacters > 0 || ttsState.totalChunks > 0) ...[
+              // Smooth progress bar
               LinearProgressIndicator(
-                value: ttsState.totalChunks > 0
-                    ? ttsState.currentChunk / ttsState.totalChunks
-                    : null,
+                value: ttsState.totalCharacters > 0
+                    ? ttsState.progress
+                    : (ttsState.totalChunks > 0
+                          ? ttsState.currentChunk / ttsState.totalChunks
+                          : null),
                 backgroundColor: Theme.of(
                   context,
                 ).colorScheme.surfaceContainerHighest,
               ),
+              const SizedBox(height: 8),
+              // Time display
+              if (ttsState.estimatedDuration > Duration.zero)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _formatDuration(ttsState.estimatedPosition),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    if (ttsState.totalChunks > 1)
+                      Text(
+                        '${ttsState.currentChunk} / ${ttsState.totalChunks}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    Text(
+                      _formatDuration(ttsState.estimatedDuration),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                )
+              else if (ttsState.totalChunks > 1)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.article_outlined,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Section ${ttsState.currentChunk} of ${ttsState.totalChunks}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 16),
             ],
 

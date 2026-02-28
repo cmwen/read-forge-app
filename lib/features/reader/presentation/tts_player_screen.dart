@@ -5,7 +5,7 @@ import 'package:read_forge/features/reader/presentation/reading_progress_provide
 import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:read_forge/core/providers/database_provider.dart';
 
-/// Full-screen TTS player with controls and progress
+/// Full-screen TTS player with real-time progress tracking and controls
 class TtsPlayerScreen extends ConsumerStatefulWidget {
   final int bookId;
   final int chapterId;
@@ -29,14 +29,12 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
     super.initState();
   }
 
-  /// Sync reading scroll position with TTS chunk progress
-  void _syncReadingProgress(int currentChunk, int totalChunks) {
+  /// Sync reading scroll position with TTS progress
+  void _syncReadingProgress(double progress) {
     if (!mounted) return;
 
-    // Calculate approximate position based on chunk progress
-    final progress = (currentChunk / totalChunks * _progressScale).round();
+    final scaledProgress = (progress * _progressScale).round();
 
-    // Update reading progress (this will auto-scroll if user returns to reader)
     final progressNotifier = ref.read(
       readingProgressProvider(
         ReadingProgressParams(
@@ -46,20 +44,33 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
       ),
     );
 
-    // Update the position but don't save immediately (save on playback end)
     if (mounted && progressNotifier.scrollController.hasClients) {
       final maxScroll =
           progressNotifier.scrollController.position.maxScrollExtent;
-      final targetPosition = (progress / _progressScale.toDouble() * maxScroll)
-          .clamp(0.0, maxScroll);
+      final targetPosition =
+          (scaledProgress / _progressScale.toDouble() * maxScroll).clamp(
+            0.0,
+            maxScroll,
+          );
 
-      // Smoothly scroll to sync position
       progressNotifier.scrollController.animateTo(
         targetPosition,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
+  }
+
+  /// Format a Duration as "mm:ss" or "h:mm:ss"
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+
+    if (hours > 0) {
+      return '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    }
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -69,18 +80,19 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
 
     // Listen to TTS state changes for auto-close and progress sync
     ref.listen<TtsState>(ttsProvider, (previous, next) {
-      // Auto-close screen when playback stops
+      // Auto-close screen when playback completes and text is cleared
       if (previous?.isPlaying == true &&
           !next.isPlaying &&
+          !next.isPaused &&
           next.currentText == null) {
         if (context.mounted) {
           Navigator.of(context).pop();
         }
       }
 
-      // Sync reading progress when chunk changes
-      if (next.totalChunks > 0 && previous?.currentChunk != next.currentChunk) {
-        _syncReadingProgress(next.currentChunk, next.totalChunks);
+      // Sync reading progress when character offset changes
+      if (next.totalCharacters > 0) {
+        _syncReadingProgress(next.progress);
       }
     });
 
@@ -146,7 +158,24 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                   },
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 16),
+
+                // Currently spoken word indicator
+                if (ttsState.currentWord.isNotEmpty && ttsState.isPlaying)
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: Text(
+                      ttsState.currentWord,
+                      key: ValueKey(ttsState.currentWord),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+
+                const SizedBox(height: 32),
 
                 // Large play/pause button
                 Container(
@@ -180,60 +209,17 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 32),
 
-                // Progress section with better visual indication
-                if (ttsState.totalChunks > 0) ...[
-                  // Current section indicator
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.article_outlined,
-                          size: 20,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onPrimaryContainer,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Section ${ttsState.currentChunk}',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        Text(
-                          ' of ${ttsState.totalChunks}',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onPrimaryContainer,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Progress bar with seek capability
+                // Progress section with real-time tracking
+                if (ttsState.totalCharacters > 0 ||
+                    ttsState.totalChunks > 0) ...[
+                  // Time display
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
+                        // Smooth progress bar based on character offset
                         SliderTheme(
                           data: SliderTheme.of(context).copyWith(
                             trackHeight: 6,
@@ -244,43 +230,83 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                               overlayRadius: 16,
                             ),
                           ),
-                          child: Slider(
-                            value: ttsState.currentChunk.toDouble(),
-                            min: 1,
-                            max: ttsState.totalChunks.toDouble(),
-                            divisions: ttsState.totalChunks > 1
-                                ? ttsState.totalChunks - 1
-                                : 1,
-                            label: 'Section ${ttsState.currentChunk}',
-                            onChanged: (value) {
-                              ref
-                                  .read(ttsProvider.notifier)
-                                  .seekToChunk(value.toInt());
-                            },
-                          ),
+                          child: ttsState.totalChunks > 0
+                              ? Slider(
+                                  value: ttsState.progress.clamp(0.0, 1.0),
+                                  min: 0.0,
+                                  max: 1.0,
+                                  onChanged: (value) {
+                                    // Convert progress to chunk index
+                                    final targetChunk =
+                                        (value * ttsState.totalChunks)
+                                            .ceil()
+                                            .clamp(1, ttsState.totalChunks);
+                                    ref
+                                        .read(ttsProvider.notifier)
+                                        .seekToChunk(targetChunk);
+                                  },
+                                )
+                              : const LinearProgressIndicator(),
                         ),
+
+                        // Time labels
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Start',
+                              _formatDuration(ttsState.estimatedPosition),
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
+                            // Section indicator
+                            if (ttsState.totalChunks > 1)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${ttsState.currentChunk} / ${ttsState.totalChunks}',
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onPrimaryContainer,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              ),
                             Text(
-                              'End',
+                              _formatDuration(ttsState.estimatedDuration),
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
+                        ),
+
+                        // Percentage indicator
+                        const SizedBox(height: 4),
+                        Text(
+                          '${(ttsState.progress * 100).toStringAsFixed(1)}%',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                 ],
 
-                // Control buttons row - chunk-based navigation
-                // Note: TTS doesn't support time-based seeking, only chunk-based
+                // Control buttons row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -317,7 +343,7 @@ class _TtsPlayerScreenState extends ConsumerState<TtsPlayerScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 48),
+                const SizedBox(height: 32),
 
                 // Speed control
                 Card(
