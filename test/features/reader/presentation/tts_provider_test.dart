@@ -6,11 +6,16 @@ import 'package:read_forge/features/reader/services/tts_service.dart';
 class FakeTtsService implements TtsServiceBase {
   bool initialized = false;
   bool playing = false;
+  bool paused = false;
   double rate = 0.5;
   String? lastText;
+  String? lastLanguage;
   bool throwOnSpeak = false;
   int _currentChunk = 0;
   int _totalChunks = 0;
+  int _currentCharOffset = 0;
+  int _totalCharacters = 0;
+  String _currentWord = '';
 
   @override
   Function()? onComplete;
@@ -28,10 +33,17 @@ class FakeTtsService implements TtsServiceBase {
   Function()? onStart;
 
   @override
-  Function(int current, int total)? onProgress;
+  Function(int current, int total)? onChunkProgress;
+
+  @override
+  Function(int globalCharOffset, int totalChars, String currentWord)?
+  onWordProgress;
 
   @override
   bool get isPlaying => playing;
+
+  @override
+  bool get isPaused => paused;
 
   @override
   double get speechRate => rate;
@@ -43,6 +55,21 @@ class FakeTtsService implements TtsServiceBase {
   int get totalChunks => _totalChunks;
 
   @override
+  int get currentCharOffset => _currentCharOffset;
+
+  @override
+  int get totalCharacters => _totalCharacters;
+
+  @override
+  String get currentWord => _currentWord;
+
+  @override
+  Duration get estimatedDuration => Duration.zero;
+
+  @override
+  Duration get estimatedPosition => Duration.zero;
+
+  @override
   Future<void> initialize() async {
     initialized = true;
   }
@@ -50,7 +77,17 @@ class FakeTtsService implements TtsServiceBase {
   @override
   Future<void> pause() async {
     playing = false;
+    paused = true;
     onPause?.call();
+  }
+
+  @override
+  Future<void> resume() async {
+    if (paused) {
+      playing = true;
+      paused = false;
+      onContinue?.call();
+    }
   }
 
   @override
@@ -59,27 +96,40 @@ class FakeTtsService implements TtsServiceBase {
   }
 
   @override
+  Future<void> setLanguage(String language) async {
+    lastLanguage = language;
+  }
+
+  @override
   Future<void> speak(
     String text, {
     String? bookTitle,
     String? chapterTitle,
+    String? language,
   }) async {
     if (throwOnSpeak) {
       throw Exception('speak failed');
     }
     lastText = text;
+    lastLanguage = language;
     playing = true;
+    paused = false;
     _currentChunk = 1;
     _totalChunks = 1;
-    onProgress?.call(1, 1);
+    _totalCharacters = text.length;
+    onChunkProgress?.call(1, 1);
     onStart?.call();
   }
 
   @override
   Future<void> stop() async {
     playing = false;
+    paused = false;
     _currentChunk = 0;
     _totalChunks = 0;
+    _currentCharOffset = 0;
+    _totalCharacters = 0;
+    _currentWord = '';
     onComplete?.call();
   }
 

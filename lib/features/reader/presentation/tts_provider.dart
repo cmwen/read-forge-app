@@ -4,9 +4,10 @@ import 'package:read_forge/features/reader/services/tts_service.dart';
 /// Provider to allow injecting a custom TTS service (e.g., in tests)
 final ttsServiceProvider = Provider<TtsServiceBase>((ref) => TtsService());
 
-/// TTS state
+/// TTS state with real-time progress tracking
 class TtsState {
   final bool isPlaying;
+  final bool isPaused;
   final bool isInitialized;
   final double speechRate;
   final String? errorMessage;
@@ -14,39 +15,80 @@ class TtsState {
   final int currentChunk;
   final int totalChunks;
 
+  // Real-time character-level progress
+  final int currentCharOffset;
+  final int totalCharacters;
+  final String currentWord;
+
+  // Time estimation
+  final Duration estimatedDuration;
+  final Duration estimatedPosition;
+
   const TtsState({
     this.isPlaying = false,
+    this.isPaused = false,
     this.isInitialized = false,
     this.speechRate = 0.5,
     this.errorMessage,
     this.currentText,
     this.currentChunk = 0,
     this.totalChunks = 0,
+    this.currentCharOffset = 0,
+    this.totalCharacters = 0,
+    this.currentWord = '',
+    this.estimatedDuration = Duration.zero,
+    this.estimatedPosition = Duration.zero,
   });
+
+  /// Progress as a value between 0.0 and 1.0
+  double get progress {
+    if (totalCharacters == 0) return 0.0;
+    return (currentCharOffset / totalCharacters).clamp(0.0, 1.0);
+  }
+
+  /// Remaining time estimate
+  Duration get estimatedRemaining {
+    if (estimatedDuration == Duration.zero) return Duration.zero;
+    final remaining = estimatedDuration - estimatedPosition;
+    return remaining.isNegative ? Duration.zero : remaining;
+  }
 
   TtsState copyWith({
     bool? isPlaying,
+    bool? isPaused,
     bool? isInitialized,
     double? speechRate,
     String? errorMessage,
     String? currentText,
     int? currentChunk,
     int? totalChunks,
+    int? currentCharOffset,
+    int? totalCharacters,
+    String? currentWord,
+    Duration? estimatedDuration,
+    Duration? estimatedPosition,
     bool clearCurrentText = false,
+    bool clearError = false,
   }) {
     return TtsState(
       isPlaying: isPlaying ?? this.isPlaying,
+      isPaused: isPaused ?? this.isPaused,
       isInitialized: isInitialized ?? this.isInitialized,
       speechRate: speechRate ?? this.speechRate,
-      errorMessage: errorMessage,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
       currentText: clearCurrentText ? null : currentText ?? this.currentText,
       currentChunk: currentChunk ?? this.currentChunk,
       totalChunks: totalChunks ?? this.totalChunks,
+      currentCharOffset: currentCharOffset ?? this.currentCharOffset,
+      totalCharacters: totalCharacters ?? this.totalCharacters,
+      currentWord: currentWord ?? this.currentWord,
+      estimatedDuration: estimatedDuration ?? this.estimatedDuration,
+      estimatedPosition: estimatedPosition ?? this.estimatedPosition,
     );
   }
 }
 
-/// TTS state notifier
+/// TTS state notifier - manages TTS lifecycle and state
 class TtsNotifier extends Notifier<TtsState> {
   late final TtsServiceBase _ttsService;
 
@@ -60,32 +102,57 @@ class TtsNotifier extends Notifier<TtsState> {
 
   void _setupCallbacks() {
     _ttsService.onStart = () {
-      state = state.copyWith(isPlaying: true, errorMessage: null);
+      state = state.copyWith(
+        isPlaying: true,
+        isPaused: false,
+        clearError: true,
+      );
     };
 
     _ttsService.onComplete = () {
-      state = state.copyWith(isPlaying: false, currentChunk: 0, totalChunks: 0);
+      state = state.copyWith(
+        isPlaying: false,
+        isPaused: false,
+        currentChunk: 0,
+        totalChunks: 0,
+        currentCharOffset: 0,
+        totalCharacters: 0,
+        currentWord: '',
+        estimatedPosition: Duration.zero,
+        estimatedDuration: Duration.zero,
+      );
     };
 
     _ttsService.onPause = () {
-      state = state.copyWith(isPlaying: false);
+      state = state.copyWith(isPlaying: false, isPaused: true);
     };
 
     _ttsService.onContinue = () {
-      state = state.copyWith(isPlaying: true);
+      state = state.copyWith(isPlaying: true, isPaused: false);
     };
 
     _ttsService.onError = (msg) {
       state = state.copyWith(
         isPlaying: false,
+        isPaused: false,
         errorMessage: msg,
         currentChunk: 0,
         totalChunks: 0,
       );
     };
 
-    _ttsService.onProgress = (current, total) {
+    _ttsService.onChunkProgress = (current, total) {
       state = state.copyWith(currentChunk: current, totalChunks: total);
+    };
+
+    _ttsService.onWordProgress = (globalCharOffset, totalChars, word) {
+      state = state.copyWith(
+        currentCharOffset: globalCharOffset,
+        totalCharacters: totalChars,
+        currentWord: word,
+        estimatedDuration: _ttsService.estimatedDuration,
+        estimatedPosition: _ttsService.estimatedPosition,
+      );
     };
   }
 
@@ -102,28 +169,30 @@ class TtsNotifier extends Notifier<TtsState> {
     }
   }
 
-  /// Speak text
+  /// Speak text - stops any existing playback first (singleton enforcement)
   Future<void> speak(
     String text, {
     String? bookTitle,
     String? chapterTitle,
+    String? language,
   }) async {
     try {
       if (!state.isInitialized) {
         await initialize();
       }
-      state = state.copyWith(currentText: text);
+      state = state.copyWith(currentText: text, clearError: true);
       await _ttsService.speak(
         text,
         bookTitle: bookTitle,
         chapterTitle: chapterTitle,
+        language: language,
       );
     } catch (e) {
       state = state.copyWith(isPlaying: false, errorMessage: e.toString());
     }
   }
 
-  /// Pause speaking
+  /// Pause speaking (preserves position)
   Future<void> pause() async {
     try {
       await _ttsService.pause();
@@ -132,25 +201,35 @@ class TtsNotifier extends Notifier<TtsState> {
     }
   }
 
-  /// Stop speaking
+  /// Stop speaking (clears all state)
   Future<void> stop() async {
     try {
       await _ttsService.stop();
       state = state.copyWith(
         isPlaying: false,
+        isPaused: false,
         clearCurrentText: true,
         currentChunk: 0,
         totalChunks: 0,
+        currentCharOffset: 0,
+        totalCharacters: 0,
+        currentWord: '',
+        estimatedPosition: Duration.zero,
+        estimatedDuration: Duration.zero,
       );
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
 
-  /// Resume speaking
+  /// Resume from pause (does NOT restart from beginning)
   Future<void> resume() async {
     try {
-      if (state.currentText != null) {
+      if (state.isPaused) {
+        // True resume from pause point
+        await _ttsService.resume();
+      } else if (state.currentText != null) {
+        // If stopped (not paused), restart from beginning
         await _ttsService.speak(state.currentText!);
       }
     } catch (e) {
@@ -158,23 +237,22 @@ class TtsNotifier extends Notifier<TtsState> {
     }
   }
 
-  /// Rewind (restart from beginning for now)
+  /// Rewind: restart current chunk from beginning
   Future<void> rewind() async {
     try {
-      await _ttsService.stop();
-      if (state.currentText != null) {
-        await _ttsService.speak(state.currentText!);
+      if (state.currentChunk > 0) {
+        // Seek to beginning of current chunk
+        await _ttsService.seekToChunk(state.currentChunk - 1);
       }
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
 
-  /// Forward (skip to end for now)
+  /// Forward: skip to next chunk
   Future<void> forward() async {
     try {
-      await _ttsService.stop();
-      state = state.copyWith(isPlaying: false);
+      await _ttsService.nextChunk();
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
@@ -187,14 +265,24 @@ class TtsNotifier extends Notifier<TtsState> {
       await _ttsService.setSpeechRate(rate);
       state = state.copyWith(
         speechRate: rate,
-        isPlaying: wasPlaying, // Maintain playing state
+        isPlaying: wasPlaying,
+        estimatedDuration: _ttsService.estimatedDuration,
       );
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
 
-  /// Seek to specific chunk
+  /// Set TTS language
+  Future<void> setLanguage(String language) async {
+    try {
+      await _ttsService.setLanguage(language);
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+    }
+  }
+
+  /// Seek to specific chunk (1-indexed from UI)
   Future<void> seekToChunk(int chunkIndex) async {
     try {
       await _ttsService.seekToChunk(chunkIndex - 1); // Convert to 0-indexed

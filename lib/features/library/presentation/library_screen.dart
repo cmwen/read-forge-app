@@ -325,6 +325,8 @@ class LibraryScreen extends ConsumerWidget {
     // Save the selected mode for future use
     await ref.read(generationModeProvider.notifier).setMode(selectedMode);
 
+    if (!context.mounted) return;
+
     // Generate based on selected mode
     if (selectedMode == GenerationMode.ollama) {
       _generateWithOllama(context, ref, l10n, description, purpose);

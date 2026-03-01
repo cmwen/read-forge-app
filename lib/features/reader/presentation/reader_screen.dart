@@ -16,6 +16,7 @@ import 'package:read_forge/core/domain/models/llm_response.dart';
 import 'package:read_forge/core/data/database.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:read_forge/features/settings/presentation/app_settings_provider.dart';
+import 'package:read_forge/features/settings/presentation/locale_provider.dart';
 import 'package:read_forge/l10n/app_localizations.dart';
 import 'package:read_forge/features/ollama/presentation/providers/ollama_providers.dart';
 import 'package:read_forge/features/ollama/domain/ollama_connection_status.dart';
@@ -75,8 +76,45 @@ class _ReaderScreenState extends ConsumerState<ReaderScreen> {
                 _playerScreenOpen = false;
               });
         }
+
+        // Auto-scroll reader to follow TTS progress when reader is visible
+        if (!_playerScreenOpen &&
+            (next.isPlaying || next.isPaused) &&
+            next.totalCharacters > 0) {
+          _autoScrollToProgress(next.progress);
+        }
       });
     });
+  }
+
+  /// Scroll the reader view to approximately match the TTS reading position.
+  void _autoScrollToProgress(double progress) {
+    final progressState = ref.read(
+      readingProgressProvider(
+        ReadingProgressParams(
+          bookId: widget.bookId,
+          chapterId: widget.chapterId,
+        ),
+      ),
+    );
+    final controller = progressState.scrollController;
+    if (!controller.hasClients) return;
+
+    final maxScroll = controller.position.maxScrollExtent;
+    if (maxScroll <= 0) return;
+
+    final targetOffset = (progress * maxScroll).clamp(0.0, maxScroll);
+    final currentOffset = controller.offset;
+
+    // Only scroll if the target is significantly ahead (avoid jitter)
+    // and only scroll forward (don't scroll back on minor offset adjustments)
+    if ((targetOffset - currentOffset).abs() > 40) {
+      controller.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -1478,6 +1516,32 @@ You can format text like:
 
   // TTS methods
 
+  /// Map a Locale to a TTS language code (e.g., 'en-US', 'zh-CN').
+  /// flutter_tts expects BCP 47 tags with hyphen separators.
+  String _ttsLanguageFromLocale(Locale locale) {
+    // Map language codes to common TTS locale codes
+    const languageToTts = {
+      'en': 'en-US',
+      'es': 'es-ES',
+      'zh': 'zh-CN',
+      'fr': 'fr-FR',
+      'de': 'de-DE',
+      'pt': 'pt-BR',
+      'ja': 'ja-JP',
+      'ko': 'ko-KR',
+      'ar': 'ar-SA',
+      'hi': 'hi-IN',
+      'ru': 'ru-RU',
+    };
+
+    // If locale has a country code, use it directly (e.g., zh_TW → zh-TW)
+    if (locale.countryCode != null && locale.countryCode!.isNotEmpty) {
+      return '${locale.languageCode}-${locale.countryCode}';
+    }
+
+    return languageToTts[locale.languageCode] ?? 'en-US';
+  }
+
   void _startReading(BuildContext context) async {
     // Stop any existing playback first
     await ref.read(ttsProvider.notifier).stop();
@@ -1487,8 +1551,15 @@ You can format text like:
         .read(ttsContextProvider.notifier)
         .setContext(widget.bookId, widget.chapterId);
 
+    if (!context.mounted) return;
+
     final l10n = AppLocalizations.of(context)!;
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));
+
+    // Determine TTS language from user locale settings
+    final userLocale = ref.read(localeProvider);
+    final effectiveLocale = userLocale ?? Localizations.localeOf(context);
+    final ttsLanguage = _ttsLanguageFromLocale(effectiveLocale);
 
     await chapterAsync.when(
       data: (chapter) async {
@@ -1507,6 +1578,7 @@ You can format text like:
                   plainText,
                   bookTitle: book?.title,
                   chapterTitle: chapter.title,
+                  language: ttsLanguage,
                 );
           } catch (e) {
             if (context.mounted) {
