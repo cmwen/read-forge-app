@@ -43,11 +43,12 @@ class LLMIntegrationService {
   /// Returns true if sharing was successful
   Future<bool> sharePrompt(String prompt, {String? subject}) async {
     try {
-      final result = await Share.share(
-        prompt,
+      final params = ShareParams(
+        text: prompt,
         subject: subject ?? 'ReadForge Prompt',
       );
-      return result.status == ShareResultStatus.success;
+      await SharePlus.instance.share(params);
+      return true;
     } catch (e) {
       return false;
     }

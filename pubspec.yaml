@@ -66,6 +66,9 @@ dependencies:
   # Text-to-Speech with background audio support
   flutter_tts: ^4.2.0
   audio_service: ^0.18.15
+  
+  # HTTP client for Ollama API
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
