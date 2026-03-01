@@ -23,7 +23,7 @@ final ollamaClientProvider = Provider<OllamaClient?>((ref) {
 
   return OllamaClient(
     baseUrl: config.serverUrl!,
-    timeout: const Duration(seconds: 30),
+    timeout: const Duration(seconds: 120),
   );
 });
 
@@ -39,9 +39,6 @@ class OllamaConfigNotifier extends Notifier<OllamaConfig> {
     final service = ref.read(ollamaConfigPersistenceServiceProvider);
     state = state.copyWith(serverUrl: url);
     await service.saveConfig(state);
-
-    // Trigger connection status refresh
-    ref.invalidate(ollamaConnectionStatusProvider);
   }
 
   Future<void> setSelectedModel(String model) async {
@@ -54,19 +51,6 @@ class OllamaConfigNotifier extends Notifier<OllamaConfig> {
     final service = ref.read(ollamaConfigPersistenceServiceProvider);
     state = state.copyWith(enabled: enabled);
     await service.saveConfig(state);
-
-    // Trigger connection status refresh
-    ref.invalidate(ollamaConnectionStatusProvider);
-  }
-
-  Future<void> testConnection() async {
-    final client = ref.read(ollamaClientProvider);
-    if (client == null || state.serverUrl == null) {
-      return;
-    }
-
-    // Trigger testing state
-    ref.invalidate(ollamaConnectionStatusProvider);
   }
 }
 
