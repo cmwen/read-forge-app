@@ -1268,6 +1268,8 @@ You can format text like:
         .read(ttsContextProvider.notifier)
         .setContext(widget.bookId, widget.chapterId);
 
+    if (!context.mounted) return;
+
     final l10n = AppLocalizations.of(context)!;
     final chapterAsync = ref.read(chapterProvider(widget.chapterId));
 

@@ -253,11 +253,15 @@ class TtsAudioHandler extends BaseAudioHandler with SeekHandler {
     String? album,
     String? language,
   }) async {
-    // Mutex: wait for any in-progress speakText to finish stopping
+    // Mutex: wait for any in-progress speakText to finish stopping.
+    // Use a local variable to hold this invocation's own Completer so
+    // the finally block always completes the correct future, even when
+    // multiple callers race past the guard and each creates a new lock.
     if (_speakLock != null && !_speakLock!.isCompleted) {
       await _speakLock!.future;
     }
-    _speakLock = Completer<void>();
+    final lock = Completer<void>();
+    _speakLock = lock;
 
     try {
       if (!_isInitialized) await _init();
@@ -305,7 +309,7 @@ class TtsAudioHandler extends BaseAudioHandler with SeekHandler {
       // Start speaking
       await _speakCurrentChunk();
     } finally {
-      _speakLock?.complete();
+      lock.complete();
     }
   }
 
