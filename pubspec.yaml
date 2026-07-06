@@ -35,37 +35,37 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
 
   # Opinionated defaults for storage
   # Simple key-value storage for user preferences and small data
-  shared_preferences: ^2.5.4
+  shared_preferences: ^2.5.5
   # Access to device file system paths (documents, cache, temp directories)
-  path_provider: ^2.1.0
+  path_provider: ^2.1.6
   
   # State management
-  flutter_riverpod: ^3.2.1
+  flutter_riverpod: ^3.3.2
   
   # Database - SQLite with type-safe queries
-  drift: ^2.31.0
-  drift_flutter: ^0.2.0
-  sqlite3_flutter_libs: ^0.5.24
+  drift: ^2.34.0
+  drift_flutter: ^0.3.0
+  sqlite3_flutter_libs: ^0.6.0+eol
   
   # Utilities
   uuid: ^4.5.3
   intl: ^0.20.2
   
   # Intent sharing for LLM integration
-  share_plus: ^12.0.1
-  receive_sharing_intent: ^1.8.0
+  share_plus: ^12.0.2
+  receive_sharing_intent: ^1.9.0
   
   # Package version info
-  package_info_plus: ^9.0.0
+  package_info_plus: ^9.0.1
   flutter_markdown_plus: ^1.0.7
   
   # Text-to-Speech with background audio support
   flutter_tts: ^4.2.5
-  audio_service: ^0.18.15
+  audio_service: ^0.18.19
   
   # HTTP client for Ollama API
   http: ^1.6.0
@@ -80,11 +80,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  mocktail: ^1.0.3
+  mocktail: ^1.0.5
   
   # Code generation for drift
-  drift_dev: ^2.20.3
-  build_runner: ^2.11.1
+  drift_dev: ^2.34.0
+  build_runner: ^2.15.0
   
   # Icon generation
   flutter_launcher_icons: ^0.14.2
